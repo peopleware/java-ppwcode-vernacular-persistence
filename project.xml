@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <pomVersion>3</pomVersion>
+
+    <organization>
+        <name>PeopleWare n.v.</name>
+        <url>http://www.peopleware.be/</url>
+    </organization>
+
+    <groupId>ppw-libraries</groupId>
+
+    <url>http://www.peopleware.be/projects/JavaLibraries/${pom.artifactId}/</url>
+
+    <siteAddress>cvs.peopleware.be</siteAddress>
+    <siteDirectory>/ppw/projects/JavaLibraries/public_html/${pom.artifactId}/</siteDirectory>
+    <distributionSite>cvs.peopleware.be</distributionSite>
+    <distributionDirectory>/ppw/projects/JavaLibraries/public_html/maven-repository/${pom.groupId}/jars</distributionDirectory>
+
+    <repository>
+        <developerConnection>scm:cvs:ext:${user.name}@cvs.peopleware.be:/ppw/projects/JavaLibraries/repository:${pom.artifactId}</developerConnection>
+    </repository>
+
+    <licenses>
+        <license>
+            <name>Copyright PeopleWare n.v.</name>
+            <url>http://www.peopleware.be/licenses/fullCopyright.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <build>
+        <nagEmailAddress>${pom.artifactId}-dev@peopleware.be</nagEmailAddress>
+        <sourceDirectory>src/java</sourceDirectory>
+        <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/_Test_*.java</include>
+            </includes>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>src/conf</directory>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <reports>
+        <report>maven-license-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-faq-plugin</report>
+        <report>maven-jdepend-plugin</report>
+        <report>maven-changelog-plugin</report>
+        <report>maven-changes-plugin</report>
+<!--
+        <report>maven-jdiff-plugin</report>
+-->
+        <report>maven-checkstyle-plugin</report>
+        <report>maven-linkcheck-plugin</report>
+        <report>maven-simian-plugin</report>
+        <report>maven-developer-activity-plugin</report>
+        <report>maven-file-activity-plugin</report>
+        <report>maven-tasklist-plugin</report>
+<!-- http://maven-doccheck.sourceforge.net/ -->
+    </reports>
+    <properties/>
+</project>
