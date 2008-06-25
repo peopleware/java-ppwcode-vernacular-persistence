@@ -11,6 +11,18 @@
   </properties>
   <body>
 
+    <release version="III v1.0.0/1.0" date="2008-06-??" description="Port to ppwcode">
+      <action dev="jand" type="update">
+        Changed package to ppwcode structure.
+      </action>
+      <action dev="jand" type="update">
+        Made java 1.5 compatible, including generics in PersistenBean a.o.
+      </action>
+      <action dev="jand" type="add">
+        Unit tests for everything.
+      </action>
+    </release>
+
     <release version="II v2.2.0/4.0" date="2006-08-31" description="Hibernate sessions in Hibernate Dao support">
       <action dev="jand" type="add">
         Added support for Hibernate session reference to Hibernate Dao support:
