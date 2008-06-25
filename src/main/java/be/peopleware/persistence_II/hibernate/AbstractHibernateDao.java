@@ -8,13 +8,14 @@ package be.peopleware.persistence_II.hibernate;
 
 import java.sql.SQLException;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import be.peopleware.bean_V.CompoundPropertyException;
-import be.peopleware.bean_V.PropertyException;
-import be.peopleware.exception_I.Exceptions;
-import be.peopleware.exception_I.TechnicalException;
-import be.peopleware.persistence_II.PersistentBean;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.ppwcode.bean_VI.CompoundPropertyException;
+import org.ppwcode.bean_VI.PropertyException;
+import org.ppwcode.util.exception.Exceptions;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
+
 import be.peopleware.persistence_II.dao.Dao;
 import be.peopleware.persistence_II.sql.MySqlSqlExceptionHandler;
 import be.peopleware.persistence_II.sql.SqlExceptionHandler;
@@ -80,31 +81,31 @@ public abstract class AbstractHibernateDao implements Dao {
     cpExc.close();
     throw cpExc;
   }
-  
-  
-	/*<property name="session">*/
-	//------------------------------------------------------------------
 
-	/**
-	 * Return the Hibernate session for this Dao.
-	 */
-	public final Session getSession() {
-		return $session;
-	}
-	
-	
-	/**
-	 * @param     session
-	 *            The hibernate session to use for database manipulations.
-	 * @post      new.getSession() == session;
-	 */
-	public void setSession(final Session session) throws TechnicalException {
-		$session = session;
-	}
-	
-	private Session $session;
 
-	/*</property>*/
+  /*<property name="session">*/
+  //------------------------------------------------------------------
+
+  /**
+   * Return the Hibernate session for this Dao.
+   */
+  public final Session getSession() {
+    return $session;
+  }
+
+
+  /**
+   * @param     session
+   *            The hibernate session to use for database manipulations.
+   * @post      new.getSession() == session;
+   */
+  public void setSession(final Session session) throws TechnicalException {
+    $session = session;
+  }
+
+  private Session $session;
+
+  /*</property>*/
 
 
 
@@ -149,8 +150,8 @@ public abstract class AbstractHibernateDao implements Dao {
     $sqlExceptionHandler = sqlExceptionHandler;
   }
 
-	private SqlExceptionHandler $sqlExceptionHandler = new MySqlSqlExceptionHandler();
+  private SqlExceptionHandler $sqlExceptionHandler = new MySqlSqlExceptionHandler();
 
-	/*</property>*/
+  /*</property>*/
 
 }

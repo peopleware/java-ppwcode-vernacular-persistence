@@ -79,6 +79,13 @@
        <classifier>tests</classifier>
        <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <!-- MUDO move version up in dependency management -->
+      <version>3.2.6.ga</version>
+      <scope>optional</scope>
+    </dependency>
   </dependencies>
 
   <!-- More Project Information -->

@@ -16,20 +16,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.QueryException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.Transaction;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.QueryException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.ppwcode.bean_VI.CompoundPropertyException;
+import org.ppwcode.bean_VI.PropertyException;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
-import be.peopleware.bean_V.CompoundPropertyException;
-import be.peopleware.bean_V.PropertyException;
-import be.peopleware.exception_I.TechnicalException;
 import be.peopleware.persistence_II.IdNotFoundException;
-import be.peopleware.persistence_II.PersistentBean;
 import be.peopleware.persistence_II.dao.AsyncCrudDao;
 
 
@@ -101,11 +100,11 @@ public class HibernateAsyncCrudDao extends AbstractHibernateDao implements Async
     }
     super.setSession(session);
   }
-  
+
   /*</property>*/
-  
-  
-  
+
+
+
   /**
    * @invar     isInTransaction() == (tx != null);
    */

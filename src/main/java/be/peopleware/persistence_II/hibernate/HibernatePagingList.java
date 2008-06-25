@@ -9,14 +9,13 @@ package be.peopleware.persistence_II.hibernate;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
 
-import be.peopleware.exception_I.TechnicalException;
 import be.peopleware.persistence_II.dao.PagingList;
 
 

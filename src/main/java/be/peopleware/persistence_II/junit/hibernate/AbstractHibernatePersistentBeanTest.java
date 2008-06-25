@@ -14,16 +14,14 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.toryt.ClassContract;
-import org.toryt.Condition;
-import org.toryt.Contracts;
+import org.ppwcode.bean_VI.CompoundPropertyException;
+import org.ppwcode.bean_VI.PropertyException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
-import be.peopleware.bean_V.CompoundPropertyException;
-import be.peopleware.bean_V.PropertyException;
-import be.peopleware.persistence_II.PersistentBean;
 import be.peopleware.persistence_II.hibernate.HibernatePagingList;
 
 
@@ -102,7 +100,7 @@ public abstract class AbstractHibernatePersistentBeanTest extends AbstractHibern
       Iterator iter = pbs.iterator();
       while (iter.hasNext()) {
         PersistentBean pb = (PersistentBean)iter.next();
-        validatePersistentBean(pb);
+//        validatePersistentBean(pb);
       }
     }
     LOG.debug("Closing session");
@@ -117,65 +115,65 @@ public abstract class AbstractHibernatePersistentBeanTest extends AbstractHibern
     return retrievePages(getClassUnderTest());
   }
 
-  /**
-   * Retrieves the class contract corresponding to the class that is tested.
-   *
-   * @return (ClassContract)Contracts.typeContractInstance(getClassUnderTest())
-   *               does not throw an exception
-   *           ? result == (ClassContract)Contracts.typeContractInstance(getClassUnderTest())
-   *           : result == null;
-   */
-  protected final ClassContract getClassContract() {
-    ClassContract result = null;
-    try {
-      result = (ClassContract)Contracts.typeContractInstance(getClassUnderTest());
-    }
-    catch (IOException e) {
-      assert false : "IOException should not happen: " + e;
-    }
-    catch (ClassNotFoundException e) {
-      assert false : "ClassNotFoundException should not happen: " + e;
-    }
-    return result;
-  }
+//  /**
+//   * Retrieves the class contract corresponding to the class that is tested.
+//   *
+//   * @return (ClassContract)Contracts.typeContractInstance(getClassUnderTest())
+//   *               does not throw an exception
+//   *           ? result == (ClassContract)Contracts.typeContractInstance(getClassUnderTest())
+//   *           : result == null;
+//   */
+//  protected final ClassContract getClassContract() {
+//    ClassContract result = null;
+//    try {
+//      result = (ClassContract)Contracts.typeContractInstance(getClassUnderTest());
+//    }
+//    catch (IOException e) {
+//      assert false : "IOException should not happen: " + e;
+//    }
+//    catch (ClassNotFoundException e) {
+//      assert false : "ClassNotFoundException should not happen: " + e;
+//    }
+//    return result;
+//  }
 
-  /**
-   * Validate the given persistent bean.
-   * The following validations are executed:
-   * - the given persistent bean should be effective
-   * - the invariants are checked
-   * - some extra validation, using {@link #extraPersistentBeanValidation(PersistentBean)}
-   */
-  protected void validatePersistentBean(final PersistentBean pb) {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("pb: " + ((pb == null) ? "null" : pb.toStringLong()));
-    }
-    assertNotNull(pb);
-    validateTypeInvariants(pb);
-    boolean civilized = pb.isCivilized();
-    /* data in DB must not really be civilized. What we STORE must be,
-     * but what we get doesn't have to be (as long as type invariants
-     * are ok.
-     * But it is something weird: WARN.
-     */
-    if (LOG.isWarnEnabled() && (!civilized)) {
-      CompoundPropertyException cpe = pb.getWildExceptions();
-      LOG.warn("Not civilized: " + pb);
-      Iterator iter1 = cpe.getElementExceptions().values().iterator();
-      while (iter1.hasNext()) {
-        Set peSet = (Set)iter1.next();
-        Iterator iter2 = peSet.iterator();
-        while (iter2.hasNext()) {
-          PropertyException pe = (PropertyException)iter2.next();
-          LOG.warn("    " + pe.getLocalizedMessage());
-          LOG.warn("    originType: " + pe.getOriginType());
-          LOG.warn("    origin: " + pe.getOrigin());
-          LOG.warn("    propertyName: " + pe.getPropertyName());
-        }
-      }
-    }
-    extraPersistentBeanValidation(pb);
-  }
+//  /**
+//   * Validate the given persistent bean.
+//   * The following validations are executed:
+//   * - the given persistent bean should be effective
+//   * - the invariants are checked
+//   * - some extra validation, using {@link #extraPersistentBeanValidation(PersistentBean)}
+//   */
+//  protected void validatePersistentBean(final PersistentBean pb) {
+//    if (LOG.isDebugEnabled()) {
+//      LOG.debug("pb: " + ((pb == null) ? "null" : pb.toString()));
+//    }
+//    assertNotNull(pb);
+//    validateTypeInvariants(pb);
+//    boolean civilized = pb.isCivilized();
+//    /* data in DB must not really be civilized. What we STORE must be,
+//     * but what we get doesn't have to be (as long as type invariants
+//     * are ok.
+//     * But it is something weird: WARN.
+//     */
+//    if (LOG.isWarnEnabled() && (!civilized)) {
+//      CompoundPropertyException cpe = pb.getWildExceptions();
+//      LOG.warn("Not civilized: " + pb);
+//      Iterator iter1 = cpe.getElementExceptions().values().iterator();
+//      while (iter1.hasNext()) {
+//        Set peSet = (Set)iter1.next();
+//        Iterator iter2 = peSet.iterator();
+//        while (iter2.hasNext()) {
+//          PropertyException pe = (PropertyException)iter2.next();
+//          LOG.warn("    " + pe.getLocalizedMessage());
+//          LOG.warn("    originType: " + pe.getOriginType());
+//          LOG.warn("    origin: " + pe.getOrigin());
+//          LOG.warn("    propertyName: " + pe.getPropertyName());
+//        }
+//      }
+//    }
+//    extraPersistentBeanValidation(pb);
+//  }
 
   /**
    * Some extra validation to be performed on the given persistent bean.
@@ -185,21 +183,21 @@ public abstract class AbstractHibernatePersistentBeanTest extends AbstractHibern
     // NOP
   }
 
-  private void validateTypeInvariants(final Object instance) {
-    assert instance != null;
-    LOG.debug("getClassContract(): " + getClassContract());
-    Set invars = getClassContract().getTypeInvariantConditions();
-    Map context = new HashMap();
-    context.put(Condition.SUBJECT_KEY, instance);
-    Iterator iter = invars.iterator();
-    while (iter.hasNext()) {
-      Condition c = (Condition)iter.next();
-      boolean result = c.validate(context);
-      if (LOG.isErrorEnabled() && (!result)) {
-        LOG.error("type invariant violation: " + c + " for " + instance);
-      }
-      assertTrue(result);
-    }
-  }
+//  private void validateTypeInvariants(final Object instance) {
+//    assert instance != null;
+//    LOG.debug("getClassContract(): " + getClassContract());
+//    Set invars = getClassContract().getTypeInvariantConditions();
+//    Map context = new HashMap();
+//    context.put(Condition.SUBJECT_KEY, instance);
+//    Iterator iter = invars.iterator();
+//    while (iter.hasNext()) {
+//      Condition c = (Condition)iter.next();
+//      boolean result = c.validate(context);
+//      if (LOG.isErrorEnabled() && (!result)) {
+//        LOG.error("type invariant violation: " + c + " for " + instance);
+//      }
+//      assertTrue(result);
+//    }
+//  }
 
 }

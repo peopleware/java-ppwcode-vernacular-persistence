@@ -12,15 +12,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.expression.Criterion;
-import net.sf.hibernate.expression.Expression;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
 
-import be.peopleware.exception_I.TechnicalException;
 import be.peopleware.persistence_II.dao.FilterDao;
 
 

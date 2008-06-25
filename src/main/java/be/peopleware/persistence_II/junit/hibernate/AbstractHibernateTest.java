@@ -12,21 +12,21 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.ObjectNotFoundException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
-import net.sf.hibernate.cfg.Configuration;
-import net.sf.hibernate.expression.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
-import be.peopleware.exception_I.TechnicalException;
-import be.peopleware.persistence_II.PersistentBean;
 import be.peopleware.persistence_II.hibernate.HibernatePagingList;
 
 
@@ -126,7 +126,7 @@ public abstract class AbstractHibernateTest extends TestCase {
     }
   }
 
-  public Long create(final Object object) {
+  public Object create(final Object object) {
     try {
       $session.save(object);
       if (object instanceof PersistentBean) {
