@@ -41,7 +41,7 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
  * Implementations should be JavaBeans,
  * with a default constructor. Further dependencies should be filled
  * out using setters, and DAO methods should be allowed to throw a
- * {@link org.ppwcode.vernacular.exception.ConfigurationError} if the dependencies
+ * {@link org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError} if the dependencies
  * are not fulfilled when the DAO method is called.
  *
  * Subtypes may depend on the fact that the objects in persistent storage are

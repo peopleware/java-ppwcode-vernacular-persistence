@@ -21,6 +21,25 @@
       <action dev="jand" type="add">
         Unit tests for everything.
       </action>
+      <action dev="jand" type="remove">
+        Removed filter DAO. This experiment was not successful: we did not succeed in making
+        filtering technology independent. And creating our own QL is really a bit too much
+        work. In essence, it is also not necessary: the actual implementation of a filter
+        request should be separated from a filter DAO interface. The latter should just extend
+        Dao: we cannot add anything meaningful on this level for filters.
+      </action>
+      <action dev="jand" type="remove">
+        Removed DAO factories. In practice, they were not used. IoC mechanisms in JSF, Spring, etc.,
+        seem to suffice.
+      </action>
+      <action dev="jand" type="update">
+        Operations now should throw a PersistenceConfigurationError, a PersistenceExternalError or
+        an IllegalPersistenceStateException instead of the older TechnicalException
+        (see the exception vernacular).
+      </action>
+      <action dev="jand" type="update">
+        Reversed arguments in CrudDao.retrievePersistentBean(Class, _IdType_
+      </action>
     </release>
 
     <release version="II v2.2.0/4.0" date="2006-08-31" description="Hibernate sessions in Hibernate Dao support">
