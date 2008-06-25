@@ -57,13 +57,13 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_IdType_> extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
   @Basic(init = @Expression("null"))
-  _IdType_ getId();
+  _Id_ getId();
 
   /**
    * @param     id
@@ -78,7 +78,7 @@ public interface PersistentBean<_IdType_> extends RousseauBean, Serializable {
   @MethodContract(
     post = @Expression("id == _id")
   )
-  void setId(final _IdType_ id);
+  void setId(final _Id_ id);
 
   /*</property>*/
 
@@ -93,6 +93,6 @@ public interface PersistentBean<_IdType_> extends RousseauBean, Serializable {
   @MethodContract(
     post = @Expression("other != null && id == other.id")
   )
-  boolean hasSameId(final PersistentBean<_IdType_> other);
+  boolean hasSameId(final PersistentBean<_Id_> other);
 
 }

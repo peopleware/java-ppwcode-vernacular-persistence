@@ -38,28 +38,28 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractPersistentBean<_IdType_>
+public abstract class AbstractPersistentBean<_Id_>
     extends AbstractRousseauBean
-    implements PersistentBean<_IdType_>, Serializable {
+    implements PersistentBean<_Id_>, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  public final _IdType_ getId() {
+  public final _Id_ getId() {
     return $id;
   }
 
-  public final void setId(final _IdType_ id) {
+  public final void setId(final _Id_ id) {
     $id = id;
   }
 
-  private _IdType_ $id;
+  private _Id_ $id;
 
   /*</property>*/
 
 
 
-  public final boolean hasSameId(final PersistentBean<_IdType_> other) {
+  public final boolean hasSameId(final PersistentBean<_Id_> other) {
     return (other != null)
              && ((getId() == null)
                    ? other.getId() == null
