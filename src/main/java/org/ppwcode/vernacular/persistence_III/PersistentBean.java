@@ -23,6 +23,10 @@ import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.toryt.annotations_I.Basic;
+import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.MethodContract;
+
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import be.peopleware.persistence_II.AbstractPersistentBean;
@@ -54,64 +58,42 @@ import be.peopleware.persistence_II.AbstractPersistentBean;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean extends RousseauBean, Serializable {
+public interface PersistentBean<_IdType_> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
+
+  @Basic(init = @Expression("null"))
+  _IdType_ getId();
 
   /**
    * @param     id
    *            The new value
    * @post      (id == null) ? new.getId() == null : new.getId().equals(id);
    *
-   * @idea (jand) This should only be changed by Hibernate. So public is too broad.
-   *              Can something be done about this?
-   * @note (dvankeer): Make hibernate set this field directly instead of using
-   *                   the get- & setter. <id .... access="field" ... />
-   * @note (dvankeer): If we remove this method we break a lot in the
-   *                   application. Especially tests
+   * @idea This method should not appear in this interface. Once an id is set,
+   *       it should always remain the same (final, immutable property).
+   *       Persistence engines need a way to set the property, but that is it.
+   *       The question is whether it is possible to do testing than?
    */
-  void setId(final Long id);
-
-  /**
-   * @basic
-   */
-  Long getId();
+  @MethodContract(
+    post = @Expression("id == _id")
+  )
+  void setId(final _IdType_ id);
 
   /*</property>*/
 
 
-  // IDEA (jand) move the String stuff to a ppw-util, or at least ppw-bean
-  // IDEA (jand) automatic implementation of hasSameValues there too
-
-  /**
-   * Short representation of the bean.
-   *
-   * @return getClass().getName() + "@" + hashCode()
-   *           + "[id: " + $id + "]";
-   */
-  String toString();
-
-  /**
-   * Long representation of this bean.
-   */
-  String toStringLong();
-
-  /**
-   * Append a long representation of this to <code>acc</code>.
-   */
-  void appendLongRepresentation(StringBuffer acc);
 
   /**
    * This instance has the same id as the instance <code>other</code>.
    *
    * @param     other
    *            The persisten object to compare to.
-   * @return    (other != null)
-   *                && ((getId() == null)
-   *                    ? other.getId() == null
-   *                    : getId().equals(other.getId())));
    */
-  boolean hasSameId(final PersistentBean other);
+  @MethodContract(
+    post = @Expression("other != null && id == other.id")
+  )
+  boolean hasSameId(final PersistentBean<_IdType_> other);
 
 }
