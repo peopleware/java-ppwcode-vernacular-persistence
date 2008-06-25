@@ -38,7 +38,14 @@
         (see the exception vernacular).
       </action>
       <action dev="jand" type="update">
-        Reversed arguments in CrudDao.retrievePersistentBean(Class, _IdType_
+        Reversed arguments in CrudDao.retrievePersistentBean(Class, _IdType_)
+      </action>
+      <action dev="jand" type="update">
+        Moved dao implementations package (only Hibernate existed) one level deeper, under the dao
+        package.
+      </action>
+      <action dev="jand" type="add">
+        Added AbstractDao with 1 property of AbstractHibernateDao.
       </action>
     </release>
 
