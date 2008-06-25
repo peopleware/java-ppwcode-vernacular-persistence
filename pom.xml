@@ -72,6 +72,13 @@
        <groupId>org.ppwcode</groupId>
        <artifactId>ppwcode-bean-VI</artifactId>
      </dependency>
+     <dependency>
+       <groupId>org.ppwcode</groupId>
+       <artifactId>ppwcode-bean-VI</artifactId>
+       <version>1.0.0-SNAPSHOT</version>
+       <classifier>tests</classifier>
+       <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <!-- More Project Information -->
