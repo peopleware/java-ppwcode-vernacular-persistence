@@ -6,7 +6,7 @@
 package be.peopleware.persistence_II.ramstorage;
 
 
-import be.peopleware.persistence_II.dao.Dao;
+import org.ppwcode.vernacular.persistence_III.dao.Dao;
 
 
 /**

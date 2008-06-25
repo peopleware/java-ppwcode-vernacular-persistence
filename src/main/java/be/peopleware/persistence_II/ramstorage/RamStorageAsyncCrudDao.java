@@ -13,9 +13,9 @@ import java.util.Set;
 import org.ppwcode.bean_VI.CompoundPropertyException;
 import org.ppwcode.vernacular.exception_N.TechnicalException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.dao.AsyncCrudDao;
 
 import be.peopleware.persistence_II.IdNotFoundException;
-import be.peopleware.persistence_II.dao.AsyncCrudDao;
 
 
 /**

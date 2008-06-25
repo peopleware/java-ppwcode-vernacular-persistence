@@ -15,8 +15,8 @@ import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.util.exception.Exceptions;
 import org.ppwcode.vernacular.exception_N.TechnicalException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.dao.Dao;
 
-import be.peopleware.persistence_II.dao.Dao;
 import be.peopleware.persistence_II.sql.MySqlSqlExceptionHandler;
 import be.peopleware.persistence_II.sql.SqlExceptionHandler;
 

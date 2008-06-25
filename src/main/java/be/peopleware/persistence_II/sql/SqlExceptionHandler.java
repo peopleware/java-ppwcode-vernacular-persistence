@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.vernacular.exception_N.TechnicalException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.dao.Dao;
 
-import be.peopleware.persistence_II.dao.Dao;
 
 
 /**
