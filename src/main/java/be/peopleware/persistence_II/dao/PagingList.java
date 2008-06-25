@@ -14,9 +14,8 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import be.peopleware.exception_I.TechnicalException;
-import be.peopleware.persistence_II.PersistentBean;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 
 
@@ -209,9 +208,9 @@ public abstract class PagingList extends AbstractSequentialList {
     /*<property name="expected pk of next and previous page">*/
     //------------------------------------------------------------------
 
-    private Long $expectedFirstPkOfNextPage;
+    private Object $expectedFirstPkOfNextPage;
 
-    private Long $expectedLastPkOfPreviousPage;
+    private Object $expectedLastPkOfPreviousPage;
 
     /*</property>*/
 
@@ -336,7 +335,7 @@ public abstract class PagingList extends AbstractSequentialList {
      * In conclusion we can say that using 1 and size() - 2 as the positions to test
      * is ok in all cases, and diversification is not needed.
      */
-    private void validateOverlap(Long expectedKey, List page, int overlapPosition) throws ConcurrentModificationException {
+    private void validateOverlap(Object expectedKey, List page, int overlapPosition) throws ConcurrentModificationException {
       LOG.debug("validating overlap: expectedKey = " + expectedKey + " for position = " + overlapPosition);
       if ($expectedLastPkOfPreviousPage != null) {
         PersistentBean pb = (PersistentBean)page.get(overlapPosition);

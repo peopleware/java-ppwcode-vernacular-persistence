@@ -8,7 +8,7 @@ package be.peopleware.persistence_II.dao;
 import java.util.List;
 import java.util.Set;
 
-import be.peopleware.exception_I.TechnicalException;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
 
 
 /**
