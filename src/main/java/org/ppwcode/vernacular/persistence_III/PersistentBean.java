@@ -29,7 +29,6 @@ import org.toryt.annotations_I.MethodContract;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
-import be.peopleware.persistence_II.AbstractPersistentBean;
 
 
 /**

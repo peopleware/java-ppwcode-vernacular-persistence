@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
+
 import be.peopleware.bean_V.RousseauBean;
 import be.peopleware.bean_V._Test_AbstractRousseauBean;
 import be.peopleware.test_I.Test;
