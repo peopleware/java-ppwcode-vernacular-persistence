@@ -1,69 +1,64 @@
 /*<license>
-  Copyright 2004, PeopleWare n.v.
-  NO RIGHTS ARE GRANTED FOR THE USE OF THIS SOFTWARE, EXCEPT, IN WRITING,
-  TO SELECTED PARTIES.
+Copyright 2004 - $Date$ by PeopleWare n.v..
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 </license>*/
+
 package org.ppwcode.vernacular.persistence_III;
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
 import org.ppwcode.bean_VI.AbstractRousseauBean;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 
 
 /**
  * A partial implementation of the interface {@link PersistentBean}.
  *
- *
- * @author    nsmeets
+ * @author    Nele Smeets
+ * @author    Ruben Vandeginste
+ * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class AbstractPersistentBean<_IdType_>
     extends AbstractRousseauBean
     implements PersistentBean<_IdType_>, Serializable {
 
-  /*<section name="Meta Information">*/
-  //------------------------------------------------------------------
-
-  /** {@value} */
-  public static final String CVS_REVISION = "$Revision$";
-  /** {@value} */
-  public static final String CVS_DATE = "$Date$";
-  /** {@value} */
-  public static final String CVS_STATE = "$State$";
-  /** {@value} */
-  public static final String CVS_TAG = "$Name$";
-
-  /*</section>*/
-
-
-
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  /**
-   * @see   PersistentBean
-   */
-  public final void setId(final _IdType_ id) {
-    $id = id;
-  }
-
-  /**
-   * @basic
-   */
   public final _IdType_ getId() {
     return $id;
+  }
+
+  public final void setId(final _IdType_ id) {
+    $id = id;
   }
 
   private _IdType_ $id;
 
   /*</property>*/
 
-  /**
-   * This instance has the same id as the instance <code>other</code>.
-   *
-   * @see   PersistentBean
-   */
+
+
   public final boolean hasSameId(final PersistentBean<_IdType_> other) {
     return (other != null)
              && ((getId() == null)
