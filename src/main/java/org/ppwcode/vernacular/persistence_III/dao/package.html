@@ -25,7 +25,7 @@
     <p>DAO implementations should be JavaBeans, with a default constructor. Further dependencies
       should be filled out using setters to allow IoC. The technology dependent super classes provide
       this architecture. DAO methods should be allowed to throw a {@link
-      org.ppwcode.vernacular.exception.ConfigurationError} if the dependencies are not fulfilled when
+      org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError} if the dependencies are not fulfilled when
       the DAO method is called.</p>
     <p>{@link org.ppwcode.vernacular.persistence.dao.Dao} subtypes may dependent on the fact that the
       objects in persistent storage are {@link org.ppwcode.vernacular.persistence.PersistentBean
