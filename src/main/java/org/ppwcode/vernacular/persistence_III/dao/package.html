@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>be.peopleware.bean_X.persistent</title>
+    <title>org.ppwcode.vernacular.persistence.dao</title>
   </head>
   <body>
     <h1>Data Access Objects</h1>
@@ -12,26 +12,26 @@
       storage is accessed is isolated from the application business logic.</p>
     <p>Since we cannot define the business logic in this general package, and since the access
       technology differs too, we cannot define much at this high level. {@link
-      be.peopleware.persistence_I.dao.Dao} is an empty interface that is used mainly as a
+      org.ppwcode.vernacular.persistence.dao.Dao} is an empty interface that is used mainly as a
       documentation aid, to flag a type as a DAO. In projects, interfaces should be defined that
-      extend {@link be.peopleware.bean_II.persistent.Dao}, with methods that have a technology
+      extend {@link org.ppwcode.vernacular.persistence.dao.Dao, with methods that have a technology
       independent contract that describes interaction with persistent storage. The actual
       implementation of these DAO methods will differ and depend on the persistence technology used.
       In this library, classes are offered that offer common support for the implementation of DAO
-      classes in a given persistence technology (e.g., JDBC, Hibernate, JDO, EJB, RMI, ...), which
+      classes in a given persistence technology (e.g., JDBC, Hibernate, JDO, EJB, RMI, JPA, ...), which
       actual implementations can extend.</p>
     <p>DAO implementations are almost always stateful, because of the underlying persistence
       technology. Instances should always be dealt with as if they are stateful.</p>
     <p>DAO implementations should be JavaBeans, with a default constructor. Further dependencies
-      should be filled out using setters. The technology dependent superclasses provide this
-      architecture. DAO methods should be allowed to throw a {@link
-      be.peopleware.exception_I.TechnicalException} if the dependencies are not fulfilled when the DAO
-      method is called.</p>
-    <p>{@link be.peopleware.persistence_I.dao.Dao} subtypes may dependent on the fact that the
-      objects in persistent storage are {@link be.peopleware.persistence_I.PersistentBean
+      should be filled out using setters to allow IoC. The technology dependent superclasses provide
+      this architecture. DAO methods should be allowed to throw a {@link
+      org.ppwcode.vernacular.exception.ConfigurationError} if the dependencies are not fulfilled when
+      the DAO method is called.</p>
+    <p>{@link org.ppwcode.vernacular.persistence.dao.Dao} subtypes may dependent on the fact that the
+      objects in persistent storage are {@link org.ppwcode.vernacular.persistence.PersistentBean
       PersistentBeans}, although this will not always be necessary.</p>
-    <p>{@link be.peopleware.persistence_I.dao.AsyncCrudDao} gathers standard <acronym
+    <p>{@link org.ppwcode.vernacular.persistence.dao.AsyncCrudDao} gathers standard <acronym
       title="Create, Retrieve, Update, Delete">CRUD</acronym> functionality for {@link
-      be.peopleware.persistence_I.PersistentBean PersistentBeans} generically.</p>
+      org.ppwcode.vernacular.persistence.PersistentBean} generically.</p>
   </body>
 </html>
