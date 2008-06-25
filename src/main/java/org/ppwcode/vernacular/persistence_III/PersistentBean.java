@@ -1,26 +1,43 @@
 /*<license>
-  Copyright 2004, PeopleWare n.v.
-  NO RIGHTS ARE GRANTED FOR THE USE OF THIS SOFTWARE, EXCEPT, IN WRITING,
-  TO SELECTED PARTIES.
+Copyright 2004 - $Date$ by PeopleWare n.v..
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 </license>*/
-package be.peopleware.persistence_II;
+
+package org.ppwcode.vernacular.persistence_III;
 
 
 import java.io.Serializable;
-import be.peopleware.bean_V.RousseauBean;
+
+import org.ppwcode.bean_VI.RousseauBean;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+
+import be.peopleware.persistence_II.AbstractPersistentBean;
 
 
 /**
- * <p>Persistent classes need a simple primary key. Persistent objects
- *   always represent real-world objects, and therefor should be
- *   implemented as {@link RousseauBean}s. This class
- *   enforces the correct behavior and provides supporting code.</p>
+ * <p>Persistent classes need a primary key. Persistent objects
+ *   always represent real-world objects, and therefore should be
+ *   implemented as {@link RousseauBean}s. This interface
+ *   enforces the correct behavior. Supporting code is offered by
+ *   {@link AbstractPersistentBean}.</p>
  * <p>Users should be aware that this means that there can be more
- *   than 1 object that represents the same instance in the persistent storage.
+ *   than 1 Javav object that represents the same instance in the persistent storage.
  *   To check whether 2 persistent objects represent the same persistent
- *   instance, use {@link #hasSameId(PersistentBean)}. To check whether 2
- *   persistent objects have the same values for all of their properties,
- *   independent of their id, use {@link #hasSameValues(RousseauBean)}.</p>
+ *   instance, use {@link #hasSameId(PersistentBean)}.</p>
  * <p>Persistent beans are not {@link Cloneable} however. Implementing
  *   clone for a semantic inheritance tree is a large investment, and
  *   should not be enforced. Furthermore, it still is a bad idea to make
@@ -29,39 +46,15 @@ import be.peopleware.bean_V.RousseauBean;
  *   Persistent beans are {@link java.io.Serializable} though, because
  *   they are often used also as Data Transfer Objects in multi-tier
  *   applications.</p>
- * <p>To make clear that more than 1 persistent bean instance representing
- *   the same persistent instance can exist, this class implements
- *   {@link Cloneable}: it makes no sense to make it impossible to
- *   have more than 1 instance with the same id.</p>
- * <p>Subclasses should take care to override the following methods diligently:
- *   <ul>
- *     <li>{@link #hasSameValues(RousseauBean)}, to take into account
- *         the values of properties added in the subclass;</li>
- *     <li>{@link #getWildExceptions()}, to add validation concerning
- *         properties and type invariants added in the subclass.</li>
- *   </ul>
- * </p>
  *
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public interface PersistentBean extends RousseauBean, Serializable {
-
-  /*<section name="Meta Information">*/
-  //------------------------------------------------------------------
-
-  /** {@value} */
-  public static final String CVS_REVISION = "$Revision$";
-  /** {@value} */
-  public static final String CVS_DATE = "$Date$";
-  /** {@value} */
-  public static final String CVS_STATE = "$State$";
-  /** {@value} */
-  public static final String CVS_TAG = "$Name$";
-
-  /*</section>*/
-
-
 
   /*<property name="id">*/
   //------------------------------------------------------------------
