@@ -10,11 +10,8 @@ import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import be.peopleware.bean_V.ConstraintException;
-import be.peopleware.bean_V.DuplicateKeyException;
-import be.peopleware.bean_V.PropertyException;
-import be.peopleware.persistence_II.PersistentBean;
+import org.ppwcode.bean_VI.PropertyException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 
 /**
@@ -71,17 +68,19 @@ public class MySqlSqlExceptionHandler implements SqlExceptionHandler {
    *
    * Otherwise, return null.
    */
-  public PropertyException handle(final SQLException sqlExc, final PersistentBean pb) {
+  public PropertyException handle(final SQLException sqlExc, final PersistentBean<?> pb) {
     assert sqlExc != null;
     if (sqlExc.getMessage()
               .indexOf("Duplicate key or integrity constraint violation,  "
                        + "message from server: \"Duplicate entry") >= 0
         || sqlExc.getMessage().indexOf("Duplicate entry") >= 0) {
       // WATCH OUT: SQL Error message contains 'dual space' after ','.
-      DuplicateKeyException dkExc = new DuplicateKeyException(pb,
+      PropertyException dkExc = new PropertyException(pb,
                                                               null,
                                                               "VALUE_NOT_UNIQUE",
                                                               sqlExc);
+      // MUDO WAS: Duplicate key exception
+
       LOG.debug("recognized MySQL duplicate key exception", dkExc);
       return dkExc;
     }
@@ -90,10 +89,12 @@ public class MySqlSqlExceptionHandler implements SqlExceptionHandler {
                  + "message from server: \"Cannot delete or update a "
                  + "parent row: a foreign key constraint fails\"") >= 0) {
       // WATCH OUT: SQL Error message contains 'dual space' after ','.
-      ConstraintException cExc = new ConstraintException(pb,
+      PropertyException cExc = new PropertyException(pb,
                                                          null,
                                                          "CONSTRAINT_FAILURE",
                                                          sqlExc);
+      // MUDO WAS: Constraint exception
+
       LOG.debug("recognized MySQL constraint violation exception", cExc);
       return cExc;
     }

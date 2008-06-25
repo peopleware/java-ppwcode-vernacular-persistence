@@ -8,9 +8,10 @@ package be.peopleware.persistence_II.sql;
 
 import java.sql.SQLException;
 
-import be.peopleware.bean_V.PropertyException;
-import be.peopleware.exception_I.TechnicalException;
-import be.peopleware.persistence_II.PersistentBean;
+import org.ppwcode.bean_VI.PropertyException;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
+
 import be.peopleware.persistence_II.dao.Dao;
 
 
@@ -77,6 +78,6 @@ public interface SqlExceptionHandler {
    * @throws TechnicalException
    *         Could not find this out, for a technical reason.
    */
-  PropertyException handle(SQLException sqlException, PersistentBean pb) throws TechnicalException;
+  PropertyException handle(SQLException sqlException, PersistentBean<?> pb) throws TechnicalException;
 
 }

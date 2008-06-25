@@ -6,7 +6,6 @@
 package be.peopleware.persistence_II;
 
 
-import be.peopleware.exception_I.LocalizedMessageException;
 
 
 /**
@@ -19,7 +18,7 @@ import be.peopleware.exception_I.LocalizedMessageException;
  * @author    David Van Keer
  * @author    PeopleWare n.v.
  */
-public class IdException extends LocalizedMessageException {
+public class IdException extends Exception {
 
   /*<section name="Meta Information">*/
   //------------------------------------------------------------------
