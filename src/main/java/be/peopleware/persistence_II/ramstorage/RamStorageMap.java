@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import be.peopleware.persistence_II.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 
 /**

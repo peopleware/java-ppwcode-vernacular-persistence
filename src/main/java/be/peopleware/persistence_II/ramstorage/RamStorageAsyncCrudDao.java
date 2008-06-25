@@ -10,10 +10,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import be.peopleware.bean_V.CompoundPropertyException;
-import be.peopleware.exception_I.TechnicalException;
+import org.ppwcode.bean_VI.CompoundPropertyException;
+import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
+
 import be.peopleware.persistence_II.IdNotFoundException;
-import be.peopleware.persistence_II.PersistentBean;
 import be.peopleware.persistence_II.dao.AsyncCrudDao;
 
 
