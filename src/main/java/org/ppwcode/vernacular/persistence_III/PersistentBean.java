@@ -49,6 +49,9 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
  *   Persistent beans are {@link java.io.Serializable} though, because
  *   they are often used also as Data Transfer Objects in multi-tier
  *   applications.</p>
+ * <p>Persistency should always be implemented with versioning (optimistic
+ *   locking), but all known persistency implementations can deal with this
+ *   completely transparently.</p>
  *
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
