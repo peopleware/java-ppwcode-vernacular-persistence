@@ -14,15 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.dao.hibernate3;
+package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.sql.SQLException;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Session;
+
 import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
@@ -31,26 +32,21 @@ import org.ppwcode.util.exception.Exceptions;
 import org.ppwcode.vernacular.exception_N.InternalException;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
-
 
 
 /**
- * Support methods for Hibernate 3 <acronym title="Data Access Object">DAO</acronym>'s.
- * These implementations need a Hibernate 3 {@link Session}.
+ * Support methods for Hibernate 2 <acronym title="Data Access Object">DAO</acronym>'s.
+ * These implementations need a Hibernate 2 {@link Session}.
  *
  * @author Jan Dockx
  * @author Peopleware n.v.
- *
- * @mudo not done
  */
-@Copyright("2004 - $Date$, PeopleWare n.v.")
+@Copyright("2004 - $Date: 2008-06-26 12:34:30 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "$Date$")
-public abstract class AbstractHibernate3Dao extends AbstractDao {
+@SvnInfo(revision = "$Revision: 1374 $",
+         date     = "$Date: 2008-06-26 12:34:30 +0200 (Thu, 26 Jun 2008) $")
+public abstract class AbstractHibernate2Dao extends AbstractDao {
+
 
   /*<property name="session">*/
   //------------------------------------------------------------------
@@ -58,27 +54,23 @@ public abstract class AbstractHibernate3Dao extends AbstractDao {
   /**
    * Return the Hibernate session for this Dao.
    */
-  @Basic(init = @Expression("null"))
   public final Session getSession() {
-    return $session;
+      return $session;
   }
 
 
   /**
    * @param     session
    *            The hibernate session to use for database manipulations.
+   * @post      new.getSession() == session;
    */
-  @MethodContract(
-    post = @Expression("session == _session")
-  )
   public void setSession(final Session session) {
-    $session = session;
+      $session = session;
   }
 
   private Session $session;
 
   /*</property>*/
-
 
 
   /**
