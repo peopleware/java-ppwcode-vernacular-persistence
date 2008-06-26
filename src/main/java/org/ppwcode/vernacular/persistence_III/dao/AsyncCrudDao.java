@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence_III.dao;
 
+
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.util.Set;
@@ -23,11 +24,14 @@ import java.util.Set;
 import org.ppwcode.bean_VI.CompoundPropertyException;
 import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.bean_VI.RousseauBean;
+import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.TechnicalException;
-import org.ppwcode.vernacular.persistence_III.IllegalPersistenceStateException;
+import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
+import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
+import org.ppwcode.vernacular.persistence_III.PeristenceIllegalArgumentError;
+import org.ppwcode.vernacular.persistence_III.PeristenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
@@ -36,7 +40,8 @@ import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 import org.toryt.annotations_I.Throw;
 
-import be.peopleware.persistence_II.IdNotFoundException;
+import be.peopleware.persistence_II.dao.PagingList;
+
 
 
 /**
@@ -87,7 +92,7 @@ public interface AsyncCrudDao extends Dao {
                               "So the only option for the implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = IllegalPersistenceStateException.class,
+      @Throw(type = PeristenceIllegalStateError.class,
              cond = @Expression(value = "inTransaction")),
       @Throw(type = PersistenceConfigurationError.class,
              cond = @Expression(value = "true",
@@ -99,7 +104,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void startTransaction() throws IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError;
+  void startTransaction() throws PeristenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
 
   /**
    * <p>Commit a transaction. The transaction was started by
@@ -118,22 +123,21 @@ public interface AsyncCrudDao extends Dao {
   @MethodContract(
     post = {
       @Expression("! inTransaction"),
-      @Expression("for (PersistentBean pb2) {'isDeleted(pb2) ? pb2.id == null}"),
-      @Expression("for (PersistentBean pb2) {! isDeleted(pb2)}"),
+      @Expression("for (PersistentBean pbDel) {'isDeleted(pbDel) ? pbDel.id == null}"),
+      @Expression("for (PersistentBean pbDel) {! isDeleted(pbDel)}"),
+      @Expression("for (PersistentBean pbCreated) {'isCreated(pbCreated) ? pbCreated.id != null}"),
+      @Expression("for (PersistentBean pbCreated) {! isCreated(pbCreated)}"),
       @Expression(value = "'inTransaction",
                   description = "Cannot be made true by this method when it is false in the old state. " +
                               "So the only option for the implementer is to throw an exception when this occurs."),
-      @Expression(value = "_pb != null",
-                  description = "Cannot be made true it is false in the old state. So the only option for the " +
-                                "implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = PropertyException.class,
+      @Throw(type = SemanticException.class,
              cond = @Expression(value = "true",
-                                description = "the commit was stopped for semantic reasons")), // is this only pb.getWildExceptions()?
-//      @Throw(type = IllegalPersistenceArgumentException.class,
-//             cond = @Expression(value = "_pb == null")),
-      @Throw(type = IllegalPersistenceStateException.class,
+                                description = "the commit was stopped for semantic reasons, either wild exceptions, " +
+                                          "or exceptions from the persistent storage (which probably cannot be " +
+                                          "translated into property exceptions)")),
+      @Throw(type = PeristenceIllegalStateError.class,
              cond = @Expression(value = "! inTransaction")),
       @Throw(type = PersistenceConfigurationError.class,
              cond = @Expression(value = "true",
@@ -145,8 +149,8 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void commitTransaction(PersistentBean<?> pb) throws PropertyException, // IllegalPersistenceArgumentException,
-      IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError;
+  void commitTransaction() throws SemanticException, PeristenceIllegalStateError, PersistenceExternalError,
+      PersistenceConfigurationError;
 
   /**
    * <p>Cancel a transaction. The transaction was started by
@@ -157,13 +161,14 @@ public interface AsyncCrudDao extends Dao {
   @MethodContract(
     post = {
       @Expression("! inTransaction"),
-      @Expression("for (PersistentBean pb) {! isDeleted(pb)}"),
+      @Expression("for (PersistentBean pbDel) {! isDeleted(pbDel)}"),
+      @Expression("for (PersistentBean pbCreated) {! isCreated(pbCreated)}"),
       @Expression(value = "'inTransaction",
                   description = "Cannot be made true by this method when it is false in the old state. " +
                               "So the only option for the implementer is to throw an exception when this occurs."),
     },
     exc = {
-      @Throw(type = IllegalPersistenceStateException.class,
+      @Throw(type = PeristenceIllegalStateError.class,
              cond = @Expression("! inTransaction")),
       @Throw(type = PersistenceConfigurationError.class,
              cond = @Expression(value = "true",
@@ -175,8 +180,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void cancelTransaction() throws  PropertyException, IllegalPersistenceStateException, PersistenceExternalError,
-      PersistenceConfigurationError;
+  void cancelTransaction() throws PeristenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
 
   @Basic(init = @Expression("false"))
   boolean isInTransaction();
@@ -210,15 +214,18 @@ public interface AsyncCrudDao extends Dao {
   },
     exc = {
       @Throw(type = PropertyException.class,
-             cond = @Expression("_pb'civilized && " +
+             cond = @Expression("! _pb'civilized && " +
                                 "(_pb.wildExceptions.size > 1 ? " +
                                    "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
                                    "thrown.like(_pb.wildExceptions.anElement)")),
-//      @Throw(type = IllegalPersistenceArgumentException.class,
-//             cond = @Expression(value = "_pb == null")),
-//      @Throw(type = IllegalPersistenceArgumentException.class,
-//             cond = @Expression(value = "_pb'id == null")),
-      @Throw(type = IllegalPersistenceStateException.class,
+      @Throw(type = SemanticException.class,
+             cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
+                                                              "signals a semantic problem")),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb == null")),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb'id != null")),
+      @Throw(type = PeristenceIllegalStateError.class,
              cond = @Expression("! inTransaction")),
       @Throw(type = PersistenceConfigurationError.class,
              cond = @Expression(value = "true",
@@ -230,12 +237,15 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, // IllegalPersistenceArgumentException,
-      IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError;
+  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, SemanticException,
+      PeristenceIllegalArgumentError, PeristenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
 
   /**
    * <p>Return a persistent bean instance that represents the data of the record with key <code>id</code> of type
    *   <code>persistentBeanType</code> in the persistent storage.</p>
+   * <p>Of particular note is the fact that returned beans <em>need not necessarily need to be civilized</em>.
+   *   This is strange, and probably a bad practice, but we have encountered situations where our code
+   *   needs to be more stringent (in creates and updates) than legacy data existing already in the database.</p>
    *
    * @idea (jand) security exceptions
    */
@@ -243,23 +253,138 @@ public interface AsyncCrudDao extends Dao {
     post = {
       @Expression("result != null"),
       @Expression("result.id == _id"),
-      @Expression("result.civilized"),
       @Expression(value = "_id != null",
                   description = "Cannot be made true it is false in the old state. So the only option for the " +
                                 "implementer is to throw an exception when this occurs."),
       @Expression(value = "_persistentBeanType != null",
                   description = "Cannot be made true it is false in the old state. So the only option for the " +
                                 "implementer is to throw an exception when this occurs."),
-  },
+    },
     exc = {
        @Throw(type = IdNotFoundException.class,
-              cond = @Expression(value = "true",
-                                 description = "no instance found in persistent storage with primary key 'id' " +
-                                                "of type persistentBeanType")),
-//      @Throw(type = IllegalPersistenceArgumentException.class, // or IdNotFoundException?
-//             cond = @Expression(value = "_id == null")),
-//      @Throw(type = IllegalPersistenceArgumentException.class,
-//             cond = @Expression("_persistentBeanType == null")),
+              cond = {
+                @Expression(value = "true",
+                            description = "no instance found in persistent storage with primary key 'id' " +
+                                          "of type persistentBeanType"),
+                @Expression("thrown.persistentBeanType == _persistentBeanType"),
+                @Expression("thrown.id == _id")
+              }),
+        @Throw(type = PeristenceIllegalArgumentError.class,
+               cond = @Expression(value = "_persistentBeanType == null")),
+        @Throw(type = PeristenceIllegalArgumentError.class,
+               cond = @Expression(value = "_id == null")),
+        @Throw(type = PersistenceConfigurationError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of a bad configuration of " +
+                                                "this object, which is considered a programming error or external condition")),
+        @Throw(type = PersistenceExternalError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of some problem with persistency " +
+                                                "which we consider external"))
+    }
+  )
+  <_IdType_, _PersistentBean_ extends PersistentBean<_IdType_>>
+  _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _IdType_ id)
+      throws IdNotFoundException, PeristenceIllegalArgumentError, PersistenceExternalError, PersistenceConfigurationError;
+
+  /**
+   * <p>Return the set of all persistent bean instances that represent the data of the records of type
+   *   <code>persistentBeanType</code> in the persistent storage.</p>
+   * <p>If this is too much data, consider using the {@link PagingList}.</p>
+   * <p>Of particular note is the fact that returned beans <em>need not necessarily need to be civilized</em>.
+   *   This is strange, and probably a bad practice, but we have encountered situations where our code
+   *   needs to be more stringent (in creates and updates) than legacy data existing already in the database.</p>
+   *
+   * @param  retrieveSubClasses
+   *         whether or not to also retrieve instances of subtypes of {@code persistentBeanType}; if
+   *         {@code persistentBeanType} is  abstract, an empty set will be returned if {@code retrieveSubclasses}
+   *         is false
+   *
+   * @idea (jand) security exceptions
+   */
+  @MethodContract(
+    post = {
+      @Expression("result != null"),
+      @Expression("! result.contains(null)"),
+      @Expression("for (PersistentBean pb : result) {pb.id != null}"),
+      @Expression(value = "_persistentBeanType != null",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs."),
+    },
+    exc = {
+        @Throw(type = PeristenceIllegalArgumentError.class,
+               cond = @Expression(value = "_persistentBeanType == null")),
+        @Throw(type = PersistenceConfigurationError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of a bad configuration of " +
+                                                "this object, which is considered a programming error or external condition")),
+        @Throw(type = PersistenceExternalError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of some problem with persistency " +
+                                                "which we consider external"))
+    }
+  )
+  <_PersistentBean_ extends PersistentBean<?>>
+  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses)
+      throws PeristenceIllegalArgumentError, PersistenceExternalError, PersistenceConfigurationError;
+
+  /**
+   * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
+   *   storage, and change the data in the persistent storage to reflect the current state of <code>pb</code>.</p>
+   * <p>Before the state of <code>pb</code> is written to the persistent storage, first <code>pb.normalize()</code> is called,
+   *   and we check whether <code>pb.isCivilized()</code>.</p>
+   * <p>The state of <code>pb</code> remains completely unchanged, apart from normalization.</p>
+   *
+   * @idea (jand) security exceptions, unmodifiable error
+   */
+  @MethodContract(
+    post = {
+      @Expression(value = "true",
+                  description = "The object is updated in persistence storage"),
+      @Expression(value = "'inTransaction",
+                  description = "Cannot be made true by this method when it is false in the old state. " +
+                                "So the only option for the implementer is to throw an exception when this occurs."),
+      @Expression(value = "_pb != null",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs."),
+      @Expression(value = "_pb'id != null",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs."),
+      @Expression(value = "_pb'civilized",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs.")
+  },
+    exc = {
+      @Throw(type = PropertyException.class,
+             cond = @Expression("! _pb'civilized && " +
+                                "(_pb.wildExceptions.size > 1 ? " +
+                                   "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
+                                   "thrown.like(_pb.wildExceptions.anElement)")),
+      @Throw(type = SemanticException.class,
+             cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
+                                                              "signals a semantic problem")),
+      @Throw(type = IdNotFoundException.class,
+             cond = {
+               @Expression(value = "true",
+                           description = "no instance found in persistent storage with primary key 'id' " +
+                                         "of type persistentBeanType"),
+               @Expression("thrown.persistentBeanType == _persistentBeanType"),
+               @Expression("thrown.id == _id")
+             }),
+      @Throw(type = AlreadyChangedException.class,
+             cond = {
+               @Expression(value = "true",
+                           description = "the instance in persistent storage of which pb is a representation " +
+                                         "has changed in persistent storage since the last time we looked; " +
+                                         "we will not override the latest data (optimistic locking, versioning)"),
+               @Expression("thrown.persistentBean == _persistentBean")
+             }),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb == null")),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb'id == null")),
+      @Throw(type = PeristenceIllegalStateError.class,
+             cond = @Expression("! inTransaction")),
       @Throw(type = PersistenceConfigurationError.class,
              cond = @Expression(value = "true",
                                 description = "could perform the operation because of a bad configuration of " +
@@ -270,133 +395,64 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  <_IdType_, _PersistentBean_ extends PersistentBean<_IdType_>>
-  _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _IdType_ id)
-      throws IdNotFoundException, //IllegalPersistenceArgumentException,
-             IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError;
+  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, SemanticException, IdNotFoundException, AlreadyChangedException,
+      PeristenceIllegalArgumentError, PeristenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
 
   /**
-   * <p>Return the set of all persistent bean instances that represent the
-   *   data of the records of type
-   *   <code>persistentBeanType</code> in the
-   *   persistent storage.</p>
-   *
-   * @param  retrieveSubClasses
-   *         whether or not to also retrieve subclasses of persistentBeanType
-   * @post   persistentBeanType != null;
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   PersistentBean.class.isAssignableFrom(persistentBeanType);
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @result result != null;
-   * @result ! result.contains(null);
-   * @result (forall Object o; result.contains(o);
-   *            persistentBeanType.isInstance(o));
-   * @result (forall PersistentBean pb; result.contains(pb);
-   *            pb.getId() != null);
-   * @result (forall PersistentBean pb; result.contains(pb); pb.isCivilized());
-   * @throws TechnicalException
-   *         ; could not perform the operation
-   * @throws TechnicalException
-   *         persistentBeanType == null
-   *            || PersistentBean.class.isAssignableFrom(persistentBeanType);
-   *
-   * @idea (jand) security exceptions
-   */
-  <_PersistentBean_ extends PersistentBean<?>>
-  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses)
-      throws TechnicalException;
-
-  /**
-   * <p>Take a persistent bean instance <code>pb</code> that exists
-   *   in memory and represents an existing record in the persistent
-   *   storage, and change the data in the persistent storage to
-   *   reflect the current state of <code>pb</code>.</p>
-   * <p>Before the state of <code>pb</code> is written to the persistent
-   *   storage, first <code>pb.normalize()</code> is called,
-   *   and we check whether <code>pb.isCivilized()</code>.
-   * <p>The state of <code>pb</code> remains completely unchanged,
-   *   apart from normalization
-   *   (<code>pb.hasSameValues(new pb)</code>).</p>
-   *
-   * @post   isInTransaction();
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   pb != null;
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   pb.getId() != null;
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   pb.isCivilized();
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   new pb.hasSameValues(pb);
-   * @post   new pb.hasSameId(pb);
-   * @throws CompoundPropertyException
-   *         pb.getWildExceptions();
-   *         The operation was stopped for a semantic reason (! pb.isCivilized()).
-   *         The CompoundPropertyException thrown will be closed.
-   * @throws TechnicalException
-   *         ; could not perform the operation
-   * @throws TechnicalException
-   *         ! isInTransaction()
-   *            || pb == null
-   *            || pb.getId() == null;
-   *
-   * @idea (jand) security, unmodifiable exceptions
-   */
-  void updatePersistentBean(final PersistentBean<?> pb)
-      throws PropertyException, IdNotFoundException, //IllegalPersistenceArgumentException,
-      IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError;
-
-  /**
-   * <p>Take a persistent bean instance <code>pb</code> that exists
-   *   in memory and represents an existing record in the persistent
+   * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
    *   storage, and remove that record from persistent storage.</p>
-   * <p>The state of <code>pb</code> remains completely unchanged,
-   *   apart from normalization
-   *   (<code>pb.hasSameValues(new pb)</code>).</p>
-   * <p>The state of <code>pb</code> remains
-   *   unchanged, including the <code>id</code> (the
-   *   <code>id</code> cannot change during a transaction).
-   *   The <code>id</code> will be set to <code>null</code>
-   *   on {@link #commitTransaction(PersistentBean)}. Also, there
+   * <p>The state of <code>pb</code> remains unchanged, including the <code>id</code> (the <code>id</code> cannot change during
+   *   a transaction). The <code>id</code> will be set to <code>null</code> on {@link #commitTransaction(PersistentBean)}. Also, there
    *   is no normalization.</p>
    *
-   * @post   isInTransaction();
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   pb != null;
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   pb.getId() != null;
-   *         This cannot be made true by this method when it is
-   *         false in the old state. So the only option for the
-   *         implementer is to throw an exception when this occurs.
-   * @post   new.isDeleted(pb);
-   * @post   new pb.hasSameValues(pb);
-   * @post   new pb.hasSameId(pb);
-   * @throws TechnicalException
-   *         ; could not perform the operation
-   * @throws TechnicalException
-   *         ! isInTransaction()
-   *            || pb == null
-   *            || pb.getId() == null;
-   *
-   * @idea (jand) security, unmodifiable exceptions
+   * @idea (jand) security exceptions, unmodifiable error
+   * @todo error on foreign key? cascade delete?
    */
-  void deletePersistentBean(final PersistentBean<?> pb) throws //IllegalPersistenceArgumentException,
-  IllegalPersistenceStateException, PersistenceExternalError, PersistenceConfigurationError; // error on foreign key? cascade delete?
+  @MethodContract(
+    post = {
+      @Expression(value = "true",
+                  description = "The object is deleted from persistence storage"),
+      @Expression("isDeleted(_pb)"),
+      @Expression(value = "'inTransaction",
+                  description = "Cannot be made true by this method when it is false in the old state. " +
+                                "So the only option for the implementer is to throw an exception when this occurs."),
+      @Expression(value = "_pb != null",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs."),
+      @Expression(value = "_pb'id != null",
+                  description = "Cannot be made true it is false in the old state. So the only option for the " +
+                                "implementer is to throw an exception when this occurs.")
+    },
+    exc = {
+      @Throw(type = SemanticException.class,
+             cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
+                                                              "signals a semantic problem")),
+      @Throw(type = IdNotFoundException.class,
+             cond = {
+               @Expression(value = "true",
+                           description = "no instance found in persistent storage with primary key 'id' " +
+                                         "of type persistentBeanType"),
+               @Expression("thrown.persistentBeanType == _persistentBeanType"),
+               @Expression("thrown.id == _id")
+             }),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb == null")),
+      @Throw(type = PeristenceIllegalArgumentError.class,
+             cond = @Expression(value = "_pb'id == null")),
+      @Throw(type = PeristenceIllegalStateError.class,
+             cond = @Expression("! inTransaction")),
+      @Throw(type = PersistenceConfigurationError.class,
+             cond = @Expression(value = "true",
+                                description = "could perform the operation because of a bad configuration of " +
+                                              "this object, which is considered a programming error or external condition")),
+      @Throw(type = PersistenceExternalError.class,
+             cond = @Expression(value = "true",
+                                description = "could perform the operation because of some problem with persistency " +
+                                              "which we consider external"))
+    }
+  )
+  void deletePersistentBean(final PersistentBean<?> pb) throws SemanticException, IdNotFoundException, PeristenceIllegalArgumentError,
+      PeristenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
 
   @Basic(init = @Expression("false"))
   boolean isCreated(final PersistentBean<?> pb);
