@@ -21,26 +21,24 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.util.Set;
 
-import org.ppwcode.bean_VI.CompoundPropertyException;
 import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.exception_N.InternalException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalArgumentError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.persistence_III.PersistenceIllegalArgumentError;
+import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 import org.toryt.annotations_I.Throw;
-
-import org.ppwcode.vernacular.persistence_III.dao.PagingList;
 
 
 
@@ -111,14 +109,6 @@ public interface AsyncCrudDao extends Dao {
    *  {@link #startTransaction()}.</p>
    * <p>This instance should keep track of the transaction state
    *   until it is requested to close the transaction.</p>
-   *
-   * @param  pb
-   *         The {@link PersistentBean} instance this transaction was mainly
-   *         concerned with.
-   *         This is used as {@link CompoundPropertyException#getOrigin()}
-   *         in potential {@link CompoundPropertyException}s that are only
-   *         discovered on commit.
-   * @mudo   The above posed problems in the past. Can we solve this now?
    */
   @MethodContract(
     post = {
@@ -132,7 +122,7 @@ public interface AsyncCrudDao extends Dao {
                               "So the only option for the implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = SemanticException.class,
+      @Throw(type = InternalException.class,
              cond = @Expression(value = "true",
                                 description = "the commit was stopped for semantic reasons, either wild exceptions, " +
                                           "or exceptions from the persistent storage (which probably cannot be " +
@@ -149,7 +139,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void commitTransaction() throws SemanticException, PersistenceIllegalStateError, PersistenceExternalError,
+  void commitTransaction() throws InternalException, PersistenceIllegalStateError, PersistenceExternalError,
       PersistenceConfigurationError;
 
   /**
@@ -454,9 +444,18 @@ public interface AsyncCrudDao extends Dao {
   void deletePersistentBean(final PersistentBean<?> pb) throws SemanticException, IdNotFoundException, PersistenceIllegalArgumentError,
       PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
 
+  /**
+   * Returns true when the given persistent bean has been created (i.e.,
+   * has been used as a parameter in {@link #createPersistentBean(PersistentBean)});
+   * during the current uncommitted transaction; returns false otherwise.
+   */
   @Basic(init = @Expression("false"))
   boolean isCreated(final PersistentBean<?> pb);
 
+  /**
+   * Returns true when the given persistent bean has been deleted during the current
+   * uncommitted transaction; returns false otherwise.
+   */
   @Basic(init = @Expression("false"))
   boolean isDeleted(final PersistentBean<?> pb);
 

@@ -30,10 +30,12 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.util.exception.Exceptions;
 import org.ppwcode.vernacular.exception_N.InternalException;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
+import org.toryt.annotations_I.Throw;
 
 
 
@@ -71,9 +73,16 @@ public abstract class AbstractHibernate3Dao extends AbstractDao {
    *            The hibernate session to use for database manipulations.
    */
   @MethodContract(
-    post = @Expression("session == _session")
+    post = {
+      @Expression("session == _session"),
+      @Expression(value = "! 'inTransaction",
+                  description = "Cannot be made true by this method when it is false in the old state. " +
+                              "So the only option for the implementer is to throw an exception when this occurs.")
+    },
+    exc = @Throw(type = PersistenceIllegalStateError.class,
+                 cond = @Expression(value = "true"))
   )
-  public void setSession(final Session session) {
+  public void setSession(final Session session) throws PersistenceIllegalStateError {
     $session = session;
   }
 
