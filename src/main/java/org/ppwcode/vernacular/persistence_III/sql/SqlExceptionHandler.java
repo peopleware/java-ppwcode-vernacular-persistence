@@ -27,9 +27,9 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_N.ExternalError;
+import org.ppwcode.vernacular.exception_N.InternalException;
 import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -50,9 +50,9 @@ import org.toryt.annotations_I.Throw;
  *   Database exceptions are not much more than a string, and there is no standardization over different
  *   database engines. Furthermore, exceptions raised by triggers and stored procedures, and constraints,
  *   are application specific.</p>
- * <p>Implementations of {@link #handle(SQLException, PersistentBean)} should return {@link SemanticException}
- *   that wraps the given {@link SQLException} if they find it of a semantic nature. If not, they should
- *   return <code>null</code>. Implementation methods should have no side effects. During this process however,
+ * <p>Implementations of {@link #handle(SQLException)} should return an {@link InternalException}
+ *   that wraps the given {@link SQLException} if they find it of an internal (semantic, persistent) nature. If not,
+ *   they should return <code>null</code>. Implementation methods should have no side effects. During this process however,
  *   it is possible that access of the persistent storage is needed (e.g., a case encounter regularly is where
  *   i18n messages for semantic exceptions are defined in tables in the database). If such an access fails,
  *   the method should throw a {@link PersistenceConfigurationError} or a {@link PersistenceExternalError}.</p>
@@ -89,6 +89,6 @@ public interface SqlExceptionHandler {
                                               "which we consider external"))
     }
   )
-  SemanticException handle(SQLException sqlException) throws PersistenceConfigurationError, PersistenceExternalError;
+  InternalException handle(SQLException sqlException) throws PersistenceConfigurationError, PersistenceExternalError;
 
 }

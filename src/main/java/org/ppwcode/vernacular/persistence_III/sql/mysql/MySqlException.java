@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2004 - $Date$ by PeopleWare n.v..
+Copyright 2004 - $Date: 2008-06-26 11:53:54 +0200 (Thu, 26 Jun 2008) $ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,54 +14,54 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III;
+package org.ppwcode.vernacular.persistence_III.sql.mysql;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import java.sql.SQLException;
+
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.InternalException;
+import org.ppwcode.vernacular.persistence_III.PersistenceException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
 
 /**
- * Superclass that gathers internal exceptions that are specific for
- * persistence operations.
+ * <p>Semantic exceptions raised by a MySQL RDBMS.</p>
  *
- * @mudo need to work on i18n messages
+ * @note This implementation will evolve as more cases are discovered in the wild.
  *
  * @author    Jan Dockx
- * @author    David Van Keer
  * @author    PeopleWare n.v.
+ *
+ * @mudo i18n, dependendin on message; see {@link MySqlSqlExceptionHandler}.
  */
-@Copyright("2004 - $Date$, PeopleWare n.v.")
+@Copyright("2004 - $Date: 2008-06-26 11:53:54 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "$Date$")
-public class PersistenceException extends InternalException {
+@SvnInfo(revision = "$Revision: 1370 $",
+         date     = "$Date: 2008-06-26 11:53:54 +0200 (Thu, 26 Jun 2008) $")
+public class MySqlException extends PersistenceException {
+
+  /*<construction>*/
+  //------------------------------------------------------------------
 
   @MethodContract(
+    pre = {
+      @Expression("cause != null")
+    },
     post = {
       @Expression("message == _message"),
       @Expression("cause == _cause")
     }
   )
-  public PersistenceException(String message, Throwable cause) {
+  public <_Id_> MySqlException(String message, SQLException cause) {
     super(message, cause);
+    assert cause != null;
   }
 
-  @MethodContract(
-    post = {
-      @Expression("message == _message"),
-      @Expression("cause == null")
-    }
-  )
-  public PersistenceException(String message) {
-    super(message);
-  }
+  /*</construction;>*/
 
 }
-
