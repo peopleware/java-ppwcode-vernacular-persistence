@@ -27,7 +27,6 @@ import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
-import be.peopleware.persistence_II.sql.MySqlSqlExceptionHandler;
 
 
 /**
@@ -56,7 +55,7 @@ public abstract class AbstractDao implements Dao {
     $sqlExceptionHandler = sqlExceptionHandler;
   }
 
-  private SqlExceptionHandler $sqlExceptionHandler = new MySqlSqlExceptionHandler();
+  private SqlExceptionHandler $sqlExceptionHandler;
 
   /*</property>*/
 
