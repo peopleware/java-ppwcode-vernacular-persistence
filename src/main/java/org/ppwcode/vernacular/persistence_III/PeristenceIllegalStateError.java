@@ -22,23 +22,19 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.ConfigurationError;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
 
 /**
- * Error thrown by persistence code when an operation cannot be completed
- * because of a configuration error (either via external configuration
- * or programmatic configuration). This is especially useful in the
- * case of IoC components, for which a number of properties have to be
- * set before the main functionality can be used.
+ * Error thrown by persistence code when a {@link Dao} method is called while the
+ * {@link Dao} is in a state in which the call is not allowed.
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public class IllegalPersistenceStateException extends ConfigurationError {
+public class PeristenceIllegalStateError extends PersistenceProgrammingError {
 
   @MethodContract(
     post = {
@@ -46,8 +42,18 @@ public class IllegalPersistenceStateException extends ConfigurationError {
       @Expression("cause == _cause")
     }
   )
-  public IllegalPersistenceStateException(String message, Throwable cause) {
+  public PeristenceIllegalStateError(String message, Throwable cause) {
     super(message, cause);
+  }
+
+  @MethodContract(
+    post = {
+      @Expression("message == _message"),
+      @Expression("cause == null")
+    }
+  )
+  public PeristenceIllegalStateError(String message) {
+    super(message);
   }
 
 }

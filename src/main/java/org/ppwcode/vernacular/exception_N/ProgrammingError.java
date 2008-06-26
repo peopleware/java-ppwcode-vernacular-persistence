@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III;
+
+package org.ppwcode.vernacular.exception_N;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
@@ -27,17 +28,19 @@ import org.toryt.annotations_I.MethodContract;
 
 
 /**
- * Error thrown by persistence code when an operation cannot be completed
- * because of a configuration error (either via external configuration
- * or programmatic configuration). This is especially useful in the
- * case of IoC components, for which a number of properties have to be
- * set before the main functionality can be used.
+ * Superclass that gathers all programming errors that can be thrown.
+ * Programming errors carry a message intended for developers in English,
+ * which describes the error consisely. They never carry references to
+ * semantic objects, to avoid keeping them alive longer then absolutely
+ * required (they are probably in an undefined state). Any extra information
+ * that the thrower wishes to signal has to be translated into a String
+ * representation and added to the message.
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public class PersistenceConfigurationError extends PersistenceProgrammingError {
+public class ProgrammingError extends Error {
 
   @MethodContract(
     post = {
@@ -45,7 +48,7 @@ public class PersistenceConfigurationError extends PersistenceProgrammingError {
       @Expression("cause == _cause")
     }
   )
-  public PersistenceConfigurationError(String message, Throwable cause) {
+  public ProgrammingError(String message, Throwable cause) {
     super(message, cause);
   }
 
@@ -55,7 +58,7 @@ public class PersistenceConfigurationError extends PersistenceProgrammingError {
       @Expression("cause == null")
     }
   )
-  public PersistenceConfigurationError(String message) {
+  public ProgrammingError(String message) {
     super(message);
   }
 
