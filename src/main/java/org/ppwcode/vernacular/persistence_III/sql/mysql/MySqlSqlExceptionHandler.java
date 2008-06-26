@@ -62,6 +62,8 @@ public class MySqlSqlExceptionHandler implements SqlExceptionHandler {
    * return a {@link ConstraintException}.
    *
    * Otherwise, return null.
+   *
+   * @mudo walk through the chain of exceptions to find a match
    */
   public MySqlException handle(final SQLException sqlExc) {
     assert sqlExc != null;
