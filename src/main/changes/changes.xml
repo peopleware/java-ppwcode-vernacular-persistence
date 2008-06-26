@@ -47,6 +47,12 @@
       <action dev="jand" type="add">
         Added AbstractDao with 1 property of AbstractHibernateDao.
       </action>
+      <action dev="jand" type="update">
+        Methods around AsyncCrudDao do no longer require a nonsense PersistentBean argument. This
+        was intended to be able to throw appropriate PropertyExceptions, that require an origin.
+        In practice, this proved undoable most of the time. Now these methods can throw any more
+        general SemanticException.
+      </action>
     </release>
 
     <release version="II v2.2.0/4.0" date="2006-08-31" description="Hibernate sessions in Hibernate Dao support">
