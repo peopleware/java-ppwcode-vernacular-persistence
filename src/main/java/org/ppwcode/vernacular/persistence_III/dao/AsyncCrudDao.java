@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.bean_VI.RousseauBean;
-import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -148,11 +147,14 @@ public interface AsyncCrudDao extends Dao {
    *   {@link #startTransaction()}.</p>
    * <p>This instance should keep track of the transaction state
    *   until it is requested to close the transaction.</p>
+   * <p>For {@link #isCreated(PersistentBean) created} persistent beans, the
+   *   {@link PersistentBean#getId()} is reset to <code>null</code> (part of rollback).</p>
    */
   @MethodContract(
     post = {
       @Expression("! inTransaction"),
       @Expression("for (PersistentBean pbDel) {! isDeleted(pbDel)}"),
+      @Expression("for (PersistentBean pbCreated) {'isCreated(pbCreated) ? pbCreated.id == null}"),
       @Expression("for (PersistentBean pbCreated) {! isCreated(pbCreated)}"),
       @Expression(value = "'inTransaction",
                   description = "Cannot be made true by this method when it is false in the old state. " +
@@ -184,6 +186,9 @@ public interface AsyncCrudDao extends Dao {
    * <p>This method cascades creation of necessary related objects: all {@link PersistentBean PersistentBeans}
    *   that are reachable via public properties from <code>pb</code>, whose {@link PersistentBean#getId() id}
    *   is <code>null</code>, recursively, are also created.</p>
+   * <p>After {@link #commitTransaction()}, <code>pb</code> will have an fresh id. Only during commit will
+   *   this <code>pb</code> actually be created in the DB, so if that fails, we need
+   *   to call {@link #cancelTransaction()}.</p>
    *
    * @idea (jand) security exceptions
    */
@@ -209,7 +214,7 @@ public interface AsyncCrudDao extends Dao {
                                 "(_pb.wildExceptions.size > 1 ? " +
                                    "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
                                    "thrown.like(_pb.wildExceptions.anElement)")),
-      @Throw(type = SemanticException.class,
+      @Throw(type = InternalException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem")),
       @Throw(type = PersistenceIllegalArgumentError.class,
@@ -228,7 +233,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, SemanticException,
+  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException,
       PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
 
   /**
