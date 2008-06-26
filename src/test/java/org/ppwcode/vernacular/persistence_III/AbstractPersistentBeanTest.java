@@ -17,9 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III;
 
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +29,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ppwcode.bean_VI.AbstractRousseauBeanTest;
 import org.ppwcode.bean_VI.CompoundPropertyException;
 import org.ppwcode.bean_VI.PropertyException;
@@ -38,7 +36,7 @@ import org.ppwcode.bean_VI.PropertyException;
 
 public class AbstractPersistentBeanTest {
 
-  public static class AbstractPersistentBeanSTUB<_IdType_> 
+  public static class AbstractPersistentBeanSTUB<_IdType_>
     extends AbstractPersistentBean<_IdType_> {
 
     public AbstractPersistentBeanSTUB(_IdType_ id, String property1,
@@ -127,7 +125,7 @@ public class AbstractPersistentBeanTest {
   @Before
   public void setUp() throws Exception {
     subjects = new ArrayList<AbstractPersistentBean<?>>();
-    AbstractPersistentBeanSTUB<?> subject = 
+    AbstractPersistentBeanSTUB<?> subject =
       new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, null);
     subjects.add(subject);
     Integer id = 9;
@@ -212,7 +210,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testClone() {
-    // The method clone cannot be tested, because the method is declared 
+    // The method clone cannot be tested, because the method is declared
     // protected in AbstractSemanticBean. This is exactly the intended behaviour.
   }
 
@@ -235,13 +233,13 @@ public class AbstractPersistentBeanTest {
   @Test
   public void testPropertyNamesForToString2() {
     AbstractPersistentBean<?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
-    testPropertyNamesForToStringA(subject, 2);
+    testPropertyNamesForToStringA(subject, 3);
   }
 
   @Test
   public void testPropertyNamesForToString1() {
     for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject, 4);
+      testPropertyNamesForToStringB(subject, 5);
     }
   }
 
