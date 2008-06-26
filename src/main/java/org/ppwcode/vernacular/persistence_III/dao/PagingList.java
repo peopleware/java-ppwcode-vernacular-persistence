@@ -137,6 +137,7 @@ public abstract class PagingList<_PersistentBean_ extends PersistentBean<_Id_>, 
    *
    * @basic
    */
+  @Override
   public final int size() {
     return $size;
   }
@@ -153,6 +154,7 @@ public abstract class PagingList<_PersistentBean_ extends PersistentBean<_Id_>, 
   /**
    * @result result instanceof PagesIterator;
    */
+  @Override
   public final ListIterator<List<_PersistentBean_>> listIterator(int index) {
     return new PagesIterator(index);
   }
@@ -232,7 +234,7 @@ public abstract class PagingList<_PersistentBean_ extends PersistentBean<_Id_>, 
      * check that it is the expected record; we cannot do this
      * for the first retrieval, or for the first or last page
      */
-    public List<_PersistentBean_> next() 
+    public List<_PersistentBean_> next()
         throws PersistenceExternalError, ConcurrentModificationException {
       LOG.debug("retrieving next page (" + $nextPage + ")");
       validateCount();
@@ -256,7 +258,7 @@ public abstract class PagingList<_PersistentBean_ extends PersistentBean<_Id_>, 
      * check that it is the expected record; we cannot do this
      * for the first retrieval, or for the first or last page
      */
-    public List<_PersistentBean_> previous() 
+    public List<_PersistentBean_> previous()
         throws PersistenceExternalError, ConcurrentModificationException {
       int pageToRetrieve = $nextPage - 1;
       LOG.debug("retrieving previous page (" + pageToRetrieve + ")");
