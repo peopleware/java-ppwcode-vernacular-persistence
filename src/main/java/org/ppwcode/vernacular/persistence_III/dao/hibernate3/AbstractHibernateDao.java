@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.dao.hibernate;
+package org.ppwcode.vernacular.persistence_III.dao.hibernate3;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
@@ -35,11 +35,11 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
+import org.ppwcode.vernacular.persistence_III.sql.mysql.MySqlSqlExceptionHandler;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
-import be.peopleware.persistence_II.sql.MySqlSqlExceptionHandler;
 
 
 /**
@@ -55,7 +55,7 @@ import be.peopleware.persistence_II.sql.MySqlSqlExceptionHandler;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractHibernateDao extends AbstractDao {
+public abstract class AbstractHibernat3Dao extends AbstractDao {
 
   /*<property name="session">*/
   //------------------------------------------------------------------
