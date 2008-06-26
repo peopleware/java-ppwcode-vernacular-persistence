@@ -34,7 +34,7 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public class PeristenceIllegalStateError extends PersistenceProgrammingError {
+public class PersistenceIllegalStateError extends PersistenceProgrammingError {
 
   @MethodContract(
     post = {
@@ -42,7 +42,7 @@ public class PeristenceIllegalStateError extends PersistenceProgrammingError {
       @Expression("cause == _cause")
     }
   )
-  public PeristenceIllegalStateError(String message, Throwable cause) {
+  public PersistenceIllegalStateError(String message, Throwable cause) {
     super(message, cause);
   }
 
@@ -52,7 +52,7 @@ public class PeristenceIllegalStateError extends PersistenceProgrammingError {
       @Expression("cause == null")
     }
   )
-  public PeristenceIllegalStateError(String message) {
+  public PersistenceIllegalStateError(String message) {
     super(message);
   }
 
