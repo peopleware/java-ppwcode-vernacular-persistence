@@ -37,7 +37,7 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  *
- * @mudo i18n, dependendin on message; see {@link MySqlSqlExceptionHandler}.
+ * @mudo i18n, dependendin on message; see {@link MySqlExceptionHandler}.
  */
 @Copyright("2004 - $Date: 2008-06-26 11:53:54 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
