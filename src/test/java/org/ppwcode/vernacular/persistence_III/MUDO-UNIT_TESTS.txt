@@ -1,0 +1,7 @@
+MySqlExceptionHandler
+AbstractDao
+AbstractHibernateNDao
+HibernateNAsyncCrudDao
+AbstractHibernateNTest
+AbstractHibernateNPersistentBeanTest
+HibernateNPagingList
