@@ -21,6 +21,7 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_N.InternalException;
+import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistenceIllegalArgumentError;
@@ -355,32 +357,26 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
    *            || !PersistentBean.class
    *                    .isAssignableFrom(persistentObjectType);
    */
-  public PersistentBean retrievePersistentBean(
-      final Long id,
-      final Class persistentObjectType)
-          throws IdNotFoundException, TechnicalException {
-    LOG.debug("Retrieving record with id = " + id + " ..."); //$NON-NLS-2$
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
+  _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
+      throws IdNotFoundException, PersistenceIllegalArgumentError, PersistenceConfigurationError, PersistenceExternalError {
+    LOG.debug("Retrieving record with id = " + id + " ...");
     if (getSession() == null) {
-      throw new TechnicalException(NULL_SESSION, null);
+      throw new PersistenceConfigurationError(NULL_SESSION, null);
     }
     if (id == null) {
-      throw new IdNotFoundException(id, "ID_IS_NULL",
-                                    null, persistentObjectType);
+      throw new PersistenceIllegalArgumentError("ID_IS_NULL", null);
     }
-    if (persistentObjectType == null) {
-      throw new TechnicalException(NO_PERSISTENT_OBJECT, null);
+    if (persistentBeanType == null) {
+      throw new PersistenceIllegalArgumentError(NO_PERSISTENT_OBJECT, null);
     }
-    if (!PersistentBean.class.isAssignableFrom(persistentObjectType)) {
-      throw new TechnicalException(persistentObjectType.toString()
-                                       + WRONG_SUBTYPE,
-                                   null);
-    }
-    PersistentBean result = null;
+    _PersistentBean_ result = null;
     try {
-      result = (PersistentBean)getSession().get(persistentObjectType, id);
-      if (result == null) {
+      @SuppressWarnings("unchecked")
+      PersistentBean<?> candidate = (PersistentBean)getSession().get(persistentBeanType, id);
+      if (candidate == null) {
         LOG.debug("Record not found");
-        throw new IdNotFoundException(id, null, null, persistentObjectType);
+        throw new IdNotFoundException(persistentBeanType, id, null, null);
       }
       // When hibernate caching is active they can give back a object with
       // the correct ID but of the wrong type, so this extra check is
@@ -388,26 +384,27 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
       // forum to ask if it is a bug or if we are missing something.
       //
       // URL: http://forum.hibernate.org/viewtopic.php?t=938177
-      if (!persistentObjectType.isInstance(result)) {
+      if (! persistentBeanType.isInstance(result)) {
         LOG.debug("Incorrect record found (Wrong type");
-        throw new IdNotFoundException(id, null, null, persistentObjectType);
+        throw new IdNotFoundException(persistentBeanType, id, null, null);
       }
-
+      @SuppressWarnings("unchecked")
+      _PersistentBean_ persistentBean = (_PersistentBean_)candidate;
+      result = persistentBean;
     }
     catch (ClassCastException ccExc) {
-      throw new TechnicalException("retrieved object was not a PersistentBean",
-                                   ccExc);
+      throw new PersistenceExternalError("retrieved object was not a PersistentBean", ccExc);
     }
     catch (HibernateException hExc) {
       // this cannot be that we did not find an object with that id, since we
       // use get
-      throw new TechnicalException("problem getting record from DB", hExc);
+      throw new PersistenceExternalError("problem getting record from DB", hExc);
     }
     assert result != null;
     assert result.getId().equals(id);
-    assert persistentObjectType.isInstance(result);
+    assert persistentBeanType.isInstance(result);
     if (LOG.isDebugEnabled()) {
-      LOG.debug("Retrieval succeeded (" + result + ")"); //$NON-NLS-2$
+      LOG.debug("Retrieval succeeded (" + result + ")");
     }
     return result;
   }

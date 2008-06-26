@@ -19,6 +19,7 @@ package org.ppwcode.vernacular.persistence_III.dao;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.ppwcode.bean_VI.PropertyException;
@@ -52,7 +53,7 @@ import org.toryt.annotations_I.Throw;
  *   completely dismiss the notion of <dfn>auto-commit</dfn>. In practice, we experience that
  *   an auto-commit feature often leads to confusion for developers, as it is unclear whether
  *   some code is executing in auto-commit mode or not.</p>
- * <p>{@link #retrievePersistentBean(Class, Object)} can be called outside a transaction. Objects that
+ * <p>{@link #retrievePersistentBean(Class, Serializable)} can be called outside a transaction. Objects that
  *   are deleted have their {@link PersistentBean#getId()} set to null on
  *   {@link #commitTransaction(PersistentBean)}.</p>
  * <p>Before a {@link PersistentBean} is written to the persistent storage (see
@@ -273,8 +274,8 @@ public interface AsyncCrudDao extends Dao {
                                                 "which we consider external"))
     }
   )
-  <_IdType_, _PersistentBean_ extends PersistentBean<_IdType_>>
-  _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _IdType_ id)
+  <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
+  _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
       throws IdNotFoundException, PersistenceIllegalArgumentError, PersistenceExternalError, PersistenceConfigurationError;
 
   /**
