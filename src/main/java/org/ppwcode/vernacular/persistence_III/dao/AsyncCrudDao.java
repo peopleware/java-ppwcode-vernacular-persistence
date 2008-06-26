@@ -350,7 +350,7 @@ public interface AsyncCrudDao extends Dao {
                                 "(_pb.wildExceptions.size > 1 ? " +
                                    "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
                                    "thrown.like(_pb.wildExceptions.anElement)")),
-      @Throw(type = SemanticException.class,
+      @Throw(type = InternalException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem")),
       @Throw(type = IdNotFoundException.class,
@@ -385,7 +385,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, SemanticException, IdNotFoundException, AlreadyChangedException,
+  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException,
       PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
 
   /**
@@ -414,7 +414,7 @@ public interface AsyncCrudDao extends Dao {
                                 "implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = SemanticException.class,
+      @Throw(type = InternalException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem")),
       @Throw(type = IdNotFoundException.class,
@@ -441,7 +441,7 @@ public interface AsyncCrudDao extends Dao {
                                               "which we consider external"))
     }
   )
-  void deletePersistentBean(final PersistentBean<?> pb) throws SemanticException, IdNotFoundException, PersistenceIllegalArgumentError,
+  void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, IdNotFoundException, PersistenceIllegalArgumentError,
       PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
 
   /**
