@@ -56,6 +56,10 @@
       <action dev="jand" type="update">
         SqlExceptionHandlers now throw InternalExceptions.
       </action>
+      <action dev="jand" type="remove">
+        RamStorage package removed. This was used to do "quick" unit tests. We are grown-ups now,
+        and can do tests in memory with HSQLDB or Derby.
+      </action>
     </release>
 
     <release version="II v2.2.0/4.0" date="2006-08-31" description="Hibernate sessions in Hibernate Dao support">
