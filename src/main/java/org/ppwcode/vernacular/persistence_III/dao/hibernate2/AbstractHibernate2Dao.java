@@ -38,6 +38,11 @@ import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
  * Support methods for Hibernate 2 <acronym title="Data Access Object">DAO</acronym>'s.
  * These implementations need a Hibernate 2 {@link Session}.
  *
+ * @note Hibernate 2 version was used very much in the past, so can be considered stable.
+ *       But: code has changed since ppwcode-vernacular-persistence II, so we are not sure.
+ *       Since we are not currently working with Hibernate, we will not invest more in this
+ *       at the moment (so no unit tests, etc.).
+ *
  * @author Jan Dockx
  * @author Peopleware n.v.
  */

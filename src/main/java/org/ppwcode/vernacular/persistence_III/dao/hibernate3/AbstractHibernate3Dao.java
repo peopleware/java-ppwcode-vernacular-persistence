@@ -41,10 +41,12 @@ import org.toryt.annotations_I.MethodContract;
  * Support methods for Hibernate 3 <acronym title="Data Access Object">DAO</acronym>'s.
  * These implementations need a Hibernate 3 {@link Session}.
  *
+ * @note Hibernate 2 version was used very much in the past. Hibernate 3 version is totally untested.
+ *       However, since we are not currently working with Hibernate, we will not invest more in this
+ *       at the moment (so no unit tests, etc.).
+ *
  * @author Jan Dockx
  * @author Peopleware n.v.
- *
- * @mudo not done
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
