@@ -35,8 +35,11 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.PagingList;
+import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
+import org.toryt.annotations_I.MethodContract;
+import org.toryt.annotations_I.Throw;
 
 
 /**
@@ -51,7 +54,6 @@ import org.toryt.annotations_I.Invars;
  * @author Ruben Vandeginste
  * @author Peopleware n.v.
  *
- * @invar getPageSize() > 0;
  */
 @Copyright("2004 - $Date: 2008-06-26 21:33:40 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -67,15 +69,22 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
   /*<construction>*/
   //------------------------------------------------------------------
 
-  /**
-   * @pre query != null;
-   * @pre countQuery != null;
-   * @pre pageSize > 0;
-   * @post new.getQuery() == query;
-   * @post new.getCountQuery() == countQuery;
-   * @post new.getPageSize() == pageSize;
-   * @throws PersistenceExternalError
-   */
+  @MethodContract(
+      pre = {
+          @Expression("_query != null"),
+          @Expression("_countQuery != null"),
+          @Expression("_pageSize > 0")
+      },
+      post = {
+          @Expression("^query == _query"),
+          @Expression("^countQuery == _countQuery"),
+          @Expression("^pageSize == _pageSize")
+      },
+      exc = {
+          @Throw(type = PersistenceExternalError.class,
+                 cond = @Expression("true"))
+      }
+  )
   public Hibernate2PagingList(Query query, Query countQuery, int pageSize) throws PersistenceExternalError {
     super(pageSize, retrieveRecordCount(countQuery));
     assert query != null;
@@ -84,15 +93,22 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
     $countQuery = countQuery;
   }
 
-  /**
-   * @pre criteria != null;
-   * @pre countCriteria != null;
-   * @pre pageSize > 0;
-   * @post new.getQuery() == query;
-   * @post new.getCountQuery() == countQuery;
-   * @post new.getPageSize() == pageSize;
-   * @throws PersistenceExternalError
-   */
+  @MethodContract(
+      pre = {
+          @Expression("_criteria != null"),
+          @Expression("_countQuery != null"),
+          @Expression("_pageSize > 0")
+      },
+      post = {
+          @Expression("^criteria == _criteria"),
+          @Expression("^countQuery == _countQuery"),
+          @Expression("^pageSize == _pageSize")
+      },
+      exc = {
+          @Throw(type = PersistenceExternalError.class,
+                 cond = @Expression("true"))
+      }
+  )
   public Hibernate2PagingList(Criteria criteria, Query countQuery, int pageSize) throws PersistenceExternalError {
     super(pageSize, retrieveRecordCount(countQuery));
     assert criteria != null;
@@ -108,9 +124,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
   /*<property name="query">*/
   //------------------------------------------------------------------
 
-  /**
-   * @basic
-   */
+  @Basic
   public final Query getQuery() {
     return $query;
   }
@@ -127,9 +141,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
   /*<property name="criteria">*/
   //------------------------------------------------------------------
 
-  /**
-   * @basic
-   */
+  @Basic
   public final Criteria getCriteria() {
     return $criteria;
   }
@@ -146,9 +158,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
   /*<property name="countQuery">*/
   //------------------------------------------------------------------
 
-  /**
-   * @basic
-   */
+  @Basic
   public final Query getCountQuery() {
     return $countQuery;
   }
