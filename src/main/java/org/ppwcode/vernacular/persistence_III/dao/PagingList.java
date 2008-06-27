@@ -32,6 +32,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
@@ -95,6 +96,25 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   protected abstract int retrieveRecordCount() throws PersistenceExternalError;
 
   protected abstract List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) throws PersistenceExternalError;
+
+
+
+  /*<property name="sqlExceptionHandler">*/
+  //------------------------------------------------------------------
+
+  @Basic(init = @Expression("null"))
+  public final SqlExceptionHandler getSqlExceptionHandler() {
+    return $sqlExceptionHandler;
+  }
+
+  @MethodContract(post = @Expression("sqlExceptionHandler == _sqlExceptionHandler"))
+  public final void setSqlExceptionHandler(final SqlExceptionHandler sqlExceptionHandler) {
+    $sqlExceptionHandler = sqlExceptionHandler;
+  }
+
+  private SqlExceptionHandler $sqlExceptionHandler;
+
+  /*</property>*/
 
 
 
