@@ -20,6 +20,7 @@ package org.ppwcode.vernacular.persistence_III;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -36,10 +37,10 @@ import org.ppwcode.bean_VI.PropertyException;
 
 public class AbstractPersistentBeanTest {
 
-  public static class AbstractPersistentBeanSTUB<_IdType_>
-    extends AbstractPersistentBean<_IdType_> {
+  public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
+    extends AbstractPersistentBean<_Id_> {
 
-    public AbstractPersistentBeanSTUB(_IdType_ id, String property1,
+    public AbstractPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
       super();
       setId(id);
@@ -92,10 +93,10 @@ public class AbstractPersistentBeanTest {
 
   }
 
-  public static class AbstractPersistentBeanWILD<_IdType_>
-    extends AbstractPersistentBeanSTUB<_IdType_> {
+  public static class AbstractPersistentBeanWILD<_Id_ extends Serializable>
+    extends AbstractPersistentBeanSTUB<_Id_> {
 
-    public AbstractPersistentBeanWILD( _IdType_ id, String property1,
+    public AbstractPersistentBeanWILD( _Id_ id, String property1,
         Date property2, Set<String> property3, int[] property4) {
       super(id, property1, property2, property3, property4);
     }
@@ -114,8 +115,8 @@ public class AbstractPersistentBeanTest {
 
   }
 
-  public static class AbstractPersistentBeanNOPROPERTIES<_IdType_>
-    extends AbstractPersistentBean<_IdType_> {
+  public static class AbstractPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
+    extends AbstractPersistentBean<_Id_> {
     // NOP
   }
 
