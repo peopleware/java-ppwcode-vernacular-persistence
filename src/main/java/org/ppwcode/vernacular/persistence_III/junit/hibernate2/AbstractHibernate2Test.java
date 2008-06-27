@@ -42,9 +42,9 @@ import org.junit.BeforeClass;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
-
-import be.peopleware.persistence_II.hibernate.HibernatePagingList;
+import org.ppwcode.vernacular.persistence_III.dao.hibernate2.Hibernate2PagingList;
 
 
 /**
@@ -201,20 +201,20 @@ public abstract class AbstractHibernate2Test {
     return DEFAULT_PAGE_SIZE;
   }
 
-  public Hibernate2PagingList<_Id_, _PersistentBean_ extends PersistentBean<_Id_>> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> Hibernate2PagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
     try {
       Query cq = $session.createQuery("select count(*) from " + persistentObjectType.getName());
       Criteria crit = $session.createCriteria(persistentObjectType);
       crit.addOrder(Order.asc("id"));
-      return new HibernatePagingList<_Id_, _PersistentBean_>(crit, cq, getPageSize());
+      return new Hibernate2PagingList<_Id_, _PersistentBean_>(crit, cq, getPageSize());
     }
     catch (HibernateException hExc) {
       hExc.printStackTrace();
       fail("Failed to retrieve objects from database");
       return null;
     }
-    catch (TechnicalException hExc) {
-      hExc.printStackTrace();
+    catch (PersistenceExternalError peErr) {
+      peErr.printStackTrace();
       fail("Failed to retrieve objects from database");
       return null;
     }
