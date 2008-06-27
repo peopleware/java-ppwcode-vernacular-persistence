@@ -1,30 +1,47 @@
 /*<license>
-  Copyright 2004, PeopleWare n.v.
-  NO RIGHTS ARE GRANTED FOR THE USE OF THIS SOFTWARE, EXCEPT, IN WRITING,
-  TO SELECTED PARTIES.
+Copyright 2004 - $Date$ by PeopleWare n.v..
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 </license>*/
+
 package org.ppwcode.vernacular.persistence_III.junit.hibernate2;
 
 
+import static org.junit.Assert.fail;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import net.sf.hibernate.Criteria;
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.ObjectNotFoundException;
+import net.sf.hibernate.Query;
+import net.sf.hibernate.Session;
+import net.sf.hibernate.SessionFactory;
+import net.sf.hibernate.Transaction;
+import net.sf.hibernate.cfg.Configuration;
+import net.sf.hibernate.expression.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Order;
-import org.ppwcode.vernacular.exception_N.TechnicalException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 import be.peopleware.persistence_II.hibernate.HibernatePagingList;
@@ -34,43 +51,36 @@ import be.peopleware.persistence_II.hibernate.HibernatePagingList;
  * A simple helper class for hibernate actions within jUnit tests.
  *
  * @author  David Van Keer
+ * @author  Jan Dockx
+ * @author  Tom Mahieu
  * @author  Peopleware n.v.
- * @todo    (nsmeets) Copied from WoundPilot.
  */
-public abstract class AbstractHibernateTest extends TestCase {
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
+public abstract class AbstractHibernate2Test {
 
-  /*<section name="Meta Information">*/
-  //------------------------------------------------------------------
-  /** {@value} */
-  public static final String CVS_REVISION = "$Revision$"; //$NON-NLS-1$
-  /** {@value} */
-  public static final String CVS_DATE = "$Date$"; //$NON-NLS-1$
-  /** {@value} */
-  public static final String CVS_STATE = "$State$"; //$NON-NLS-1$
-  /** {@value} */
-  public static final String CVS_TAG = "$Name$"; //$NON-NLS-1$
-  /*</section>*/
-
-
-  private static final Log _LOG = LogFactory.getLog(AbstractHibernateTest.class);
+  private static final Log _LOG = LogFactory.getLog(AbstractHibernate2Test.class);
 
   private static SessionFactory $sessionFactory;
 
-  private static final String JUNIT_CONFIG_FILE_LOCATION =
-      "/hibernate_junit.cfg.xml";
+  private static final String JUNIT_CONFIG_FILE_LOCATION = "/hibernate2_junit.cfg.xml";
 
-  static {
+  @BeforeClass
+  public void initSessionFactory() throws HibernateException {
     _LOG.debug("reading Hibernate config from " + JUNIT_CONFIG_FILE_LOCATION);
     Configuration configuration = new Configuration();
-    try {
-      configuration.configure(JUNIT_CONFIG_FILE_LOCATION);
-      $sessionFactory = configuration.buildSessionFactory();
-      _LOG.debug("Hibernate config read ok.");
-    }
-    catch (HibernateException hExc) {
-      hExc.printStackTrace();
-      fail("Hibernate configuration is invalid.");
-    }
+    configuration.configure(JUNIT_CONFIG_FILE_LOCATION);
+    $sessionFactory = configuration.buildSessionFactory();
+    _LOG.debug("Hibernate config read ok.");
+  }
+
+  @AfterClass
+  public void deinitSessionFactory() {
+    _LOG.debug("discarding hibernate session factory");
+    $sessionFactory = null;
+    _LOG.debug("hibernate session factory discarded");
   }
 
   public void openSession() {
@@ -130,7 +140,7 @@ public abstract class AbstractHibernateTest extends TestCase {
     try {
       $session.save(object);
       if (object instanceof PersistentBean) {
-        return ((PersistentBean)object).getId();
+        return ((PersistentBean<?>)object).getId();
       }
       else {
         return null;
@@ -163,7 +173,7 @@ public abstract class AbstractHibernateTest extends TestCase {
     }
   }
 
-  public Object retrieve(final Class clazz, final Long id) {
+  public Object retrieve(final Class<?> clazz, final Serializable id) {
     Object result = null;
     try {
       result = $session.load(clazz, id);
@@ -178,9 +188,11 @@ public abstract class AbstractHibernateTest extends TestCase {
     return result;
   }
 
-  public Set retrieve(final Class persistentObjectType) {
+  public <_PersistentObject_> Set<_PersistentObject_> retrieve(final Class<_PersistentObject_> persistentObjectType) {
     Criteria crit = $session.createCriteria(persistentObjectType);
-    return retrieve(crit);
+    @SuppressWarnings("unchecked")
+    Set<_PersistentObject_> retrieve = (Set<_PersistentObject_>)retrieve(crit);
+    return retrieve;
   }
 
   public final static int DEFAULT_PAGE_SIZE = 100;
@@ -189,12 +201,12 @@ public abstract class AbstractHibernateTest extends TestCase {
     return DEFAULT_PAGE_SIZE;
   }
 
-  public HibernatePagingList retrievePages(final Class persistentObjectType) {
+  public Hibernate2PagingList<_Id_, _PersistentBean_ extends PersistentBean<_Id_>> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
     try {
       Query cq = $session.createQuery("select count(*) from " + persistentObjectType.getName());
       Criteria crit = $session.createCriteria(persistentObjectType);
       crit.addOrder(Order.asc("id"));
-      return new HibernatePagingList(crit, cq, getPageSize());
+      return new HibernatePagingList<_Id_, _PersistentBean_>(crit, cq, getPageSize());
     }
     catch (HibernateException hExc) {
       hExc.printStackTrace();
@@ -208,10 +220,11 @@ public abstract class AbstractHibernateTest extends TestCase {
     }
   }
 
-  public Set retrieve(final Criteria criteria) {
-    Set results = new HashSet();
+  public Set<?> retrieve(final Criteria criteria) {
+    Set<Object> results = new HashSet<Object>();
     try {
-      results.addAll(criteria.list());
+      List<?> list = criteria.list();
+      results.addAll(list);
     }
     catch (HibernateException hExc) {
       hExc.printStackTrace();
@@ -220,8 +233,8 @@ public abstract class AbstractHibernateTest extends TestCase {
     return results;
   }
 
-  public List retrieve(String HqlQueryString) {
-    List roles = null;
+  public List<?> retrieve(String HqlQueryString) {
+    List<?> roles = null;
     try {
       Query q = getSession().createQuery(HqlQueryString);
       roles = q.list();
