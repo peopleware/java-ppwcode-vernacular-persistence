@@ -151,6 +151,10 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   /*</property>*/
 
 
+  @Override
+  public final PagesIterator listIterator() {
+    return listIterator(0);
+  }
 
   @Override
   public final PagesIterator listIterator(int index) {
