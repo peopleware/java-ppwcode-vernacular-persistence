@@ -45,7 +45,7 @@ import org.toryt.annotations_I.MethodContract;
  * @author  Tom Mahieu
  * @author  Peopleware n.v.
  */
-public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> extends AbstractHibernate3Test {
+public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> extends AbstractJpaTest {
 
   private static final Log LOG = LogFactory.getLog(AbstractJpaPersistentBeanTest.class);
 
@@ -89,8 +89,8 @@ public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _
    * When logging is debug enabled, we only retrieve and test 1 page.
    */
   public void testAlInstances() {
-    LOG.debug("Opening Hibernate session and starting a new transaction.");
-    openSession();
+    LOG.debug("Creating a new Entity Manager and starting a new transaction.");
+    createEntityManager();
     LOG.info("Creating paging set to retrieve instances of " + getClassUnderTest() + " from database in a new session.");
     PagingList<_Id_, _PersistentBean_>.PagesIterator pages = loadInstancesToTest().listIterator();
     if (pages.hasNext()) {
@@ -102,7 +102,7 @@ public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _
       }
     }
     LOG.debug("Closing session");
-    closeSession();
+    discardEntityManager();
   }
 
   /**
