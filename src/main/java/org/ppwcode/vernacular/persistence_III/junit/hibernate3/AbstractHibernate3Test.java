@@ -25,18 +25,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.ObjectNotFoundException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
-import net.sf.hibernate.cfg.Configuration;
-import net.sf.hibernate.expression.Order;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.ppwcode.metainfo_I.Copyright;
@@ -201,12 +200,12 @@ public abstract class AbstractHibernate3Test {
     return DEFAULT_PAGE_SIZE;
   }
 
-  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> Hibernate2PagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> Hibernate3PagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
     try {
       Query cq = $session.createQuery("select count(*) from " + persistentObjectType.getName());
       Criteria crit = $session.createCriteria(persistentObjectType);
       crit.addOrder(Order.asc("id"));
-      return new Hibernate2PagingList<_Id_, _PersistentBean_>(crit, cq, getPageSize());
+      return new Hibernate3PagingList<_Id_, _PersistentBean_>(crit, cq, getPageSize());
     }
     catch (HibernateException hExc) {
       hExc.printStackTrace();
