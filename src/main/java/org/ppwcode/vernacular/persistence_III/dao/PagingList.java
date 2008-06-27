@@ -32,6 +32,11 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.toryt.annotations_I.Basic;
+import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.Invars;
+import org.toryt.annotations_I.MethodContract;
+import org.toryt.annotations_I.Throw;
 
 
 
@@ -47,7 +52,6 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
  * @author Ruben Vandeginste
  * @author Peopleware n.v.
  *
- * @invar getPageSize() > 0;
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -63,13 +67,19 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   /*<construction>*/
   //------------------------------------------------------------------
 
-  /**
-   * @pre pageSize > 0;
-   * @pre recordCount >= 0;
-   * @post new.getPageSize() == pageSize;
-   *
-   * @throws TechnicalException
-   */
+  @MethodContract(
+      pre = {
+          @Expression("_pageSize > 0"),
+          @Expression("_recordCount >= 0")
+      },
+      post = {
+          @Expression("^pageSize == _pageSize")
+      },
+      exc = {
+          @Throw(type = PersistenceExternalError.class,
+                 cond = @Expression("true"))
+      }
+  )
   protected PagingList(int pageSize, int recordCount) throws PersistenceExternalError {
     assert pageSize > 0;
     assert recordCount >= 0;
@@ -91,16 +101,14 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   /*<property name="page size">*/
   //------------------------------------------------------------------
 
-  /**
-   * @basic
-   */
+  @Basic
   public final int getPageSize() {
     return $pageSize;
   }
 
-  /**
-   * @invar $pageSize > 0;
-   */
+  @Invars({
+    @Expression("$pageSize > 0")
+  })
   private int $pageSize;
 
   /*</property>*/
@@ -113,16 +121,15 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   /**
    * This must be the same on the next DB access,
    * or we give a {@link java.util.ConcurrentModificationException}.
-   *
-   * @basic
    */
+  @Basic
   public final int getRecordCount() {
     return $recordCount;
   }
 
-  /**
-   * @invar $recordCount >= 0;
-   */
+  @Invars({
+    @Expression("$recordCount >= 0")
+  })
   private int $recordCount;
 
   /*</property>*/
@@ -135,17 +142,16 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
   /**
    * The number of pages. This might change,
    * when a next page is requested.
-   *
-   * @basic
    */
+  @Basic
   @Override
   public final int size() {
     return $size;
   }
 
-  /**
-   * @invar $pageSize > 0;
-   */
+  @Invars({
+    @Expression("$size >= 0")
+  })
   private int $size;
 
   /*</property>*/
@@ -167,11 +173,15 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
     /*<construction>*/
     //------------------------------------------------------------------
 
-    /**
-     * @pre page >= 0;
-     * @pre page < size();
-     * @post new.nextIndex() == page;
-     */
+    @MethodContract(
+        pre = {
+            @Expression("_page >= 0"),
+            @Expression("_page < size")
+        },
+        post = {
+            @Expression("^nextIndex == _page")
+        }
+     )
     public PagesIterator(int page) {
       assert page >= 0;
       assert page < size();
@@ -185,30 +195,34 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
     /*<property name="currentPage">*/
     //------------------------------------------------------------------
 
-    /**
-     * @basic
-     */
+    @Basic
     public final int nextIndex() {
       return $nextPage;
     }
 
-    /**
-     * @return = nextIndex() - 1;
-     */
+    @MethodContract(
+        post = {
+            @Expression("result == nextIndex - 1")
+        }
+    )
     public final int previousIndex() {
       return $nextPage - 1;
     }
 
-    /**
-     * @return nextIndex() < size() - 1;
-     */
+    @MethodContract(
+        post = {
+            @Expression("result == (nextIndex < size - 1)")
+        }
+    )
     public final boolean hasNext() {
       return $nextPage < size();
     }
 
-    /**
-     * @return nextIndex() > 0;
-     */
+    @MethodContract(
+        post = {
+            @Expression("result == (nextIndex > 0)")
+        }
+    )
     public final boolean hasPrevious() {
       return $nextPage > 0;
     }
@@ -371,29 +385,41 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       }
     }
 
-    /**
-     * @post   false;
-     * @throws UnsupportedOperationException
-     *         true;
-     */
+    @MethodContract(
+        post = {
+            @Expression("false")
+        },
+        exc = {
+            @Throw(type = UnsupportedOperationException.class,
+                    cond = @Expression("true"))
+        }
+    )
     public void remove() throws UnsupportedOperationException {
       throw new UnsupportedOperationException();
     }
 
-    /**
-     * @post   false;
-     * @throws UnsupportedOperationException
-     *         true;
-     */
+    @MethodContract(
+        post = {
+            @Expression("false")
+        },
+        exc = {
+            @Throw(type = UnsupportedOperationException.class,
+                    cond = @Expression("true"))
+        }
+    )
     public void set(List<_PersistentBean_> l) throws UnsupportedOperationException  {
       throw new UnsupportedOperationException();
     }
 
-    /**
-     * @post   false;
-     * @throws UnsupportedOperationException
-     *         true;
-     */
+    @MethodContract(
+        post = {
+            @Expression("false")
+        },
+        exc = {
+            @Throw(type = UnsupportedOperationException.class,
+                    cond = @Expression("true"))
+        }
+    )
     public void add(List<_PersistentBean_> l) throws UnsupportedOperationException {
       throw new UnsupportedOperationException();
     }
