@@ -38,7 +38,7 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractPersistentBean<_Id_>
+public abstract class AbstractPersistentBean<_Id_ extends Serializable>
     extends AbstractRousseauBean
     implements PersistentBean<_Id_>, Serializable {
 

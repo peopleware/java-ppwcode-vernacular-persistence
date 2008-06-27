@@ -19,6 +19,8 @@ package org.ppwcode.vernacular.persistence_III;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import java.io.Serializable;
+
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -58,7 +60,7 @@ public class IdNotFoundException extends PersistenceException {
       @Expression("cause == _cause")
     }
   )
-  public <_Id_> IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id, String message, Throwable cause) {
+  public <_Id_ extends Serializable> IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id, String message, Throwable cause) {
     super(message, cause);
     assert persistentBeanType != null;
     assert id != null;

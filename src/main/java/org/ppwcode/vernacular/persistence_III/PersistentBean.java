@@ -46,12 +46,15 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
  *   should not be enforced. Furthermore, it still is a bad idea to make
  *   any semantic object {@link Cloneable}. From experience we know that
  *   it is very difficult to decide in general how deep a clone should go.
- *   Persistent beans are {@link java.io.Serializable} though, because
+ *   Persistent beans are {@link Serializable} though, because
  *   they are often used also as Data Transfer Objects in multi-tier
  *   applications.</p>
  * <p>Persistency should always be implemented with versioning (optimistic
  *   locking), but all known persistency implementations can deal with this
  *   completely transparently.</p>
+ *<p>_Id_ must be {@link Serializable}, because PersistentBeans are {@link Serializable}
+ *   and the {@link #getId()} is not {@code transient}. (And BTW, id's must be
+ *   {@link Serializable} for Hibernate too ... :-) ).</p>
  *
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
@@ -60,7 +63,7 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_Id_> extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
