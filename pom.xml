@@ -71,7 +71,7 @@
       <artifactId>commons-logging-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.ppwcode.verncular</groupId>
+      <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-I</artifactId>
     </dependency>
     <dependency>
@@ -148,7 +148,8 @@
       </roles>
     </developer>
   </developers>
-  <contributors></contributors>
+  <contributors>
+  </contributors>
 
   <repositories>
     <repository>
