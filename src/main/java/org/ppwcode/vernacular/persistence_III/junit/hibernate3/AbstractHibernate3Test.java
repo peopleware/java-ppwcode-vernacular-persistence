@@ -43,7 +43,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
-import org.ppwcode.vernacular.persistence_III.dao.hibernate2.Hibernate2PagingList;
+import org.ppwcode.vernacular.persistence_III.dao.hibernate3.Hibernate3PagingList;
 
 
 /**
