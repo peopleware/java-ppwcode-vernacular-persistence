@@ -19,6 +19,8 @@ package org.ppwcode.vernacular.persistence_III;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
+
 import org.ppwcode.bean_VI.CompoundPropertyException;
 import org.ppwcode.bean_VI.RousseauBeanContract;
 
@@ -65,11 +67,11 @@ public class PersistentBeanContract {
     RousseauBeanContract.contractNormalize(subject, result);
   }
 
-  public static <_IdType_> void contractSetId(PersistentBean<_IdType_> subject, _IdType_ newId) {
+  public static <_Id_ extends Serializable> void contractSetId(PersistentBean<_Id_> subject, _Id_ newId) {
     assertEquals(newId, subject.getId());
   }
 
-  public static <_IdType_> void contractHasSameId(PersistentBean<_IdType_> subject, PersistentBean<_IdType_> other, boolean result) {
+  public static <_Id_ extends Serializable> void contractHasSameId(PersistentBean<_Id_> subject, PersistentBean<_Id_> other, boolean result) {
     assertEquals((other != null) && eqn(subject.getId(), other.getId()), result);
   }
 
