@@ -67,30 +67,32 @@ public class PagingListTest {
 
     private int $i;
   }
-  
+
   // stub for PagingList
   public static class PagingListSTUB<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
     extends PagingList<_Id_,_PersistentBean_>{
-    
+
     public PagingListSTUB(int pageSize, int recordCount, List<_PersistentBean_> pbs) {
       super(pageSize, recordCount);
       $pbs = pbs;
     }
-    
+
     public List<_PersistentBean_> getPersistentBeanList() {
       return $pbs;
     }
-    
+
     public void setPersistentBeanList(ArrayList<_PersistentBean_> pbs) {
       $pbs = pbs;
     }
-    
+
     private List<_PersistentBean_> $pbs;
-    
+
+    @Override
     protected int retrieveRecordCount() {
       return getRecordCount();
     }
-    
+
+    @Override
     protected List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) {
       try {
         ArrayList<_PersistentBean_> result = new ArrayList<_PersistentBean_>();
@@ -165,7 +167,7 @@ public class PagingListTest {
     beanlists = new ArrayList<List<?>>();
     pagesizes = new ArrayList<Integer>();
     numberpages = new ArrayList<Integer>();
-    
+
     // (nr pages, pagesize, record count, list of beans)
     createTestIntegerPagingList(4, 10, beans1.size(), beans1);
     createTestIntegerPagingList(2, 20, beans1.size(), beans1);
@@ -175,8 +177,8 @@ public class PagingListTest {
     createTestStringPagingList(1, 12, beans3.size(), beans3);
     createTestStringPagingList(0, 10, 0, beans4);
   }
-  
-  private void  
+
+  private void
       createTestIntegerPagingList(int nbpages, int pagesize, int recordcount, List<AbstractPersistentBeanSTUB<Integer>> beans) {
     PagingList<?, ?> result = new PagingListSTUB<Integer , AbstractPersistentBeanSTUB<Integer>>(pagesize, beans.size(), beans);
     pagesizes.add(pagesize);
@@ -184,7 +186,7 @@ public class PagingListTest {
     beanlists.add(beans);
     subjects.add(result);
   }
-  
+
   private void
       createTestStringPagingList(int nbpages, int pagesize, int recordcount, List<AbstractPersistentBeanSTUB<String>> beans) {
     PagingList<?, ?> result = new PagingListSTUB<String , AbstractPersistentBeanSTUB<String>>(pagesize, beans.size(), beans);
@@ -194,19 +196,19 @@ public class PagingListTest {
     subjects.add(result);
   }
 
-  
+
   @After
   public void tearDown() throws Exception {
     subjects = null;
   }
-  
-  
+
+
   private void assertInvariants(PagingList<?,?> subject){
     assertTrue(subject.getPageSize() > 0);
     assertTrue(subject.getRecordCount() >= 0);
     assertTrue(subject.size() >= 0);
   }
-  
+
   @Test
   public void testPageSize() {
     int i = 0;
@@ -215,7 +217,7 @@ public class PagingListTest {
       assertInvariants(subject);
     }
   }
-  
+
   @Test
   public void testRecordCount() {
     int i = 0;
@@ -224,7 +226,7 @@ public class PagingListTest {
       assertInvariants(subject);
     }
   }
-  
+
   @Test
   public void testSize() {
     int i = 0;
@@ -233,10 +235,10 @@ public class PagingListTest {
       assertInvariants(subject);
     }
   }
-  
+
   @Test
   public void testContents() {
-    int subjectIndex = 0;    
+    int subjectIndex = 0;
     for (PagingList<?,?> subject : subjects) {
       if (subject.size() > 0) {
         int el = 0;
