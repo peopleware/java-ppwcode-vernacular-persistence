@@ -195,17 +195,17 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
     //------------------------------------------------------------------
 
     @MethodContract(
-        pre = {
-            @Expression("_page >= 0"),
-            @Expression("_page < size")
-        },
         post = {
             @Expression("^nextIndex == _page")
+        },
+        exc = {
+            @Throw(type = PersistenceProgrammingError.class,
+                   cond = @Expression("_page >= 0")),
+            @Throw(type = PersistenceProgrammingError.class,
+                   cond = @Expression("_page < size"))
         }
      )
     public PagesIterator(int page) {
-      //assert page >= 0;
-      //assert page < size();
       if ((page < 0) || (page >= size())) {
         throw new PersistenceProgrammingError("Invalid page number.");
       }
