@@ -131,7 +131,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
 
   @Invars({
     @Expression("$query != null")
-  })  
+  })
   private Query $query;
 
   /*</property>*/
@@ -175,6 +175,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
     }
   }
 
+  @Override
   protected final int retrieveRecordCount() throws PersistenceExternalError {
       return retrieveRecordCount(getCountQuery());
   }
@@ -188,7 +189,8 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
 
 
 
-  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) 
+  @Override
+  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage)
       throws PersistenceExternalError {
     try {
       List<_PersistentBean_> page = null;
@@ -209,13 +211,13 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
     }
   }
 
-  private List<_PersistentBean_> retrievePageCriteria(int retrieveSize, int startOfPage) 
+  private List<_PersistentBean_> retrievePageCriteria(int retrieveSize, int startOfPage)
       throws HibernateException {
     try {
       $criteria.setMaxResults(retrieveSize); // first and last record is for check only (depending on booleans)
       $criteria.setFirstResult(startOfPage);
       @SuppressWarnings("unchecked")
-      List<_PersistentBean_> page = (List<_PersistentBean_>) $criteria.list();
+      List<_PersistentBean_> page = $criteria.list();
       return page;
     }
     catch (ClassCastException ccExc) {
@@ -223,13 +225,13 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
     }
   }
 
-  private List<_PersistentBean_> retrievePageQuery(int retrieveSize, int startOfPage) 
+  private List<_PersistentBean_> retrievePageQuery(int retrieveSize, int startOfPage)
       throws HibernateException {
     try {
       $query.setMaxResults(retrieveSize); // first and last record is for check only (depending on booleans)
       $query.setFirstResult(startOfPage);
       @SuppressWarnings("unchecked")
-      List<_PersistentBean_> page = (List<_PersistentBean_>) $query.list();
+      List<_PersistentBean_> page = $query.list();
       return page;
     }
     catch (ClassCastException ccExc) {

@@ -45,11 +45,11 @@ import org.toryt.annotations_I.Throw;
 @SvnInfo(revision = "$Revision: 1418 $",
          date     = "$Date: 2008-06-27 16:28:22 +0200 (Fri, 27 Jun 2008) $")
 public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
-		extends PagingList<_Id_, _PersistentBean_> {
+    extends PagingList<_Id_, _PersistentBean_> {
 
   private static final Log LOG = LogFactory.getLog(JpaPagingList.class);
 
-	
+
   /*<construction>*/
   //------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
   /*</construction>*/
 
-	
+
   /*<property name="query">*/
   //------------------------------------------------------------------
 
@@ -90,12 +90,12 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
   @Invars({
     @Expression("$query != null")
-  })  
+  })
   private Query $query;
 
   /*</property>*/
 
-  
+
   /*<property name="countQuery">*/
   //------------------------------------------------------------------
 
@@ -122,6 +122,7 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
     }
   }
 
+  @Override
   protected final int retrieveRecordCount() throws PersistenceExternalError {
       return retrieveRecordCount(getCountQuery());
   }
@@ -133,12 +134,12 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
   /*</property>*/
 
-  
-	@Override
-	protected List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage)
-			throws PersistenceExternalError {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+  @Override
+  protected List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage)
+      throws PersistenceExternalError {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }
