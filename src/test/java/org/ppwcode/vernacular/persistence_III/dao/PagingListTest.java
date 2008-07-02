@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.persistence_III.PersistenceProgrammingError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 
@@ -95,7 +97,9 @@ public class PagingListTest {
         int i = retrieveSize;
         int j = startOfPage;
         while (i > 0) {
-          result.add($pbs.get(j));
+          if (j < $pbs.size()) {
+            result.add($pbs.get(j));
+          }
           i--;
           j++;
         }
@@ -234,16 +238,28 @@ public class PagingListTest {
   public void testContents() {
     int subjectIndex = 0;    
     for (PagingList<?,?> subject : subjects) {
-      int el = 0;
-      PagingList<?,?>.PagesIterator pi = subject.listIterator();
-      while (pi.hasNext()) {
-        List<?> beanlist = pi.next();
-        for (int j = 0; j < beanlist.size(); j++) {
-          assertEquals(beanlist.get(j), beanlists.get(subjectIndex).get(el++));
+      if (subject.size() > 0) {
+        int el = 0;
+        PagingList<?,?>.PagesIterator pi = subject.listIterator();
+        while (pi.hasNext()) {
+          List<?> beanlist = pi.next();
+          for (int j = 0; j < beanlist.size(); j++) {
+            assertEquals(beanlist.get(j), beanlists.get(subjectIndex).get(el++));
+          }
         }
-      assertTrue(el == beanlists.get(subjectIndex).size());
+        assertTrue(el == beanlists.get(subjectIndex).size());
+        assertInvariants(subject);
+        subjectIndex++;
+      } else {
+        try {
+          @SuppressWarnings("unused")
+          PagingList<?,?>.PagesIterator pi = subject.listIterator();
+          fail();
+        }
+        catch (PersistenceProgrammingError ppe) {
+          assertInvariants(subject);
+        }
       }
-      assertInvariants(subject);
     }
   }
 }

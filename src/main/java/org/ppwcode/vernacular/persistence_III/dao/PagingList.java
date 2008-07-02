@@ -31,6 +31,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.persistence_III.PersistenceProgrammingError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
 import org.toryt.annotations_I.Basic;
@@ -203,8 +204,11 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
         }
      )
     public PagesIterator(int page) {
-      assert page >= 0;
-      assert page < size();
+      //assert page >= 0;
+      //assert page < size();
+      if ((page < 0) || (page >= size())) {
+        throw new PersistenceProgrammingError("Invalid page number.");
+      }
       $nextPage = page;
     }
 
