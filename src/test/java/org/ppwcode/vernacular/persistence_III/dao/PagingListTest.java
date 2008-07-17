@@ -254,8 +254,7 @@ public class PagingListTest {
         subjectIndex++;
       } else {
         try {
-          @SuppressWarnings("unused")
-          PagingList<?,?>.PagesIterator pi = subject.listIterator();
+          subject.listIterator(); // we are not interested in the result
           fail();
         }
         catch (PersistenceProgrammingError ppe) {
