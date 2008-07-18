@@ -85,8 +85,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
-      <!-- MUDO move version up in dependency management -->
-      <version>3.2.6.ga</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -95,7 +93,6 @@
         it is legacy, not to be used in current projects. -->
       <groupId>hibernate</groupId>
       <artifactId>hibernate</artifactId>
-      <!-- MUDO move version up in dependency management -->
       <version>2.1.8</version>
       <scope>compile</scope>
       <optional>true</optional>
@@ -103,7 +100,6 @@
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
-      <version>1.0</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
