@@ -242,7 +242,18 @@ public class PagingListTest {
     for (PagingList<?,?> subject : subjects) {
       if (subject.size() > 0) {
         int el = 0;
-        PagingList<?,?>.PagesIterator pi = subject.listIterator();
+        @SuppressWarnings("unchecked")
+        PagingList.PagesIterator pi = subject.listIterator();
+        /* IMPORTANT - WORKAROUND
+         * The code above obviously should be PagingList<?, ?>.PagesIterator
+         * to avoid the warning we are suppressing.
+         * But, it turns out that compiles fine with eclipse, and on debian via Maven,
+         * with javac v 1.5.0_14. On Mac OS X however via Maven, with javac v 1.5.0_13,
+         * compilation fails.
+         * With this workaround, it compiles also in the latter case. It is unclear
+         * what the reason is (maybe our code _is_ bad). See Issue96 on
+         * http://code.google.com/p/ppwcode/issues/detail?id=96.
+         * IMPORTANT - WORKAROUND */
         while (pi.hasNext()) {
           List<?> beanlist = pi.next();
           for (int j = 0; j < beanlist.size(); j++) {
