@@ -51,10 +51,10 @@ import org.toryt.annotations_I.Throw;
  * @author Jan Dockx
  * @author Peopleware n.v.
  */
-@Copyright("2004 - $Date: 2008-06-26 12:34:30 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1374 $",
-         date     = "$Date: 2008-06-26 12:34:30 +0200 (Thu, 26 Jun 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class AbstractHibernate2Dao extends AbstractDao {
 
 

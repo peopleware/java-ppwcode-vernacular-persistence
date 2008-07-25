@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2004 - $Date: 2008-06-26 21:33:40 +0200 (Thu, 26 Jun 2008) $ by PeopleWare n.v..
+Copyright 2004 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -55,10 +55,10 @@ import org.toryt.annotations_I.Throw;
  * @author Peopleware n.v.
  *
  */
-@Copyright("2004 - $Date: 2008-06-26 21:33:40 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1402 $",
-         date     = "$Date: 2008-06-26 21:33:40 +0200 (Thu, 26 Jun 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 
 public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
     extends PagingList<_Id_, _PersistentBean_> {

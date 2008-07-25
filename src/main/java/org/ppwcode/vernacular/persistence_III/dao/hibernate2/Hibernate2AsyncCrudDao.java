@@ -70,10 +70,10 @@ import org.toryt.annotations_I.Throw;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - $Date: 2008-06-26 21:17:17 +0200 (Thu, 26 Jun 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1398 $",
-         date     = "$Date: 2008-06-26 21:17:17 +0200 (Thu, 26 Jun 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements AsyncCrudDao {
 
   private static final Log LOG = LogFactory.getLog(Hibernate2AsyncCrudDao.class);

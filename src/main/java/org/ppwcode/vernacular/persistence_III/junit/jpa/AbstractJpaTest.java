@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2004 - $Date: 2008-06-27 11:16:22 +0200 (Fri, 27 Jun 2008) $ by PeopleWare n.v..
+Copyright 2004 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,10 +53,10 @@ import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
  * @author  Tom Mahieu
  * @author  Peopleware n.v.
  */
-@Copyright("2004 - $Date: 2008-06-27 11:16:22 +0200 (Fri, 27 Jun 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1418 $",
-		date     = "$Date: 2008-06-27 11:16:22 +0200 (Fri, 27 Jun 2008) $")
+@SvnInfo(revision = "$Revision$",
+		date     = "$Date$")
 		public abstract class AbstractJpaTest {
 
 	private static final Log _LOG = LogFactory.getLog(AbstractJpaTest.class);

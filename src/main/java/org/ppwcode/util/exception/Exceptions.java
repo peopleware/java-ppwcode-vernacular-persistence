@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2005 - $Date: 2008-06-03 20:23:13 +0200 (Tue, 03 Jun 2008) $ by PeopleWare n.v..
+Copyright 2005 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -35,19 +35,19 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
  *
  * @mudo STUB
  */
-@Copyright("2007 - $Date: 2008-06-03 20:23:13 +0200 (Tue, 03 Jun 2008) $, PeopleWare n.v.")
+@Copyright("2007 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1117 $",
-         date     = "$Date: 2008-06-03 20:23:13 +0200 (Tue, 03 Jun 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class Exceptions {
 
   /*<section name="Meta Information">*/
   //------------------------------------------------------------------
 
   /** {@value} */
-  public static final String CVS_REVISION = "$Revision: 1117 $"; //$NON-NLS-1$
+  public static final String CVS_REVISION = "$Revision$"; //$NON-NLS-1$
   /** {@value} */
-  public static final String CVS_DATE = "$Date: 2008-06-03 20:23:13 +0200 (Tue, 03 Jun 2008) $"; //$NON-NLS-1$
+  public static final String CVS_DATE = "$Date$"; //$NON-NLS-1$
   /** {@value} */
   public static final String CVS_STATE = "$State$"; //$NON-NLS-1$
   /** {@value} */
