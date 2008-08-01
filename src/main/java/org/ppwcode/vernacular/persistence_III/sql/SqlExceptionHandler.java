@@ -21,15 +21,11 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.sql.SQLException;
 
-import org.ppwcode.bean_VI.PropertyException;
-import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.ExternalError;
-import org.ppwcode.vernacular.exception_N.InternalException;
-import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.exception_II.ExternalError;
+import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -45,22 +41,21 @@ import org.toryt.annotations_I.Throw;
  *   ppwcode exception vernacular, they should be encapsulated in an {@link ExternalError}. The latter kinds
  *   are semantic exceptions. Normally, they would result in a roll-back, user feedback, and continuation
  *   of the normal operation of the application. According to ppwcode exception vernacular, they should be
- *   encapsulated in a {@link SemanticException}</p>
+ *   encapsulated in an {@link InternalException}</p>
  * <p>It is impossible for {@link Dao Dao's} to decide of which kind the {@link SQLException} is in general.
  *   Database exceptions are not much more than a string, and there is no standardization over different
  *   database engines. Furthermore, exceptions raised by triggers and stored procedures, and constraints,
  *   are application specific.</p>
  * <p>Implementations of {@link #handle(SQLException)} should return an {@link InternalException}
  *   that wraps the given {@link SQLException} if they find it of an internal (semantic, persistent) nature. If not,
- *   they should return <code>null</code>. Implementation methods should have no side effects. During this process however,
- *   it is possible that access of the persistent storage is needed (e.g., a case encounter regularly is where
- *   i18n messages for semantic exceptions are defined in tables in the database). If such an access fails,
- *   the method should throw a {@link PersistenceConfigurationError} or a {@link PersistenceExternalError}.</p>
+ *   they should not end nominally, but throw an {@link ExternalError} or {@link AssertionError} instead.
+ *   Implementation methods should have no side effects. During this process, it is possible that access of the
+ *   persistent storage is needed (e.g., a case encounter regularly is where i18n messages for semantic exceptions
+ *   are defined in tables in the database). If such an access fails, the method should throw an {@link ExternalError}
+ *   or {@link AssertionError} without further ado.</p>
  *
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
- *
- * @mudo not done
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -69,8 +64,8 @@ import org.toryt.annotations_I.Throw;
 public interface SqlExceptionHandler {
 
   /**
-   * Return a {@link PropertyException} wrapping <code>sqlException</code>
-   * if you find the latter of a semantic nature. If not, return <code>null</code>.
+   * Return an {@link InternalException} wrapping <code>sqlException</code>
+   * if you find the latter of a semantic nature.
    *
    * @param sqlException
    *        The exception to handle.
@@ -79,16 +74,16 @@ public interface SqlExceptionHandler {
     pre  = @Expression("_sqlException != null"),
     post = @Expression("true"),
     exc  = {
-      @Throw(type = PersistenceConfigurationError.class,
+      @Throw(type = AssertionError.class,
              cond = @Expression(value = "true",
                                 description = "could perform the operation because of a bad configuration of " +
                                               "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
+      @Throw(type = ExternalError.class,
              cond = @Expression(value = "true",
                                 description = "could perform the operation because of some problem with persistency " +
                                               "which we consider external"))
     }
   )
-  InternalException handle(SQLException sqlException) throws PersistenceConfigurationError, PersistenceExternalError;
+  InternalException handle(SQLException sqlException);
 
 }
