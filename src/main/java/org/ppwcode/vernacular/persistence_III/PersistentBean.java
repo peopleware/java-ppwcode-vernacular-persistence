@@ -134,6 +134,4 @@ public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Ser
 
   /*</property>*/
 
-
-
 }
