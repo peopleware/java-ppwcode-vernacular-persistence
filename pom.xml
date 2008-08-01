@@ -113,6 +113,10 @@
     </dependency>
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
+      <artifactId>ppwcode-vernacular-exception-II</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-I</artifactId>
     </dependency>
     <dependency>
