@@ -24,13 +24,13 @@ import java.sql.SQLException;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
 
-import org.ppwcode.exception_N.SemanticException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.util.exception.Exceptions;
 import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_II.SemanticException;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;

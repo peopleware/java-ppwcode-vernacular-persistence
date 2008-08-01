@@ -20,10 +20,10 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
-import org.ppwcode.bean_VI.AbstractRousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.semantics_I.bean.AbstractRousseauBean;
 
 
 /**

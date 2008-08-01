@@ -24,10 +24,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.bean_VI.CompoundPropertyException;
-import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.PagingList;
+import org.ppwcode.vernacular.semantics_I.exception.CompoundPropertyException;
+import org.ppwcode.vernacular.semantics_I.exception.PropertyException;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;

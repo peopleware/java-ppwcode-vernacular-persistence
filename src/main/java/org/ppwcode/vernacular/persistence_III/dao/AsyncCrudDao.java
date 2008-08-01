@@ -22,8 +22,6 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.ppwcode.bean_VI.PropertyException;
-import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -31,6 +29,8 @@ import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.semantics_I.bean.RousseauBean;
+import org.ppwcode.vernacular.semantics_I.exception.PropertyException;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;

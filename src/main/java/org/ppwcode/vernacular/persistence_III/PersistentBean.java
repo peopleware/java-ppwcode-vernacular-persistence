@@ -17,6 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III;
 
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -24,15 +26,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.semantics_I.bean.RousseauBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
-
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 
 

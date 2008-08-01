@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 
-import org.ppwcode.bean_VI.CompoundPropertyException;
-import org.ppwcode.bean_VI.RousseauBeanContract;
+import org.ppwcode.vernacular.semantics_I.bean.RousseauBeanContract;
+import org.ppwcode.vernacular.semantics_I.exception.CompoundPropertyException;
 
 
 public class PersistentBeanContract {
