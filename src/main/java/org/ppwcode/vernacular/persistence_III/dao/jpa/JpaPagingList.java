@@ -25,20 +25,18 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.PagingList;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
 import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
 
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -49,6 +47,7 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
   private static final Log LOG = LogFactory.getLog(JpaPagingList.class);
 
+  // MUDO this class is absolutely not finished
 
   /*<construction>*/
   //------------------------------------------------------------------
@@ -63,13 +62,9 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
           @Expression("^query == _query"),
           @Expression("^countQuery == _countQuery"),
           @Expression("^pageSize == _pageSize")
-      },
-      exc = {
-          @Throw(type = PersistenceExternalError.class,
-                 cond = @Expression("true"))
       }
   )
-  public JpaPagingList(Query query, Query countQuery, int pageSize) throws PersistenceExternalError {
+  public JpaPagingList(Query query, Query countQuery, int pageSize) {
     super(pageSize, retrieveRecordCount(countQuery));
     assert query != null;
     assert countQuery != null;
@@ -104,7 +99,7 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
     return $countQuery;
   }
 
-  private static int retrieveRecordCount(Query countQuery) throws PersistenceExternalError {
+  private static int retrieveRecordCount(Query countQuery) {
     try {
       LOG.debug("retrieving record count");
       int result = ((Integer)countQuery.getSingleResult()).intValue();
@@ -112,18 +107,18 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
       return result;
     }
     catch (NoResultException nre) {
-      throw new PersistenceExternalError("cannot retrieve count", nre);
+      throw new ExternalError("cannot retrieve count", nre);
     }
     catch (NonUniqueResultException nure) {
-      throw new PersistenceExternalError("cannot retrieve count", nure);
+      throw new ExternalError("cannot retrieve count", nure);
     }
     catch (IllegalStateException ise) {
-      throw new PersistenceExternalError("cannot retrieve count", ise);
+      throw new ExternalError("cannot retrieve count", ise);
     }
   }
 
   @Override
-  protected final int retrieveRecordCount() throws PersistenceExternalError {
+  protected final int retrieveRecordCount() {
       return retrieveRecordCount(getCountQuery());
   }
 
@@ -136,8 +131,7 @@ public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
 
   @Override
-  protected List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage)
-      throws PersistenceExternalError {
+  protected List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) {
     // TODO Auto-generated method stub
     return null;
   }
