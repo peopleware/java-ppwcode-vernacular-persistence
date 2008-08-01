@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
 
 
@@ -61,7 +62,7 @@ public class MySqlExceptionHandler implements SqlExceptionHandler {
    *             + "parent row: a foreign key constraint fails\""
    * return a {@link ConstraintException}.
    *
-   * Otherwise, return null.
+   * Never return null.
    *
    * @mudo walk through the chain of exceptions to find a match
    */
@@ -85,7 +86,7 @@ public class MySqlExceptionHandler implements SqlExceptionHandler {
       LOG.debug("recognized MySQL constraint violation exception", cExc);
       return cExc;
     }
-    return null;
+    throw new ExternalError("MySQL error not recognized as internal", sqlExc);
   }
 
 }
