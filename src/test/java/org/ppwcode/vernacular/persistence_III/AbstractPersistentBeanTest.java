@@ -38,7 +38,7 @@ import org.ppwcode.bean_VI.PropertyException;
 public class AbstractPersistentBeanTest {
 
   public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> {
+    extends AbstractPersistentBean<_Id_, Long> {
 
     public AbstractPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
@@ -116,16 +116,16 @@ public class AbstractPersistentBeanTest {
   }
 
   public static class AbstractPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> {
+    extends AbstractPersistentBean<_Id_, Long> {
     // NOP
   }
 
 
-  private List<AbstractPersistentBean<?>> subjects;
+  private List<AbstractPersistentBean<?, ?>> subjects;
 
   @Before
   public void setUp() throws Exception {
-    subjects = new ArrayList<AbstractPersistentBean<?>>();
+    subjects = new ArrayList<AbstractPersistentBean<?, ?>>();
     AbstractPersistentBeanSTUB<?> subject =
       new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, null);
     subjects.add(subject);
@@ -156,12 +156,12 @@ public class AbstractPersistentBeanTest {
     subjects = null;
   }
 
-  public static void assertInvariants(PersistentBean<?> subject) {
+  public static void assertInvariants(PersistentBean<?, ?> subject) {
     // no own invariants
     PersistentBeanContract.assertInvariants(subject);
   }
 
-  public static void testEquals(AbstractPersistentBean<?> subject, Object other) {
+  public static void testEquals(AbstractPersistentBean<?, ?> subject, Object other) {
     // execute
     boolean result = subject.equals(other);
     // validate
@@ -171,7 +171,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testEqualsObject() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testEquals(subject, null);
       testEquals(subject, subject);
       testEquals(subject, new Object());
@@ -179,7 +179,7 @@ public class AbstractPersistentBeanTest {
     }
   }
 
-  public static void testHashCode(AbstractPersistentBean<?> subject) {
+  public static void testHashCode(AbstractPersistentBean<?, ?> subject) {
     // execute
     int result = subject.hashCode();
     // validate
@@ -189,12 +189,12 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testHashCode() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testHashCode(subject);
     }
   }
 
-  public static void testToString(AbstractPersistentBean<?> subject) {
+  public static void testToString(AbstractPersistentBean<?, ?> subject) {
     // execute
     String result = subject.toString();
     // validate
@@ -204,7 +204,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testToString() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testToString(subject);
     }
   }
@@ -215,7 +215,7 @@ public class AbstractPersistentBeanTest {
     // protected in AbstractSemanticBean. This is exactly the intended behaviour.
   }
 
-  public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?> subject, int nrOfProperties) {
+  public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?, ?> subject, int nrOfProperties) {
     Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringA(subject, nrOfProperties);
     assertTrue(result.contains("wildExceptions"));
     assertTrue(result.contains("civilized"));
@@ -223,7 +223,7 @@ public class AbstractPersistentBeanTest {
     return result;
   }
 
-  public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?> subject, int nrOfProperties) {
+  public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?, ?> subject, int nrOfProperties) {
     Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringB(subject, nrOfProperties);
     assertTrue(result.contains("wildExceptions"));
     assertTrue(result.contains("civilized"));
@@ -233,30 +233,30 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testPropertyNamesForToString2() {
-    AbstractPersistentBean<?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
-    testPropertyNamesForToStringA(subject, 3);
+    AbstractPersistentBean<?, ?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
+    testPropertyNamesForToStringA(subject, 4);
   }
 
   @Test
   public void testPropertyNamesForToString1() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject, 5);
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
+      testPropertyNamesForToStringB(subject, 6);
     }
   }
 
-  public static void testCollectionString(AbstractPersistentBean<?> subject) {
+  public static void testCollectionString(AbstractPersistentBean<?, ?> subject) {
     AbstractRousseauBeanTest.testCollectionString(subject);
     assertInvariants(subject);
   }
 
   @Test
   public void testCollectionString() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testCollectionString(subject);
     }
   }
 
-  public static CompoundPropertyException testGetWildExceptions(AbstractPersistentBean<?> subject) {
+  public static CompoundPropertyException testGetWildExceptions(AbstractPersistentBean<?, ?> subject) {
     // execute
     CompoundPropertyException result = subject.getWildExceptions();
     // validate
@@ -265,14 +265,14 @@ public class AbstractPersistentBeanTest {
     return result;
   }
 
-  private static void contractPROTECTEDGetWildExceptions(AbstractPersistentBean<?> subject, CompoundPropertyException result) {
+  private static void contractPROTECTEDGetWildExceptions(AbstractPersistentBean<?, ?> subject, CompoundPropertyException result) {
     assertNull(result.getPropertyName());
     assertTrue(result.isEmpty());
   }
 
   @Test
   public void testGetWildExceptions() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       CompoundPropertyException result = testGetWildExceptions(subject);
       if (subject.getClass() == AbstractPersistentBeanSTUB.class) {
         contractPROTECTEDGetWildExceptions(subject, result);
@@ -280,7 +280,7 @@ public class AbstractPersistentBeanTest {
     }
   }
 
-  public static void testIsCivilized(AbstractPersistentBean<?> subject) {
+  public static void testIsCivilized(AbstractPersistentBean<?, ?> subject) {
     // execute
     boolean result = subject.isCivilized();
     // validate
@@ -290,12 +290,12 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testIsCivilized() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testIsCivilized(subject);
     }
   }
 
-  public static void testCheckCivility(AbstractPersistentBean<?> subject) {
+  public static void testCheckCivility(AbstractPersistentBean<?, ?> subject) {
     boolean OLDcivilized = subject.isCivilized();
     try {
       subject.checkCivility();
@@ -309,12 +309,12 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testCheckCivility() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testCheckCivility(subject);
     }
   }
 
-  public static void testNormalize(AbstractPersistentBean<?> subject) {
+  public static void testNormalize(AbstractPersistentBean<?, ?> subject) {
     // execute
     subject.normalize();
     // validate
@@ -323,7 +323,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testNormalize() {
-    for (AbstractPersistentBean<?> subject : subjects) {
+    for (AbstractPersistentBean<?, ?> subject : subjects) {
       testNormalize(subject);
     }
   }

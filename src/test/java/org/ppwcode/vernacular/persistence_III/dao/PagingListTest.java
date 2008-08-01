@@ -36,7 +36,7 @@ public class PagingListTest {
 
   // stub for PersistentBean
   public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
-  extends AbstractPersistentBean<_Id_> {
+  extends AbstractPersistentBean<_Id_, Long> {
 
     public AbstractPersistentBeanSTUB(_Id_ id, String str, int i) {
       super();
@@ -68,7 +68,7 @@ public class PagingListTest {
   }
 
   // stub for PagingList
-  public static class PagingListSTUB<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
+  public static class PagingListSTUB<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, Long>>
     extends PagingList<_Id_,_PersistentBean_>{
 
     public PagingListSTUB(int pageSize, int recordCount, List<_PersistentBean_> pbs) {

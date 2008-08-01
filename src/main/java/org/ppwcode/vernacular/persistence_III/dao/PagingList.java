@@ -59,7 +59,7 @@ import org.toryt.annotations_I.Throw;
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 
-public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
+public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>>
   extends AbstractSequentialList<List<_PersistentBean_>>{
 
   private static final Log LOG = LogFactory.getLog(PagingList.class);

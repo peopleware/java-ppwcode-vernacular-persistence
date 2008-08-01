@@ -29,49 +29,49 @@ public class PersistentBeanContract {
 
   // interface, not actual tests, only contract
 
-  public static void assertInvariants(PersistentBean<?> subject) {
+  public static void assertInvariants(PersistentBean<?, ?> subject) {
     RousseauBeanContract.assertInvariants(subject);
     // no local invariants
   }
 
-  public static void contractEquals(PersistentBean<?> subject, Object other, boolean result) {
+  public static void contractEquals(PersistentBean<?, ?> subject, Object other, boolean result) {
     // validate
     RousseauBeanContract.contractEquals(subject, other, result);
   }
 
-  public static void contractHashCode(PersistentBean<?> subject, int result) {
+  public static void contractHashCode(PersistentBean<?, ?> subject, int result) {
     RousseauBeanContract.contractHashCode(subject, result);
   }
 
-  public static void contractToString(PersistentBean<?> subject, String result) {
+  public static void contractToString(PersistentBean<?, ?> subject, String result) {
     RousseauBeanContract.contractToString(subject, result);
   }
 
-  public static void contractGetWildExceptions(PersistentBean<?> subject, CompoundPropertyException result) {
+  public static void contractGetWildExceptions(PersistentBean<?, ?> subject, CompoundPropertyException result) {
     RousseauBeanContract.contractGetWildExceptions(subject, result);
   }
 
-  public static void contractIsCivilized(PersistentBean<?> subject, boolean result) {
+  public static void contractIsCivilized(PersistentBean<?, ?> subject, boolean result) {
     RousseauBeanContract.contractIsCivilized(subject, result);
   }
 
-  public static void contractPostCheckCivility(boolean OLDCivilized, PersistentBean<?> subject) {
+  public static void contractPostCheckCivility(boolean OLDCivilized, PersistentBean<?, ?> subject) {
     RousseauBeanContract.contractPostCheckCivility(OLDCivilized, subject);
   }
 
-  public static void contractExcCheckCivility(boolean OLDCivilized, PersistentBean<?> subject, CompoundPropertyException thrown) {
+  public static void contractExcCheckCivility(boolean OLDCivilized, PersistentBean<?, ?> subject, CompoundPropertyException thrown) {
     RousseauBeanContract.contractExcCheckCivility(OLDCivilized, subject, thrown);
   }
 
-  public static void contractNormalize(PersistentBean<?> subject, boolean result) {
+  public static void contractNormalize(PersistentBean<?, ?> subject, boolean result) {
     RousseauBeanContract.contractNormalize(subject, result);
   }
 
-  public static <_Id_ extends Serializable> void contractSetId(PersistentBean<_Id_> subject, _Id_ newId) {
+  public static <_Id_ extends Serializable> void contractSetId(PersistentBean<_Id_, ?> subject, _Id_ newId) {
     assertEquals(newId, subject.getId());
   }
 
-  public static <_Id_ extends Serializable> void contractHasSameId(PersistentBean<_Id_> subject, PersistentBean<_Id_> other, boolean result) {
+  public static <_Id_ extends Serializable> void contractHasSameId(PersistentBean<_Id_, ?> subject, PersistentBean<_Id_, ?> other, boolean result) {
     assertEquals((other != null) && eqn(subject.getId(), other.getId()), result);
   }
 

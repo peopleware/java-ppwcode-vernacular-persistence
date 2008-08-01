@@ -45,7 +45,8 @@ import org.toryt.annotations_I.MethodContract;
  * @author  Tom Mahieu
  * @author  Peopleware n.v.
  */
-public abstract class AbstractHibernate2PersistentBeanTest<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> extends AbstractHibernate2Test {
+public abstract class AbstractHibernate2PersistentBeanTest<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>>
+    extends AbstractHibernate2Test {
 
   private static final Log LOG = LogFactory.getLog(AbstractHibernate2PersistentBeanTest.class);
 

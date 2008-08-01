@@ -162,7 +162,7 @@ import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
     try {
       $entityManager.persist(object);
       if (object instanceof PersistentBean) {
-        return ((PersistentBean<?>)object).getId();
+        return ((PersistentBean<?, ?>)object).getId();
       }
       else {
         return null;
@@ -221,7 +221,8 @@ import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
     return DEFAULT_PAGE_SIZE;
   }
 
-  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> JpaPagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>> JpaPagingList<_Id_, _PersistentBean_>
+  retrievePages(final Class<_PersistentBean_> persistentObjectType) {
     try {
       Query countq = $entityManager.createQuery("SELECT COUNT(*) FROM " + persistentObjectType.getName());
       Query listq = $entityManager.createQuery("SELECT c FROM " + persistentObjectType.getName() + " c ORDER BY c.id");
