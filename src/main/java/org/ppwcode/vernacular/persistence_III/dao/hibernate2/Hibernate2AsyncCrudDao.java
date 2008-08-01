@@ -94,6 +94,7 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
 
   @Override
   @MethodContract(
+    pre  = @Expression("! isInTransaction"),
     post = @Expression(value = "! 'inTransaction",
                        description = "Cannot be made true by this method when it is false in the old state. " +
                                      "So the only option for the implementer is to throw an exception when this occurs.")
