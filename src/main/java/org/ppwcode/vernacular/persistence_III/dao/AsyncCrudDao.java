@@ -27,19 +27,14 @@ import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.InternalException;
+import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
-import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalArgumentError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 import org.toryt.annotations_I.Throw;
-
 
 
 /**
@@ -83,26 +78,10 @@ public interface AsyncCrudDao extends Dao {
    *   until it is requested to close the transaction.</p>
    */
   @MethodContract(
-    post = {
-      @Expression("inTransaction"),
-      @Expression(value = "! 'inTransaction",
-                  description = "Cannot be made true by this method when it is false in the old state. " +
-                              "So the only option for the implementer is to throw an exception when this occurs.")
-    },
-    exc = {
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression(value = "inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
-    }
+    pre  = @Expression("! 'inTransaction"),
+    post = @Expression("inTransaction")
   )
-  void startTransaction() throws PersistenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
+  void startTransaction();
 
   /**
    * <p>Commit a transaction. The transaction was started by
@@ -111,6 +90,7 @@ public interface AsyncCrudDao extends Dao {
    *   until it is requested to close the transaction.</p>
    */
   @MethodContract(
+    pre  = @Expression("'inTransaction"),
     post = {
       @Expression("! inTransaction"),
       @Expression("for (PersistentBean pbDel) {'isDeleted(pbDel) ? pbDel.id == null}"),
@@ -126,21 +106,10 @@ public interface AsyncCrudDao extends Dao {
              cond = @Expression(value = "true",
                                 description = "the commit was stopped for semantic reasons, either wild exceptions, " +
                                           "or exceptions from the persistent storage (which probably cannot be " +
-                                          "translated into property exceptions)")),
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression(value = "! inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
+                                          "translated into property exceptions)"))
     }
   )
-  void commitTransaction() throws InternalException, PersistenceIllegalStateError, PersistenceExternalError,
-      PersistenceConfigurationError;
+  void commitTransaction() throws InternalException;
 
   /**
    * <p>Cancel a transaction. The transaction was started by
@@ -151,6 +120,7 @@ public interface AsyncCrudDao extends Dao {
    *   {@link PersistentBean#getId()} is reset to <code>null</code> (part of rollback).</p>
    */
   @MethodContract(
+    pre  = @Expression("'inTransaction"),
     post = {
       @Expression("! inTransaction"),
       @Expression("for (PersistentBean pbDel) {! isDeleted(pbDel)}"),
@@ -159,21 +129,9 @@ public interface AsyncCrudDao extends Dao {
       @Expression(value = "'inTransaction",
                   description = "Cannot be made true by this method when it is false in the old state. " +
                               "So the only option for the implementer is to throw an exception when this occurs.")
-    },
-    exc = {
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression("! inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
     }
   )
-  void cancelTransaction() throws PersistenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
+  void cancelTransaction();
 
   @Basic(init = @Expression("false"))
   boolean isInTransaction();
@@ -193,6 +151,10 @@ public interface AsyncCrudDao extends Dao {
    * @idea (jand) security exceptions
    */
   @MethodContract(
+    pre  = {
+      @Expression("_pb != null"),
+      @Expression("_pb'id == null")
+    },
     post = {
       @Expression("isCreated(_pb)"),
       @Expression(value = "'inTransaction",
@@ -207,7 +169,7 @@ public interface AsyncCrudDao extends Dao {
       @Expression(value = "_pb'civilized",
                   description = "Cannot be made true it is false in the old state. So the only option for the " +
                                 "implementer is to throw an exception when this occurs.")
-  },
+    },
     exc = {
       @Throw(type = PropertyException.class,
              cond = @Expression("! _pb'civilized && " +
@@ -216,25 +178,10 @@ public interface AsyncCrudDao extends Dao {
                                    "thrown.like(_pb.wildExceptions.anElement)")),
       @Throw(type = InternalException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
-                                                              "signals a semantic problem")),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb == null")),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb'id != null")),
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression("! inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
+                                                              "signals a semantic problem"))
     }
   )
-  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException,
-      PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError;
+  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException;
 
   /**
    * <p>Return a persistent bean instance that represents the data of the record with key <code>id</code> of type
@@ -246,6 +193,10 @@ public interface AsyncCrudDao extends Dao {
    * @idea (jand) security exceptions
    */
   @MethodContract(
+    pre  = {
+      @Expression("_persistentBeanType != null"),
+      @Expression("_id != null")
+    },
     post = {
       @Expression("result != null"),
       @Expression("result.id == _id"),
@@ -264,24 +215,12 @@ public interface AsyncCrudDao extends Dao {
                                           "of type persistentBeanType"),
                 @Expression("thrown.persistentBeanType == _persistentBeanType"),
                 @Expression("thrown.id == _id")
-              }),
-        @Throw(type = PersistenceIllegalArgumentError.class,
-               cond = @Expression(value = "_persistentBeanType == null")),
-        @Throw(type = PersistenceIllegalArgumentError.class,
-               cond = @Expression(value = "_id == null")),
-        @Throw(type = PersistenceConfigurationError.class,
-               cond = @Expression(value = "true",
-                                  description = "could perform the operation because of a bad configuration of " +
-                                                "this object, which is considered a programming error or external condition")),
-        @Throw(type = PersistenceExternalError.class,
-               cond = @Expression(value = "true",
-                                  description = "could perform the operation because of some problem with persistency " +
-                                                "which we consider external"))
+              })
     }
   )
   <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
-      throws IdNotFoundException, PersistenceIllegalArgumentError, PersistenceExternalError, PersistenceConfigurationError;
+      throws IdNotFoundException;
 
   /**
    * <p>Return the set of all persistent bean instances that represent the data of the records of type
@@ -299,6 +238,7 @@ public interface AsyncCrudDao extends Dao {
    * @idea (jand) security exceptions
    */
   @MethodContract(
+    pre  = @Expression("_persistentBeanType != null"),
     post = {
       @Expression("result != null"),
       @Expression("! result.contains(null)"),
@@ -306,23 +246,10 @@ public interface AsyncCrudDao extends Dao {
       @Expression(value = "_persistentBeanType != null",
                   description = "Cannot be made true it is false in the old state. So the only option for the " +
                                 "implementer is to throw an exception when this occurs.")
-    },
-    exc = {
-        @Throw(type = PersistenceIllegalArgumentError.class,
-               cond = @Expression(value = "_persistentBeanType == null")),
-        @Throw(type = PersistenceConfigurationError.class,
-               cond = @Expression(value = "true",
-                                  description = "could perform the operation because of a bad configuration of " +
-                                                "this object, which is considered a programming error or external condition")),
-        @Throw(type = PersistenceExternalError.class,
-               cond = @Expression(value = "true",
-                                  description = "could perform the operation because of some problem with persistency " +
-                                                "which we consider external"))
     }
   )
   <_PersistentBean_ extends PersistentBean<?>>
-  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses)
-      throws PersistenceIllegalArgumentError, PersistenceExternalError, PersistenceConfigurationError;
+  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses);
 
   /**
    * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
@@ -334,6 +261,11 @@ public interface AsyncCrudDao extends Dao {
    * @idea (jand) security exceptions, unmodifiable error
    */
   @MethodContract(
+    pre  = {
+      @Expression("_pb != null"),
+      @Expression("_pb'id != null"),
+      @Expression("inTransaction")
+    },
     post = {
       @Expression(value = "true",
                   description = "The object is updated in persistence storage"),
@@ -374,25 +306,10 @@ public interface AsyncCrudDao extends Dao {
                                          "has changed in persistent storage since the last time we looked; " +
                                          "we will not override the latest data (optimistic locking, versioning)"),
                @Expression("thrown.persistentBean == _persistentBean")
-             }),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb == null")),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb'id == null")),
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression("! inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
+             })
     }
   )
-  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException,
-      PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
+  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException;
 
   /**
    * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
@@ -405,6 +322,11 @@ public interface AsyncCrudDao extends Dao {
    * @todo error on foreign key? cascade delete?
    */
   @MethodContract(
+    pre  = {
+      @Expression("_pb != null"),
+      @Expression("_pb'id != null"),
+      @Expression("inTransaction")
+    },
     post = {
       @Expression(value = "true",
                   description = "The object is deleted from persistence storage"),
@@ -430,25 +352,10 @@ public interface AsyncCrudDao extends Dao {
                                          "of type persistentBeanType"),
                @Expression("thrown.persistentBeanType == _persistentBeanType"),
                @Expression("thrown.id == _id")
-             }),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb == null")),
-      @Throw(type = PersistenceIllegalArgumentError.class,
-             cond = @Expression(value = "_pb'id == null")),
-      @Throw(type = PersistenceIllegalStateError.class,
-             cond = @Expression("! inTransaction")),
-      @Throw(type = PersistenceConfigurationError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = PersistenceExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
+             })
     }
   )
-  void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, IdNotFoundException, PersistenceIllegalArgumentError,
-      PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError;
+  void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, IdNotFoundException;
 
   /**
    * Returns true when the given persistent bean has been created (i.e.,
