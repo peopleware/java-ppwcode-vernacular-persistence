@@ -22,7 +22,7 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.InternalException;
+import org.ppwcode.vernacular.exception_II.InternalException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
@@ -43,24 +43,42 @@ import org.toryt.annotations_I.MethodContract;
          date     = "$Date$")
 public class PersistenceException extends InternalException {
 
+  /**
+   * @param     messageKey
+   *            The string that identifies a localized end user feedback message about the
+   *            non-nominal behavior.
+   * @param     cause
+   *            The exception that occured, causing this exception to be thrown, if that is
+   *            the case.
+   */
   @MethodContract(
+    pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
     post = {
-      @Expression("message == _message"),
+      @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
       @Expression("cause == _cause")
     }
   )
-  public PersistenceException(String message, Throwable cause) {
-    super(message, cause);
+  public PersistenceException(final String messageKey, final Throwable cause) {
+    super(messageKey, cause);
   }
 
+  /**
+   * @param     messageKey
+   *            The string that identifies a localized end user feedback message about the
+   *            non-nominal behavior.
+   * @param     cause
+   *            The exception that occured, causing this exception to be thrown, if that is
+   *            the case.
+   */
   @MethodContract(
+    pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
     post = {
-      @Expression("message == _message"),
-      @Expression("cause == null")
+      @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+      @Expression("cause == _cause")
     }
   )
-  public PersistenceException(String message) {
-    super(message);
+  public PersistenceException(final String messageKey) {
+    this(messageKey, null);
   }
 
 }
