@@ -29,14 +29,12 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.util.exception.Exceptions;
-import org.ppwcode.vernacular.exception_N.InternalException;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
+import org.ppwcode.vernacular.exception_II.ExternalError;
+import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
 
 
 /**
@@ -77,11 +75,9 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
   @MethodContract(
     post = {
       @Expression("session == _session")
-    },
-    exc = @Throw(type = PersistenceIllegalStateError.class,
-                 cond = @Expression(value = "true"))
+    }
   )
-  public void setSession(final Session session) throws PersistenceIllegalStateError {
+  public void setSession(final Session session) {
       $session = session;
   }
 
@@ -103,7 +99,7 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
    * handle it.
    */
   protected final void handleHibernateException(final HibernateException hExc, final String operationName)
-      throws InternalException, PersistenceExternalError {
+      throws InternalException {
     SQLException sqlExc = (SQLException)Exceptions.huntFor(hExc, SQLException.class);
     if ((sqlExc != null) && (getSqlExceptionHandler() != null)) {
       InternalException iExc = getSqlExceptionHandler().handle(sqlExc);
@@ -112,8 +108,7 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
       }
       // if we are here, the above handler did not translate into an InternalException
       // cannot be that the record is not found
-      // the sql exception is thus considered an external problem
-      throw new PersistenceExternalError("problem " + operationName + " record", hExc);
+      // the sql exception is thus considered an external problem (thrown by handle)
     }
     // Now, if it is not a sql exception we are dealing with, maybe there is an internal
     // exception transported by the hibernate exception
@@ -124,7 +119,7 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
     else {
       // cannot be that the record is not found
       // the Hibernate exception is thus considered an external problem
-      throw new PersistenceExternalError("problem " + operationName + " record", hExc);
+      throw new ExternalError("problem " + operationName + " record", hExc);
     }
   }
 
