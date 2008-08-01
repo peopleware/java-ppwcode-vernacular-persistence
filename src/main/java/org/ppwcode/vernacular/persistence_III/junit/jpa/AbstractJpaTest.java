@@ -35,13 +35,12 @@ import javax.persistence.TransactionRequiredException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
 
@@ -56,216 +55,215 @@ import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
-		date     = "$Date$")
-		public abstract class AbstractJpaTest {
+    date     = "$Date$")
+    public abstract class AbstractJpaTest {
 
-	private static final Log _LOG = LogFactory.getLog(AbstractJpaTest.class);
+  private static final Log _LOG = LogFactory.getLog(AbstractJpaTest.class);
 
-	private static EntityManagerFactory $entityManagerFactory;
+  private static EntityManagerFactory $entityManagerFactory;
 
-	private static final String JPA_PERSISTENCE_UNIT_NAME = AbstractJpaTest.class.getName() + "_persistenceunit";
+  private static final String JPA_PERSISTENCE_UNIT_NAME = AbstractJpaTest.class.getName() + "_persistenceunit";
 
-	@BeforeClass
-	public void initEntityManagerFactory() {
-		try {
-			_LOG.debug("Creating EntityManagerFactory; Using persistence unit " + JPA_PERSISTENCE_UNIT_NAME);
-			$entityManagerFactory = Persistence.createEntityManagerFactory(JPA_PERSISTENCE_UNIT_NAME);
-			_LOG.debug("EntityManagerFactory created.");
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Failed to create EntityManagerFactory.");
-		}
-	}
+  @BeforeClass
+  public void initEntityManagerFactory() {
+    try {
+      _LOG.debug("Creating EntityManagerFactory; Using persistence unit " + JPA_PERSISTENCE_UNIT_NAME);
+      $entityManagerFactory = Persistence.createEntityManagerFactory(JPA_PERSISTENCE_UNIT_NAME);
+      _LOG.debug("EntityManagerFactory created.");
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Failed to create EntityManagerFactory.");
+    }
+  }
 
-	@AfterClass
-	public void deinitEntityManagerFactory() {
-		_LOG.debug("discarding EntityManagerFactory");
-		$entityManagerFactory = null;
-		_LOG.debug("EntityManagerFactory discarded");
-	}
+  @AfterClass
+  public void deinitEntityManagerFactory() {
+    _LOG.debug("discarding EntityManagerFactory");
+    $entityManagerFactory = null;
+    _LOG.debug("EntityManagerFactory discarded");
+  }
 
-	public void createEntityManager() {
-		try {
-			$entityManager = $entityManagerFactory.createEntityManager();
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Failed to create EntityManager.");
-		}
-	}
+  public void createEntityManager() {
+    try {
+      $entityManager = $entityManagerFactory.createEntityManager();
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Failed to create EntityManager.");
+    }
+  }
 
-	public void discardEntityManager() {
-		try {
-			$entityManager.close();
-			$entityManager = null;
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Couldn't discard EntityManager.");
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Couldn't discard EntityManager.");
-		}
-	}
+  public void discardEntityManager() {
+    try {
+      $entityManager.close();
+      $entityManager = null;
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Couldn't discard EntityManager.");
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Couldn't discard EntityManager.");
+    }
+  }
 
-	public void beginTransaction() {
-		try {
-			$tx = $entityManager.getTransaction();
-			$tx.begin();
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Couldn't start Transaction.");
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Couldn't start Transaction.");
-		}
-	}
+  public void beginTransaction() {
+    try {
+      $tx = $entityManager.getTransaction();
+      $tx.begin();
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Couldn't start Transaction.");
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Couldn't start Transaction.");
+    }
+  }
 
-	public void commitTransaction() {
-		try {
-			$tx.commit();
-			$tx = null;
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Couldn't commit Transaction");
-		}
-		catch (RollbackException rbe) {
-			rbe.printStackTrace();
-			fail("Couldn't commit Transaction");
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Couldn't commit Transaction");
-		}
-	}
+  public void commitTransaction() {
+    try {
+      $tx.commit();
+      $tx = null;
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Couldn't commit Transaction");
+    }
+    catch (RollbackException rbe) {
+      rbe.printStackTrace();
+      fail("Couldn't commit Transaction");
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Couldn't commit Transaction");
+    }
+  }
 
-	public void rollbackTransaction() {
-		try {
-			$tx.rollback();
-			$tx = null;
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Couldn't roll back Transaction.");
-		}
-		catch (PersistenceException all) {
-			all.printStackTrace();
-			fail("Couldn't roll back Transaction.");
-		}
-	}
+  public void rollbackTransaction() {
+    try {
+      $tx.rollback();
+      $tx = null;
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Couldn't roll back Transaction.");
+    }
+    catch (PersistenceException all) {
+      all.printStackTrace();
+      fail("Couldn't roll back Transaction.");
+    }
+  }
 
-	public Object create(final Object object) {
-		try {
-			$entityManager.persist(object);
-			if (object instanceof PersistentBean) {
-				return ((PersistentBean<?>)object).getId();
-			}
-			else {
-				return null;
-			}
-		}
-		catch (EntityExistsException eee) {
-			eee.printStackTrace();
-			fail("Failed to create the object in the database.");
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Failed to create the object in the database.");
-		}
-		catch (IllegalArgumentException iae) {
-			iae.printStackTrace();
-			fail("Failed to create the object in the database.");
-		}
-		catch (TransactionRequiredException tre) {
-			tre.printStackTrace();
-			fail("Failed to create the object in the database.");
-		}
-		return null;
-	}
+  public Object create(final Object object) {
+    try {
+      $entityManager.persist(object);
+      if (object instanceof PersistentBean) {
+        return ((PersistentBean<?>)object).getId();
+      }
+      else {
+        return null;
+      }
+    }
+    catch (EntityExistsException eee) {
+      eee.printStackTrace();
+      fail("Failed to create the object in the database.");
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Failed to create the object in the database.");
+    }
+    catch (IllegalArgumentException iae) {
+      iae.printStackTrace();
+      fail("Failed to create the object in the database.");
+    }
+    catch (TransactionRequiredException tre) {
+      tre.printStackTrace();
+      fail("Failed to create the object in the database.");
+    }
+    return null;
+  }
 
-	public void delete(final Object object) {
-		$entityManager.remove(object);
-	}
+  public void delete(final Object object) {
+    $entityManager.remove(object);
+  }
 
-	public Object retrieve(final Class<?> clazz, final Serializable id) {
-		Object result = null;
-		try {
-			result = $entityManager.find(clazz, id);
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Failed to retrieve the object from the database.");
-		}
-		catch (IllegalArgumentException iae) {
-			iae.printStackTrace();
-			fail("Failed to retrieve the object from the database.");
-		}
-		return result;
-	}
+  public Object retrieve(final Class<?> clazz, final Serializable id) {
+    Object result = null;
+    try {
+      result = $entityManager.find(clazz, id);
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Failed to retrieve the object from the database.");
+    }
+    catch (IllegalArgumentException iae) {
+      iae.printStackTrace();
+      fail("Failed to retrieve the object from the database.");
+    }
+    return result;
+  }
 
-	public <_PersistentObject_> List<_PersistentObject_> retrieve(final Class<_PersistentObject_> persistentObjectType) {
-		String qlString = "SELECT c FROM " + persistentObjectType.getName() + " c ORDER BY c.id";
+  public <_PersistentObject_> List<_PersistentObject_> retrieve(final Class<_PersistentObject_> persistentObjectType) {
+    String qlString = "SELECT c FROM " + persistentObjectType.getName() + " c ORDER BY c.id";
 
-		@SuppressWarnings("unchecked")
-		List<_PersistentObject_> result = (List<_PersistentObject_>) retrieve(qlString);
-		return result;
-	}
+    @SuppressWarnings("unchecked")
+    List<_PersistentObject_> result = (List<_PersistentObject_>) retrieve(qlString);
+    return result;
+  }
 
-	public final static int DEFAULT_PAGE_SIZE = 100;
+  public final static int DEFAULT_PAGE_SIZE = 100;
 
-	public int getPageSize() {
-		return DEFAULT_PAGE_SIZE;
-	}
+  public int getPageSize() {
+    return DEFAULT_PAGE_SIZE;
+  }
 
-	public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> JpaPagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
-		try {
-			Query countq = $entityManager.createQuery("SELECT COUNT(*) FROM " + persistentObjectType.getName());
-			Query listq = $entityManager.createQuery("SELECT c FROM " + persistentObjectType.getName() + " c ORDER BY c.id");
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> JpaPagingList<_Id_, _PersistentBean_> retrievePages(final Class<_PersistentBean_> persistentObjectType) {
+    try {
+      Query countq = $entityManager.createQuery("SELECT COUNT(*) FROM " + persistentObjectType.getName());
+      Query listq = $entityManager.createQuery("SELECT c FROM " + persistentObjectType.getName() + " c ORDER BY c.id");
+      return new JpaPagingList<_Id_, _PersistentBean_>(listq, countq, getPageSize());
+    }
+    catch (IllegalStateException ise) {
+      ise.printStackTrace();
+      fail("Failed to retrieve objects from database");
+    }
+    catch (IllegalArgumentException iae) {
+      iae.printStackTrace();
+      fail("Failed to retrieve objects from database");
+    }
+    catch (ExternalError peErr) {
+      peErr.printStackTrace();
+      fail("Failed to retrieve objects from database");
+    }
+    return null;
+  }
 
-			return new JpaPagingList<_Id_, _PersistentBean_>(listq, countq, getPageSize());
-		}
-		catch (IllegalStateException ise) {
-			ise.printStackTrace();
-			fail("Failed to retrieve objects from database");
-		}
-		catch (IllegalArgumentException iae) {
-			iae.printStackTrace();
-			fail("Failed to retrieve objects from database");
-		}
-		catch (PersistenceExternalError peErr) {
-			peErr.printStackTrace();
-			fail("Failed to retrieve objects from database");
-		}
-		return null;
-	}
+  public List<?> retrieve(String qlQueryString) {
+    List<?> result = null;
+    try {
+      Query q = $entityManager.createQuery(qlQueryString);
+      result = q.getResultList();
+    }
+    catch (IllegalStateException e) {
+      assert false : "HibernateExceptionshould not happen: " + e;
+    }
+    return result;
+  }
 
-	public List<?> retrieve(String qlQueryString) {
-		List<?> result = null;
-		try {
-			Query q = $entityManager.createQuery(qlQueryString);
-			result = q.getResultList();
-		}
-		catch (IllegalStateException e) {
-			assert false : "HibernateExceptionshould not happen: " + e;
-		}
-		return result;
-	}
+  public EntityManager getEntityManager() {
+    return $entityManager;
+  }
 
-	public EntityManager getEntityManager() {
-		return $entityManager;
-	}
+  private EntityManager $entityManager;
 
-	private EntityManager $entityManager;
+  public EntityTransaction getTransaction() {
+    return $tx;
+  }
 
-	public EntityTransaction getTransaction() {
-		return $tx;
-	}
-
-	private EntityTransaction $tx;
+  private EntityTransaction $tx;
 
 }
