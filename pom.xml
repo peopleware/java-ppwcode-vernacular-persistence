@@ -54,7 +54,7 @@
   </description>
   <inceptionYear>2004</inceptionYear>
 
-  <!-- DEVELOPERS & CONTRIBUTORS: OVERWRITE IN YOUR CHILD POM (we don't work for you :-) ) -->
+  <!-- DEVELOPERS & CONTRIBUTORS -->
   <developers>
     <developer>
       <name>Jan Dockx</name>
