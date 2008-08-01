@@ -114,6 +114,7 @@ public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Ser
   //------------------------------------------------------------------
 
   @Version
+  @Column(name="version")
   @Basic(init = @Expression("null"))
   _Version_ getVersion();
 
