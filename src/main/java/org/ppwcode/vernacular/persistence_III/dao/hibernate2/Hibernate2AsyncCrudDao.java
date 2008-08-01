@@ -19,6 +19,9 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.dependency;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.pre;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.preArgumentNotNull;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -43,18 +46,15 @@ import org.ppwcode.bean_VI.PropertyException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_N.InternalException;
+import org.ppwcode.vernacular.exception_II.ExternalError;
+import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_II.ProgrammingErrors;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
-import org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalArgumentError;
-import org.ppwcode.vernacular.persistence_III.PersistenceIllegalStateError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.AsyncCrudDao;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
 import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
 
 
 /**
@@ -69,6 +69,8 @@ import org.toryt.annotations_I.Throw;
  *
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
+ *
+ * @mudo strengthening preconditions is a nono!!
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -80,10 +82,8 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
 
 
 
-  private static final String NULL_SESSION = "Session is null";
   private static final String NO_PENDING_TRANSACTION = "No transaction pending";
   private static final String PENDING_TRANSACTION = "There is a transaction still pending";
-  private static final String NO_PERSISTENT_OBJECT = "No persistent object";
   private static final String NO_ID_IN_PERSISTENT_OBJECT = "No id in persistent object";
   private static final String SHOULD_HAVE_NO_ID_IN_PERSISTENT_OBJECT = "There should be no id in persistent object";
 
@@ -96,14 +96,10 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   @MethodContract(
     post = @Expression(value = "! 'inTransaction",
                        description = "Cannot be made true by this method when it is false in the old state. " +
-                                     "So the only option for the implementer is to throw an exception when this occurs."),
-    exc = @Throw(type = PersistenceIllegalStateError.class,
-                 cond = @Expression(value = "true"))
+                                     "So the only option for the implementer is to throw an exception when this occurs.")
   )
-  public final void setSession(final Session session) throws PersistenceIllegalStateError {
-    if (isInTransaction()) {
-      throw new PersistenceIllegalStateError("Cannot set session now, transaction still in use", null);
-    }
+  public final void setSession(final Session session) {
+    pre(! isInTransaction(), "Cannot set session now, transaction still in use");
     super.setSession(session);
   }
 
@@ -115,34 +111,27 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   private Transaction $tx;
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
-  public final void startTransaction() throws PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError {
+  public final void startTransaction() {
     LOG.debug("Starting hibernate transaction ...");
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (isInTransaction()) {
-      throw new PersistenceIllegalStateError(PENDING_TRANSACTION, null);
-    }
+    pre(! isInTransaction(), PENDING_TRANSACTION);
+    dependency(getSession(), "session");
     assert $tx == null;
     try {
       $tx = getSession().beginTransaction();
       setInTransaction(true);
     }
     catch (HibernateException hExc) {
-      throw new PersistenceExternalError("Could not create Hibernate transaction", hExc);
+      throw new ExternalError("Could not create Hibernate transaction", hExc);
     }
     LOG.debug("Hibernate transaction started.");
   }
 
-  public final void commitTransaction() throws InternalException, PersistenceIllegalStateError, PersistenceExternalError {
+  public final void commitTransaction() throws InternalException {
     LOG.debug("Starting commit ...");
-    if (!isInTransaction()) {
-      throw new PersistenceIllegalStateError(NO_PENDING_TRANSACTION, null);
-    }
+    pre(! isInTransaction(), PENDING_TRANSACTION);
     assert $tx != null;
     try {
       $tx.commit();
@@ -182,11 +171,9 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
    * @throws    TechnicalException
    *            isInTransaction();
    */
-  public final void cancelTransaction() throws PersistenceIllegalStateError, PersistenceExternalError, PersistenceConfigurationError {
+  public final void cancelTransaction() {
     LOG.debug("Cancelling transaction.");
-    if (!isInTransaction()) {
-      throw new PersistenceIllegalStateError(NO_PENDING_TRANSACTION, null);
-    }
+    pre(! isInTransaction(), PENDING_TRANSACTION);
     assert $tx != null;
     try {
       $tx.rollback();
@@ -194,7 +181,7 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
       // $deleted objects get to keep there original id, as they are not really deleted
     }
     catch (HibernateException hExc) {
-      throw new PersistenceExternalError("could not rollback Hibernate transaction. This is serious.", hExc);
+      throw new ExternalError("could not rollback Hibernate transaction. This is serious.", hExc);
     }
     finally {
       $tx = null;
@@ -205,25 +192,15 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   }
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
-  public final void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException,
-      PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError {
-    LOG.debug("Creating new record for bean \"" + pb + "\" ..."); //$NON-NLS-2$
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (!isInTransaction()) {
-      throw new PersistenceIllegalStateError(NO_PENDING_TRANSACTION, null);
-    }
-    if (pb == null) {
-      throw new PersistenceIllegalArgumentError(NO_PERSISTENT_OBJECT, null);
-    }
-    if (pb.getId() != null) {
-      throw new PersistenceIllegalArgumentError(SHOULD_HAVE_NO_ID_IN_PERSISTENT_OBJECT, null);
-    }
+  public final void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
+    LOG.debug("Creating new record for bean \"" + pb + "\" ...");
+    dependency(getSession(), "session");
+    preArgumentNotNull(pb, "pb");
+    pre(pb.getId() == null, SHOULD_HAVE_NO_ID_IN_PERSISTENT_OBJECT);
+    pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       LOG.trace("Gather all beans to be created, taking into account cascade");
       List<PersistentBean<?>> allToBeCreated = relatedFreshPersistentBeans(pb);
@@ -253,7 +230,7 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
     catch (HibernateException hExc) {
       LOG.debug("Creation of new record failed.");
       handleHibernateException(hExc, "Creating");
-      // throws InternalException, PersistenceExternalError
+      // throws InternalException, ExternalError
     }
     assert pb.getId() != null;
   }
@@ -340,23 +317,16 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   }
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
   public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
-      throws IdNotFoundException, PersistenceIllegalArgumentError, PersistenceConfigurationError, PersistenceExternalError {
+      throws IdNotFoundException {
     LOG.debug("Retrieving record with id = " + id + " ...");
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (id == null) {
-      throw new PersistenceIllegalArgumentError("ID_IS_NULL", null);
-    }
-    if (persistentBeanType == null) {
-      throw new PersistenceIllegalArgumentError(NO_PERSISTENT_OBJECT, null);
-    }
+    dependency(getSession(), "session");
+    preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    preArgumentNotNull(id, "id");
     _PersistentBean_ result = null;
     try {
       @SuppressWarnings("unchecked")
@@ -380,12 +350,11 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
       result = persistentBean;
     }
     catch (ClassCastException ccExc) {
-      throw new PersistenceExternalError("retrieved object was not a PersistentBean", ccExc);
+      ProgrammingErrors.unexpectedException(ccExc, "retrieved object was not a PersistentBean");
     }
     catch (HibernateException hExc) {
-      // this cannot be that we did not find an object with that id, since we
-      // use get
-      throw new PersistenceExternalError("problem getting record from DB", hExc);
+      // this cannot be that we did not find an object with that id, since we use get
+      throw new ExternalError("problem getting record from DB", hExc);
     }
     assert result != null;
     assert result.getId().equals(id);
@@ -397,20 +366,14 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   }
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
   public <_PersistentBean_ extends PersistentBean<?>>
-  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses)
-      throws PersistenceIllegalArgumentError, PersistenceConfigurationError, PersistenceExternalError {
+  Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses) {
     LOG.debug("Retrieving all records of type \"" + persistentBeanType + "\" ...");
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (persistentBeanType == null) {
-      throw new PersistenceIllegalArgumentError("persistentObjectType cannot be null", null);
-    }
+    dependency(getSession(), "session");
+    preArgumentNotNull(persistentBeanType, "persistentBeanType");
     Set<_PersistentBean_> results = new HashSet<_PersistentBean_>();
     try {
       if (retrieveSubClasses) {
@@ -436,7 +399,7 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
       }
     }
     catch (HibernateException hExc) {
-      throw new PersistenceExternalError("problem getting all instances of " + persistentBeanType.getName(), hExc);
+      throw new ExternalError("problem getting all instances of " + persistentBeanType.getName(), hExc);
     }
     assert results != null;
     LOG.debug("Retrieval succeeded (" + results.size() + " objects retrieved)"); //$NON-NLS-2$
@@ -444,27 +407,17 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   }
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
-  public final void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException,
-      PersistenceIllegalArgumentError, PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError {
+  public final void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Updating bean \"" + pb + "\" ...");
     }
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (!isInTransaction()) {
-      throw new PersistenceIllegalStateError(NO_PENDING_TRANSACTION, null);
-    }
-    if (pb == null) {
-      throw new PersistenceIllegalArgumentError(NO_PERSISTENT_OBJECT, null);
-    }
-    if (pb.getId() == null) {
-      throw new PersistenceIllegalArgumentError(NO_ID_IN_PERSISTENT_OBJECT, null);
-    }
+    dependency(getSession(), "session");
+    preArgumentNotNull(pb, "pb");
+    pre(pb.getId() != null, NO_ID_IN_PERSISTENT_OBJECT);
+    pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       if (LOG.isTraceEnabled()) {
         LOG.trace("Normalizing  \"" + pb + "\" ...");
@@ -492,25 +445,15 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
   }
 
   @MethodContract(
-    post = {},
-    exc = @Throw(type = PersistenceConfigurationError.class,
-                 cond = @Expression("session == null"))
+    pre  = @Expression("session != null"),
+    post = {}
   )
-  public void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, PersistenceIllegalArgumentError,
-      PersistenceIllegalStateError, PersistenceConfigurationError, PersistenceExternalError {
+  public void deletePersistentBean(final PersistentBean<?> pb) throws InternalException {
     LOG.debug("Deleting persistent bean \"" + pb + "\" ...");
-    if (getSession() == null) {
-      throw new PersistenceConfigurationError(NULL_SESSION, null);
-    }
-    if (!isInTransaction()) {
-      throw new PersistenceIllegalStateError(NO_PENDING_TRANSACTION, null);
-    }
-    if (pb == null) {
-      throw new PersistenceIllegalArgumentError(NO_PERSISTENT_OBJECT, null);
-    }
-    if (pb.getId() == null) {
-      throw new PersistenceIllegalArgumentError(NO_ID_IN_PERSISTENT_OBJECT, null);
-    }
+    dependency(getSession(), "session");
+    preArgumentNotNull(pb, "pb");
+    pre(pb.getId() != null, NO_ID_IN_PERSISTENT_OBJECT);
+    pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       getSession().delete(pb);
       $deleted.add(pb);
