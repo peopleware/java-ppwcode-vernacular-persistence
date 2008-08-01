@@ -234,6 +234,7 @@
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-I</artifactId>
+      <version>1.0.0-SNAPSHOT</version> <!--  this version is not defined in ppwcode ppwcode parent pom -->
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
