@@ -60,7 +60,9 @@ public class IdNotFoundException extends PersistenceException {
       @Expression("cause == _cause")
     }
   )
-  public <_Id_ extends Serializable> IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id, String message, Throwable cause) {
+  public <_Id_ extends Serializable>
+  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType,
+                      _Id_ id, String message, Throwable cause) {
     super(message, cause);
     assert persistentBeanType != null;
     assert id != null;
@@ -75,12 +77,12 @@ public class IdNotFoundException extends PersistenceException {
   //------------------------------------------------------------------
 
   @Basic(invars = @Expression("persistentBeanType != null"))
-  public final Class<? extends PersistentBean<?>> getPersistentBeanType() {
+  public final Class<? extends PersistentBean<?, ?>> getPersistentBeanType() {
     return $persistentBeanType;
   }
 
   @Invars(@Expression("$persistentBeanType != null"))
-  private final Class<? extends PersistentBean<?>> $persistentBeanType;
+  private final Class<? extends PersistentBean<?, ?>> $persistentBeanType;
 
   /*</property>*/
 

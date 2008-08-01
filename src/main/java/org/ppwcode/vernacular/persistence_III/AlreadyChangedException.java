@@ -56,7 +56,7 @@ public class AlreadyChangedException extends PersistenceException {
       @Expression("cause == _cause")
     }
   )
-  public AlreadyChangedException(PersistentBean<?> persistentBean, String message, Throwable cause) {
+  public AlreadyChangedException(PersistentBean<?, ?> persistentBean, String message, Throwable cause) {
     super(message, cause);
     assert persistentBean != null;
     $persistentBean = persistentBean;
@@ -70,12 +70,12 @@ public class AlreadyChangedException extends PersistenceException {
   //------------------------------------------------------------------
 
   @Basic(invars = @Expression("persistentBean != null"))
-  public final PersistentBean<?> getPersistentBeanType() {
+  public final PersistentBean<?, ?> getPersistentBeanType() {
     return $persistentBean;
   }
 
   @Invars(@Expression("$persistentBean != null"))
-  private final PersistentBean<?> $persistentBean;
+  private final PersistentBean<?, ?> $persistentBean;
 
   /*</property>*/
 

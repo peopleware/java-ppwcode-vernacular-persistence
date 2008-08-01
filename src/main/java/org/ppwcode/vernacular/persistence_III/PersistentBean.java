@@ -19,6 +19,10 @@ package org.ppwcode.vernacular.persistence_III;
 
 import java.io.Serializable;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Version;
+
 import org.ppwcode.bean_VI.RousseauBean;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
@@ -38,7 +42,7 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
  *   enforces the correct behavior. Supporting code is offered by
  *   {@link AbstractPersistentBean}.</p>
  * <p>Users should be aware that this means that there can be more
- *   than 1 Javav object that represents the same instance in the persistent storage.
+ *   than 1 Java object that represents the same instance in the persistent storage.
  *   To check whether 2 persistent objects represent the same persistent
  *   instance, use {@link #hasSameId(PersistentBean)}.</p>
  * <p>Persistent beans are not {@link Cloneable} however. Implementing
@@ -50,9 +54,11 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
  *   they are often used also as Data Transfer Objects in multi-tier
  *   applications.</p>
  * <p>Persistency should always be implemented with versioning (optimistic
- *   locking), but all known persistency implementations can deal with this
- *   completely transparently.</p>
- *<p>_Id_ must be {@link Serializable}, because PersistentBeans are {@link Serializable}
+ *   locking). For that, the property {@link #getVersion() version}
+ *   is added to this interface. There are several different possible types of versioning,
+ *   using an integer, date, or event a GUID. For that reason, the type of the property
+ *   is generic.</p>
+ *<p>_Id_ and _Version_ must be {@link Serializable}, because PersistentBeans are {@link Serializable}
  *   and the {@link #getId()} is not {@code transient}. (And BTW, id's must be
  *   {@link Serializable} for Hibernate too ... :-) ).</p>
  *
@@ -63,18 +69,30 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
+  @Id
+  @GeneratedValue
   @Basic(init = @Expression("null"))
   _Id_ getId();
 
   /**
+   * This instance has the same id as the instance <code>other</code>.
+   *
+   * @param     other
+   *            The persistent object to compare to.
+   */
+  @MethodContract(
+                  post = @Expression("other != null && id == other.id")
+  )
+  boolean hasSameId(final PersistentBean<_Id_, _Version_> other);
+
+  /**
    * @param     id
    *            The new value
-   * @post      (id == null) ? new.getId() == null : new.getId().equals(id);
    *
    * @idea This method should not appear in this interface. Once an id is set,
    *       it should always remain the same (final, immutable property).
@@ -90,15 +108,29 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
 
 
 
+  /*<property name="persistence version">*/
+  //------------------------------------------------------------------
+
+  @Version
+  @Basic(init = @Expression("null"))
+  _Version_ getVersion();
+
   /**
-   * This instance has the same id as the instance <code>other</code>.
+   * @param     version
+   *            The new value
    *
-   * @param     other
-   *            The persisten object to compare to.
+   * @idea This method should not appear in this interface. Once a version is set,
+   *       it should always remain the same (final, immutable property).
+   *       Persistence engines need a way to set the property, but that is it.
+   *       The question is whether it is possible to do testing than?
    */
   @MethodContract(
-    post = @Expression("other != null && id == other.id")
+    post = @Expression("version == _version")
   )
-  boolean hasSameId(final PersistentBean<_Id_> other);
+  void setVersion(final _Version_ version);
+
+  /*</property>*/
+
+
 
 }

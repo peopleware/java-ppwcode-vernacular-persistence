@@ -38,15 +38,22 @@ import org.ppwcode.metainfo_I.vcs.SvnInfo;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractPersistentBean<_Id_ extends Serializable>
+public abstract class AbstractPersistentBean<_Id_ extends Serializable, _Version_ extends Serializable>
     extends AbstractRousseauBean
-    implements PersistentBean<_Id_>, Serializable {
+    implements PersistentBean<_Id_, _Version_>, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
   public final _Id_ getId() {
     return $id;
+  }
+
+  public final boolean hasSameId(final PersistentBean<_Id_, _Version_> other) {
+    return (other != null)
+    && ((getId() == null)
+        ? other.getId() == null
+        : getId().equals(other.getId()));
   }
 
   public final void setId(final _Id_ id) {
@@ -59,11 +66,22 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable>
 
 
 
-  public final boolean hasSameId(final PersistentBean<_Id_> other) {
-    return (other != null)
-             && ((getId() == null)
-                   ? other.getId() == null
-                   : getId().equals(other.getId()));
+  /*<property name="version">*/
+  //------------------------------------------------------------------
+
+  public final _Version_ getVersion() {
+    return $version;
   }
+
+  public final void setVersion(final _Version_ version) {
+    $version = version;
+  }
+
+  private _Version_ $version;
+
+  /*</property>*/
+
+
+
 
 }
