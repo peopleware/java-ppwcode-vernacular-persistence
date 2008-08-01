@@ -19,6 +19,7 @@ package org.ppwcode.vernacular.persistence_III;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
@@ -76,6 +77,7 @@ public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Ser
 
   @Id
   @GeneratedValue
+  @Column(name="id")
   @Basic(init = @Expression("null"))
   _Id_ getId();
 
