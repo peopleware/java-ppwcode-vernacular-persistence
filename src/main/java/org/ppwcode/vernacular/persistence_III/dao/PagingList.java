@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.pre;
 
 import java.io.Serializable;
 import java.util.AbstractSequentialList;
@@ -30,8 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistenceProgrammingError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
 import org.toryt.annotations_I.Basic;
@@ -76,13 +75,9 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       },
       post = {
           @Expression("^pageSize == _pageSize")
-      },
-      exc = {
-          @Throw(type = PersistenceExternalError.class,
-                 cond = @Expression("true"))
       }
   )
-  protected PagingList(int pageSize, int recordCount) throws PersistenceExternalError {
+  protected PagingList(int pageSize, int recordCount) {
     assert pageSize > 0;
     assert recordCount >= 0;
     $pageSize = pageSize;
@@ -94,9 +89,9 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
 
 
 
-  protected abstract int retrieveRecordCount() throws PersistenceExternalError;
+  protected abstract int retrieveRecordCount();
 
-  protected abstract List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) throws PersistenceExternalError;
+  protected abstract List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage);
 
 
 
@@ -195,20 +190,17 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
     //------------------------------------------------------------------
 
     @MethodContract(
-        post = {
-            @Expression("^nextIndex == _page")
-        },
-        exc = {
-            @Throw(type = PersistenceProgrammingError.class,
-                   cond = @Expression("_page >= 0")),
-            @Throw(type = PersistenceProgrammingError.class,
-                   cond = @Expression("_page < size"))
-        }
-     )
-    public PagesIterator(int page) {
-      if ((page < 0) || (page >= size())) {
-        throw new PersistenceProgrammingError("Invalid page number.");
+      pre  = {
+        @Expression("_page >= 0"),
+        @Expression("_page < size")
+      },
+      post = {
+          @Expression("nextIndex == _page")
       }
+    )
+    public PagesIterator(int page) {
+      pre(page >= 0, "page must be positive");
+      pre(page < size(), "page too large");
       $nextPage = page;
     }
 
@@ -274,8 +266,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
      * check that it is the expected record; we cannot do this
      * for the first retrieval, or for the first or last page
      */
-    public List<_PersistentBean_> next()
-        throws PersistenceExternalError, ConcurrentModificationException {
+    public List<_PersistentBean_> next() throws ConcurrentModificationException {
       LOG.debug("retrieving next page (" + $nextPage + ")");
       validateCount();
       boolean isFirstPage = $nextPage <= 0;
@@ -298,8 +289,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
      * check that it is the expected record; we cannot do this
      * for the first retrieval, or for the first or last page
      */
-    public List<_PersistentBean_> previous()
-        throws PersistenceExternalError, ConcurrentModificationException {
+    public List<_PersistentBean_> previous() throws ConcurrentModificationException {
       int pageToRetrieve = $nextPage - 1;
       LOG.debug("retrieving previous page (" + pageToRetrieve + ")");
       validateCount();
@@ -318,7 +308,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
     }
 
     private List<_PersistentBean_> retrievePage(boolean isFirstPage, boolean isLastPage, int pageToRetrieve)
-        throws PersistenceExternalError, ConcurrentModificationException {
+        throws ConcurrentModificationException {
       LOG.debug("retrieving page " + pageToRetrieve);
       int retrieveSize = getPageSize() + (isFirstPage ? 0 : 1) + (isLastPage ? 0 : 1);
       int realStartOfPage = pageToRetrieve * getPageSize();
@@ -331,7 +321,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       return page;
     }
 
-    private void validateCount() throws ConcurrentModificationException, PersistenceExternalError {
+    private void validateCount() throws ConcurrentModificationException {
       LOG.debug("validating that count of total set has not changed");
       int newRecordCount = retrieveRecordCount();
       if (newRecordCount != getRecordCount()) {
