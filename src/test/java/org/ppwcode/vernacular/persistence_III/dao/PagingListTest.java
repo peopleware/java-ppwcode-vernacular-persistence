@@ -16,8 +16,8 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence_III.dao;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.Serializable;
@@ -27,9 +27,8 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistenceProgrammingError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 
 
@@ -108,7 +107,7 @@ public class PagingListTest {
         return result;
       }
       catch (IndexOutOfBoundsException e) {
-        throw new PersistenceExternalError("cannot retrieve page", e);
+        throw new ExternalError("cannot retrieve page", e);
       }
     }
   }
@@ -264,12 +263,16 @@ public class PagingListTest {
         assertInvariants(subject);
         subjectIndex++;
       } else {
+        boolean failed = false;
         try {
           subject.listIterator(); // we are not interested in the result
-          fail();
+          failed = true; // we cannot call fail() here, because that merely throws an AssertionError too
         }
-        catch (PersistenceProgrammingError ppe) {
+        catch (AssertionError ppe) {
           assertInvariants(subject);
+        }
+        if (failed) {
+          fail();
         }
       }
     }
