@@ -23,23 +23,21 @@ import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.PersistenceExternalError;
+import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.PagingList;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
 import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
 
 
 /**
@@ -79,13 +77,9 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
           @Expression("^query == _query"),
           @Expression("^countQuery == _countQuery"),
           @Expression("^pageSize == _pageSize")
-      },
-      exc = {
-          @Throw(type = PersistenceExternalError.class,
-                 cond = @Expression("true"))
       }
   )
-  public Hibernate3PagingList(Query query, Query countQuery, int pageSize) throws PersistenceExternalError {
+  public Hibernate3PagingList(Query query, Query countQuery, int pageSize) {
     super(pageSize, retrieveRecordCount(countQuery));
     assert query != null;
     assert countQuery != null;
@@ -103,13 +97,9 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
           @Expression("^criteria == _criteria"),
           @Expression("^countQuery == _countQuery"),
           @Expression("^pageSize == _pageSize")
-      },
-      exc = {
-          @Throw(type = PersistenceExternalError.class,
-                 cond = @Expression("true"))
       }
   )
-  public Hibernate3PagingList(Criteria criteria, Query countQuery, int pageSize) throws PersistenceExternalError {
+  public Hibernate3PagingList(Criteria criteria, Query countQuery, int pageSize) {
     super(pageSize, retrieveRecordCount(countQuery));
     assert criteria != null;
     assert countQuery != null;
@@ -163,7 +153,7 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
     return $countQuery;
   }
 
-  private static int retrieveRecordCount(Query countQuery) throws PersistenceExternalError {
+  private static int retrieveRecordCount(Query countQuery) {
     try {
       LOG.debug("retrieving record count");
       int result = ((Integer)countQuery.uniqueResult()).intValue();
@@ -171,12 +161,12 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
       return result;
     }
     catch (HibernateException e) {
-      throw new PersistenceExternalError("cannot retrieve count", e);
+      throw new ExternalError("cannot retrieve count", e);
     }
   }
 
   @Override
-  protected final int retrieveRecordCount() throws PersistenceExternalError {
+  protected final int retrieveRecordCount() {
       return retrieveRecordCount(getCountQuery());
   }
 
@@ -190,8 +180,7 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
 
 
   @Override
-  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage)
-      throws PersistenceExternalError {
+  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) {
     try {
       List<_PersistentBean_> page = null;
       if ($criteria != null) {
@@ -207,7 +196,7 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
       return page;
     }
     catch (HibernateException hExc) {
-      throw new PersistenceExternalError("cannot retrieve page", hExc);
+      throw new ExternalError("cannot retrieve page", hExc);
     }
   }
 
@@ -221,7 +210,7 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
       return page;
     }
     catch (ClassCastException ccExc) {
-      throw new PersistenceExternalError("retrieved list was not a list of PersistentBean objects", ccExc);
+      throw new ExternalError("retrieved list was not a list of PersistentBean objects", ccExc);
     }
   }
 
@@ -235,7 +224,7 @@ public final class Hibernate3PagingList<_Id_ extends Serializable, _PersistentBe
       return page;
     }
     catch (ClassCastException ccExc) {
-      throw new PersistenceExternalError("retrieved list was not a list of PersistentBean objets", ccExc);
+      throw new ExternalError("retrieved list was not a list of PersistentBean objets", ccExc);
     }
   }
 
