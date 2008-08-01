@@ -181,7 +181,7 @@ public final class Hibernate2PagingList<_Id_ extends Serializable, _PersistentBe
 
 
   @Override
-  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) throws ExternalError {
+  protected final List<_PersistentBean_> retrievePage(int retrieveSize, int startOfPage) {
     try {
       List<_PersistentBean_> page = null;
       if ($criteria != null) {
