@@ -51,7 +51,7 @@ import org.ppwcode.vernacular.exception_II.ProgrammingErrors;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.AsyncCrudDao;
-import org.ppwcode.vernacular.semantics_I.exception.PropertyException;
+import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
 import org.toryt.annotations_I.MethodContract;

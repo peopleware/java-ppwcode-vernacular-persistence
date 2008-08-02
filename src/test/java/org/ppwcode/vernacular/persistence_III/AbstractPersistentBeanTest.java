@@ -30,9 +30,9 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ppwcode.vernacular.semantics_I.bean.AbstractRousseauBeanTest;
-import org.ppwcode.vernacular.semantics_I.exception.CompoundPropertyException;
-import org.ppwcode.vernacular.semantics_I.exception.PropertyException;
+import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBeanTest;
+import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
+import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
 
 public class AbstractPersistentBeanTest {

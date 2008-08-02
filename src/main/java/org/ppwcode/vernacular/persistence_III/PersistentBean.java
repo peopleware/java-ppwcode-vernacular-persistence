@@ -29,7 +29,7 @@ import javax.persistence.Version;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.semantics_I.bean.RousseauBean;
+import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;

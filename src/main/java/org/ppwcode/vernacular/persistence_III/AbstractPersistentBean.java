@@ -23,7 +23,7 @@ import java.io.Serializable;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.semantics_I.bean.AbstractRousseauBean;
+import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 
 
 /**
