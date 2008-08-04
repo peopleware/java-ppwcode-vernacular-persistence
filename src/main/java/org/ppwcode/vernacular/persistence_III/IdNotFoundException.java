@@ -56,18 +56,52 @@ public class IdNotFoundException extends PersistenceException {
     post = {
       @Expression("persistentBeanType == _persistentBeanType"),
       @Expression("id == _id"),
-      @Expression("message == _message"),
+      @Expression("message == (_messageKey == null || _messageKey == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
       @Expression("cause == _cause")
     }
   )
   public <_Id_ extends Serializable>
   IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType,
-                      _Id_ id, String message, Throwable cause) {
-    super(message, cause);
+                      _Id_ id, String messageKey, Throwable cause) {
+    super(messageKey, cause);
     assert persistentBeanType != null;
     assert id != null;
     $persistentBeanType = persistentBeanType;
     $id = id;
+  }
+
+  @MethodContract(
+    pre = {
+      @Expression("persistentBeanType != null"),
+      @Expression("_id != null")
+    },
+    post = {
+      @Expression("persistentBeanType == _persistentBeanType"),
+      @Expression("id == _id"),
+      @Expression("message == DEFAULT_MESSAGE_KEY"),
+      @Expression("cause == null")
+    }
+  )
+  public <_Id_ extends Serializable>
+  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType, _Id_ id) {
+    this(persistentBeanType, id, null, null);
+  }
+
+  @MethodContract(
+    pre = {
+      @Expression("persistentBeanType != null"),
+      @Expression("_id != null")
+    },
+    post = {
+      @Expression("persistentBeanType == _persistentBeanType"),
+      @Expression("id == _id"),
+      @Expression("message == DEFAULT_MESSAGE_KEY"),
+      @Expression("cause == _cause")
+    }
+  )
+  public <_Id_ extends Serializable>
+  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType, _Id_ id, Throwable cause) {
+    this(persistentBeanType, id, null, cause);
   }
 
   /*</construction;>*/
