@@ -24,6 +24,9 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
+import org.toryt.annotations_I.Basic;
+import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.MethodContract;
 
 
 /**
@@ -38,9 +41,8 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractPersistentBean<_Id_ extends Serializable, _Version_ extends Serializable>
-    extends AbstractRousseauBean
-    implements PersistentBean<_Id_, _Version_>, Serializable {
+public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
+    implements PersistentBean<_Id_>, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
@@ -49,11 +51,8 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable, _Version
     return $id;
   }
 
-  public final boolean hasSameId(final PersistentBean<_Id_, _Version_> other) {
-    return (other != null)
-    && ((getId() == null)
-        ? other.getId() == null
-        : getId().equals(other.getId()));
+  public final boolean hasSameId(final PersistentBean<_Id_> other) {
+    return (other != null)  && ((getId() == null) ? other.getId() == null : getId().equals(other.getId()));
   }
 
   public final void setId(final _Id_ id) {
@@ -69,19 +68,27 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable, _Version
   /*<property name="version">*/
   //------------------------------------------------------------------
 
-  public final _Version_ getVersion() {
+  @Basic(init = @Expression("Long.MIN_VALUE"))
+  public final long getPersistenceVersion() {
     return $version;
   }
 
-  public final void setVersion(final _Version_ version) {
+  /**
+   * @param     version
+   *            The new value
+   *
+   * @note      This method is only available for testing purposes, and therefor is
+   *            package accessible.
+   */
+  @MethodContract(
+    post = @Expression("persistenceVersion == _version")
+  )
+  final void setPersistenceVersion(final long version) {
     $version = version;
   }
 
-  private _Version_ $version;
+  private long $version = Long.MIN_VALUE;
 
   /*</property>*/
-
-
-
 
 }

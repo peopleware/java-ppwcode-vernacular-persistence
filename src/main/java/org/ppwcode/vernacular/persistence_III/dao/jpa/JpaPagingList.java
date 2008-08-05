@@ -42,7 +42,7 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>>
+public final class JpaPagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
     extends PagingList<_Id_, _PersistentBean_> {
 
   private static final Log LOG = LogFactory.getLog(JpaPagingList.class);

@@ -54,13 +54,13 @@ public class MySqlExceptionHandler implements SqlExceptionHandler {
    *   "Duplicate key or integrity constraint violation,  message from server: \"Duplicate entry"
    * or
    *   "Duplicate entry"
-   * return a {@link DuplicateKeyException}.
+   * return a {@link MySqlException}.
    *
    * If the message of the given sql exception contains the string
    * "Duplicate key or integrity constraint violation,  "
    *             + "message from server: \"Cannot delete or update a "
    *             + "parent row: a foreign key constraint fails\""
-   * return a {@link ConstraintException}.
+   * return a {@link MySqlException}.
    *
    * Never return null.
    *

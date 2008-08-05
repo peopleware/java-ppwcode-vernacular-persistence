@@ -43,13 +43,13 @@ import org.toryt.annotations_I.Throw;
  *   {@link #updatePersistentBean(PersistentBean)} and
  *   {@link #deletePersistentBean(PersistentBean)} always in the context of a transaction. A transaction
  *   is started by {@link #startTransaction()}, and completes with, either a call to
- *   {@link #commitTransaction(PersistentBean)} or {@link #cancelTransaction()}. With this, we
+ *   {@link #commitTransaction()} or {@link #cancelTransaction()}. With this, we
  *   completely dismiss the notion of <dfn>auto-commit</dfn>. In practice, we experience that
  *   an auto-commit feature often leads to confusion for developers, as it is unclear whether
  *   some code is executing in auto-commit mode or not.</p>
  * <p>{@link #retrievePersistentBean(Class, Serializable)} can be called outside a transaction. Objects that
  *   are deleted have their {@link PersistentBean#getId()} set to null on
- *   {@link #commitTransaction(PersistentBean)}.</p>
+ *   {@link #commitTransaction()}.</p>
  * <p>Before a {@link PersistentBean} is written to the persistent storage (see
  *   {@link #createPersistentBean(PersistentBean)} and {@link #updatePersistentBean(PersistentBean)}, it is
  *   {@link RousseauBean#normalize() normalized} and checked for {@link RousseauBean#isCivilized() civility}.</p>
@@ -72,7 +72,7 @@ public interface AsyncCrudDao extends Dao {
 
   /**
    * <p>Start a transaction. The transaction will be closed in
-   *   {@link #commitTransaction(PersistentBean)}
+   *   {@link #commitTransaction()}
    *   or {@link #cancelTransaction()}.</p>
    * <p>This instance should keep track of the transaction state
    *   until it is requested to close the transaction.</p>
@@ -181,7 +181,7 @@ public interface AsyncCrudDao extends Dao {
                                                               "signals a semantic problem"))
     }
   )
-  void createPersistentBean(final PersistentBean<?, ?> pb) throws PropertyException, InternalException;
+  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException;
 
   /**
    * <p>Return a persistent bean instance that represents the data of the record with key <code>id</code> of type
@@ -218,7 +218,7 @@ public interface AsyncCrudDao extends Dao {
               })
     }
   )
-  <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>>
+  <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
       throws IdNotFoundException;
 
@@ -248,7 +248,7 @@ public interface AsyncCrudDao extends Dao {
                                 "implementer is to throw an exception when this occurs.")
     }
   )
-  <_PersistentBean_ extends PersistentBean<?, ?>>
+  <_PersistentBean_ extends PersistentBean<?>>
   Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses);
 
   /**
@@ -309,13 +309,13 @@ public interface AsyncCrudDao extends Dao {
              })
     }
   )
-  void updatePersistentBean(final PersistentBean<?, ?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException;
+  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException;
 
   /**
    * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
    *   storage, and remove that record from persistent storage.</p>
    * <p>The state of <code>pb</code> remains unchanged, including the <code>id</code> (the <code>id</code> cannot change during
-   *   a transaction). The <code>id</code> will be set to <code>null</code> on {@link #commitTransaction(PersistentBean)}. Also, there
+   *   a transaction). The <code>id</code> will be set to <code>null</code> on {@link #commitTransaction()}. Also, there
    *   is no normalization.</p>
    *
    * @idea (jand) security exceptions, unmodifiable error
@@ -355,7 +355,7 @@ public interface AsyncCrudDao extends Dao {
              })
     }
   )
-  void deletePersistentBean(final PersistentBean<?, ?> pb) throws InternalException, IdNotFoundException;
+  void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, IdNotFoundException;
 
   /**
    * Returns true when the given persistent bean has been created (i.e.,
@@ -363,14 +363,14 @@ public interface AsyncCrudDao extends Dao {
    * during the current uncommitted transaction; returns false otherwise.
    */
   @Basic(init = @Expression("false"))
-  boolean isCreated(final PersistentBean<?, ?> pb);
+  boolean isCreated(final PersistentBean<?> pb);
 
   /**
    * Returns true when the given persistent bean has been deleted during the current
    * uncommitted transaction; returns false otherwise.
    */
   @Basic(init = @Expression("false"))
-  boolean isDeleted(final PersistentBean<?, ?> pb);
+  boolean isDeleted(final PersistentBean<?> pb);
 
 }
 

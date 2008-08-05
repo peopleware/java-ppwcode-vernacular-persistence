@@ -38,10 +38,8 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
  * DAO instances are almost always stateful, because of the underlying
  * persistence technology.
  *
- * Implementations should be JavaBeans,
- * with a default constructor. Further dependencies should be filled
- * out using setters, and DAO methods should be allowed to throw a
- * {@link org.ppwcode.vernacular.persistence_III.PersistenceConfigurationError} if the dependencies
+ * Implementations should be JavaBeans, with a default constructor. Further dependencies should be filled
+ * out using setters, and DAO methods should be allowed to consider it a programming error if the dependencies
  * are not fulfilled when the DAO method is called.
  *
  * Subtypes may depend on the fact that the objects in persistent storage are
@@ -52,11 +50,11 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
  * Sessions are {@link java.io.Serializable}, they cannot be serialized while they are connected.
  * So, we state as part of the contract that Dao's are <strong>not
  * {@link java.io.Serializable}</strong>. Note that this poses a particular problem when
- * Dao's are used in webapplications, where all objects in sessions scope must
+ * Dao's are used in web applications, where all objects in sessions scope must
  * be {@link java.io.Serializable}.
  *
  * @author Jan Dockx
- * @author Peopleware n.v.
+ * @author PeopleWare n.v.
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)

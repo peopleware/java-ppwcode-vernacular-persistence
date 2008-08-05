@@ -55,7 +55,7 @@ import org.toryt.annotations_I.MethodContract;
  *   they are often used also as Data Transfer Objects in multi-tier
  *   applications.</p>
  * <p>Persistency should always be implemented with versioning (optimistic
- *   locking). For that, the property {@link #getVersion() version}
+ *   locking). For that, the property {@link #getPersistenceVersion() version}
  *   is added to this interface. There are several different possible types of versioning,
  *   using an integer, date, or event a GUID. For that reason, the type of the property
  *   is generic.</p>
@@ -70,7 +70,7 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Serializable> extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
@@ -90,7 +90,7 @@ public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Ser
   @MethodContract(
                   post = @Expression("other != null && id == other.id")
   )
-  boolean hasSameId(final PersistentBean<_Id_, _Version_> other);
+  boolean hasSameId(final PersistentBean<_Id_> other);
 
   /**
    * @param     id
@@ -116,21 +116,7 @@ public interface PersistentBean<_Id_ extends Serializable, _Version_ extends Ser
   @Version
   @Column(name="version")
   @Basic(init = @Expression("null"))
-  _Version_ getVersion();
-
-  /**
-   * @param     version
-   *            The new value
-   *
-   * @idea This method should not appear in this interface. Once a version is set,
-   *       it should always remain the same (final, immutable property).
-   *       Persistence engines need a way to set the property, but that is it.
-   *       The question is whether it is possible to do testing than?
-   */
-  @MethodContract(
-    post = @Expression("version == _version")
-  )
-  void setVersion(final _Version_ version);
+  long getPersistenceVersion();
 
   /*</property>*/
 

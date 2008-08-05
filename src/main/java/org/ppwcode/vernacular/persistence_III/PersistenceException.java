@@ -48,7 +48,7 @@ public class PersistenceException extends InternalException {
    *            The string that identifies a localized end user feedback message about the
    *            non-nominal behavior.
    * @param     cause
-   *            The exception that occured, causing this exception to be thrown, if that is
+   *            The exception that occurred, causing this exception to be thrown, if that is
    *            the case.
    */
   @MethodContract(
@@ -66,9 +66,6 @@ public class PersistenceException extends InternalException {
    * @param     messageKey
    *            The string that identifies a localized end user feedback message about the
    *            non-nominal behavior.
-   * @param     cause
-   *            The exception that occured, causing this exception to be thrown, if that is
-   *            the case.
    */
   @MethodContract(
     pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),

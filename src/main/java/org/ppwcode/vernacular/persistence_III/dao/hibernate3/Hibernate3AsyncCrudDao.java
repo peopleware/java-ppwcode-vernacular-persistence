@@ -134,8 +134,8 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
       $tx.commit();
       $tx = null;
       resetId($deleted);
-      $deleted = new HashSet<PersistentBean<?, ?>>();
-      $created = new HashSet<PersistentBean<?, ?>>();
+      $deleted = new HashSet<PersistentBean<?>>();
+      $created = new HashSet<PersistentBean<?>>();
       setInTransaction(false);
       LOG.debug("Commit completed.");
     }
@@ -152,11 +152,11 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
    */
   @MethodContract(
     pre = @Expression("persistentBeans != null"),
-    post = @Expression("for (PersistentBean<?, ?> persistentBean : persistentBeans) {persistentBean.id == null}")
+    post = @Expression("for (PersistentBean<?> persistentBean : persistentBeans) {persistentBean.id == null}")
   )
-  private void resetId(Set<PersistentBean<?, ?>> persistentBeans) {
+  private void resetId(Set<PersistentBean<?>> persistentBeans) {
     assert persistentBeans != null;
-    for (PersistentBean<?, ?> persistentBean : persistentBeans) {
+    for (PersistentBean<?> persistentBean : persistentBeans) {
       persistentBean.setId(null);
     }
   }
@@ -164,9 +164,6 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
   /**
    * For {@link #isCreated(PersistentBean) created} persistent beans, the
    * {@link PersistentBean#getId()} is reset to <code>null</code> (part of rollback).
-   *
-   * @throws    TechnicalException
-   *            isInTransaction();
    */
   public final void cancelTransaction() {
     LOG.debug("Cancelling transaction.");
@@ -183,8 +180,8 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     finally {
       $tx = null;
       setInTransaction(false);
-      $deleted = new HashSet<PersistentBean<?, ?>>();
-      $created = new HashSet<PersistentBean<?, ?>>();
+      $deleted = new HashSet<PersistentBean<?>>();
+      $created = new HashSet<PersistentBean<?>>();
     }
   }
 
@@ -192,7 +189,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public final void createPersistentBean(final PersistentBean<?, ?> pb) throws PropertyException, InternalException {
+  public final void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
     LOG.debug("Creating new record for bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
@@ -200,11 +197,11 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       LOG.trace("Gather all beans to be created, taking into account cascade");
-      List<PersistentBean<?, ?>> allToBeCreated = relatedFreshPersistentBeans(pb);
+      List<PersistentBean<?>> allToBeCreated = relatedFreshPersistentBeans(pb);
       // we need to normalize and check all these beans
-      Iterator<PersistentBean<?, ?>> iter = allToBeCreated.iterator();
+      Iterator<PersistentBean<?>> iter = allToBeCreated.iterator();
       while (iter.hasNext()) {
-        PersistentBean<?, ?> current = iter.next();
+        PersistentBean<?> current = iter.next();
         LOG.trace("Normalizing  \"" + current + "\" and checking civility ...");
         current.normalize();
         current.checkCivility(); // PropertyException
@@ -219,7 +216,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
         LOG.debug("Creating succesfull.");
         iter = allToBeCreated.iterator();
         while (iter.hasNext()) {
-          PersistentBean<?, ?> current = iter.next();
+          PersistentBean<?> current = iter.next();
           LOG.debug("    generated " + current.getId() + " as id for " + current);
         }
       }
@@ -244,18 +241,18 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     },
     post = {}
   )
-  private List<PersistentBean<?, ?>> relatedFreshPersistentBeans(PersistentBean<?, ?> pb) {
+  private List<PersistentBean<?>> relatedFreshPersistentBeans(PersistentBean<?> pb) {
     assert pb != null;
     assert pb.getId() == null;
-    List<PersistentBean<?, ?>> result = new LinkedList<PersistentBean<?, ?>>();
+    List<PersistentBean<?>> result = new LinkedList<PersistentBean<?>>();
     result.add(pb);
     int current = 0;
     while (current < result.size()) {
-      PersistentBean<?, ?> currentPb = result.get(current);
+      PersistentBean<?> currentPb = result.get(current);
       current++;
       PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(currentPb);
       for (int i = 0; i < pds.length; i++) {
-        PersistentBean<?, ?> related = relatedPeristentBean(currentPb, pds[i]);
+        PersistentBean<?> related = relatedPeristentBean(currentPb, pds[i]);
         if ((related != null) && (related.getId() == null) &&  (! result.contains(related))) {
             /* if it is a fresh bean and it is the first time that we encounter it,
              * it is to be part of the result;
@@ -282,16 +279,16 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     },
     post = {}
   )
-  private PersistentBean<?, ?> relatedPeristentBean(PersistentBean<?, ?> pb, PropertyDescriptor pd) {
+  private PersistentBean<?> relatedPeristentBean(PersistentBean<?> pb, PropertyDescriptor pd) {
     assert pb != null;
     assert pd != null;
-    PersistentBean<?, ?> result = null;
+    PersistentBean<?> result = null;
     if (PersistentBean.class.isAssignableFrom(pd.getPropertyType())) {
       Method rm = pd.getReadMethod();
       if (rm != null) {
         // found a property that returns a related bean; get it
         try {
-          result = (PersistentBean<?, ?>)rm.invoke(pb);
+          result = (PersistentBean<?>)rm.invoke(pb);
         }
         catch (IllegalArgumentException iaExc) {
           assert false : "Should not happen, since there are no arguments, and the implicit argument is "
@@ -317,7 +314,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>>
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   _PersistentBean_ retrievePersistentBean(final Class<_PersistentBean_> persistentBeanType, final _Id_ id)
       throws IdNotFoundException {
     LOG.debug("Retrieving record with id = " + id + " ...");
@@ -327,7 +324,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     _PersistentBean_ result = null;
     try {
       @SuppressWarnings("unchecked")
-      PersistentBean<?, ?> candidate = (PersistentBean)getSession().get(persistentBeanType, id);
+      PersistentBean<?> candidate = (PersistentBean)getSession().get(persistentBeanType, id);
       if (candidate == null) {
         LOG.debug("Record not found");
         throw new IdNotFoundException(persistentBeanType, id, null, null);
@@ -366,7 +363,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public <_PersistentBean_ extends PersistentBean<?, ?>>
+  public <_PersistentBean_ extends PersistentBean<?>>
   Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses) {
     LOG.debug("Retrieving all records of type \"" + persistentBeanType + "\" ...");
     dependency(getSession(), "session");
@@ -407,7 +404,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public final void updatePersistentBean(final PersistentBean<?, ?> pb) throws PropertyException, InternalException {
+  public final void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Updating bean \"" + pb + "\" ...");
     }
@@ -445,7 +442,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public void deletePersistentBean(final PersistentBean<?, ?> pb) throws InternalException {
+  public void deletePersistentBean(final PersistentBean<?> pb) throws InternalException {
     LOG.debug("Deleting persistent bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
@@ -478,7 +475,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
    * @param  pb
    * @basic
    */
-  public boolean isCreated(final PersistentBean<?, ?> pb) {
+  public boolean isCreated(final PersistentBean<?> pb) {
     return $created.contains(pb);
   }
 
@@ -486,7 +483,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     @Expression("$created != null"),
     @Expression("! $created.contains(null)")
   })
-  private Set<PersistentBean<?, ?>> $created = new HashSet<PersistentBean<?, ?>>();
+  private Set<PersistentBean<?>> $created = new HashSet<PersistentBean<?>>();
 
   /*</property>*/
 
@@ -495,7 +492,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
   /*<property name="deleted">*/
   //------------------------------------------------------------------
 
-  public boolean isDeleted(final PersistentBean<?, ?> pb) {
+  public boolean isDeleted(final PersistentBean<?> pb) {
     return $deleted.contains(pb);
   }
 
@@ -503,7 +500,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     @Expression("$deleted != null"),
     @Expression("! $deleted.contains(null)")
   })
-  private Set<PersistentBean<?, ?>> $deleted = new HashSet<PersistentBean<?, ?>>();
+  private Set<PersistentBean<?>> $deleted = new HashSet<PersistentBean<?>>();
 
   /*</property>*/
 

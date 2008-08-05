@@ -140,7 +140,7 @@ public abstract class AbstractHibernate2Test {
     try {
       $session.save(object);
       if (object instanceof PersistentBean) {
-        return ((PersistentBean<?, ?>)object).getId();
+        return ((PersistentBean<?>)object).getId();
       }
       else {
         return null;
@@ -201,7 +201,7 @@ public abstract class AbstractHibernate2Test {
     return DEFAULT_PAGE_SIZE;
   }
 
-  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_, ?>> Hibernate2PagingList<_Id_, _PersistentBean_>
+  public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>> Hibernate2PagingList<_Id_, _PersistentBean_>
   retrievePages(final Class<_PersistentBean_> persistentObjectType) {
     try {
       Query cq = $session.createQuery("select count(*) from " + persistentObjectType.getName());

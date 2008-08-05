@@ -32,7 +32,7 @@ import org.toryt.annotations_I.MethodContract;
 
 /**
  * <p>This exception signals failure to locate a object with the given
- *   {@link PersistenceException#getId() id}. Since we cannot use
+ *   {@link #getId() id}. Since we cannot use
  *   generics in exceptions, the type of the id is just {@link Object}.</p>
  *
  * @author    Jan Dockx
@@ -61,7 +61,7 @@ public class IdNotFoundException extends PersistenceException {
     }
   )
   public <_Id_ extends Serializable>
-  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType,
+  IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType,
                       _Id_ id, String messageKey, Throwable cause) {
     super(messageKey, cause);
     assert persistentBeanType != null;
@@ -83,7 +83,7 @@ public class IdNotFoundException extends PersistenceException {
     }
   )
   public <_Id_ extends Serializable>
-  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType, _Id_ id) {
+  IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id) {
     this(persistentBeanType, id, null, null);
   }
 
@@ -100,7 +100,7 @@ public class IdNotFoundException extends PersistenceException {
     }
   )
   public <_Id_ extends Serializable>
-  IdNotFoundException(Class<? extends PersistentBean<_Id_, ?>> persistentBeanType, _Id_ id, Throwable cause) {
+  IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id, Throwable cause) {
     this(persistentBeanType, id, null, cause);
   }
 
@@ -111,12 +111,12 @@ public class IdNotFoundException extends PersistenceException {
   //------------------------------------------------------------------
 
   @Basic(invars = @Expression("persistentBeanType != null"))
-  public final Class<? extends PersistentBean<?, ?>> getPersistentBeanType() {
+  public final Class<? extends PersistentBean<?>> getPersistentBeanType() {
     return $persistentBeanType;
   }
 
   @Invars(@Expression("$persistentBeanType != null"))
-  private final Class<? extends PersistentBean<?, ?>> $persistentBeanType;
+  private final Class<? extends PersistentBean<?>> $persistentBeanType;
 
   /*</property>*/
 

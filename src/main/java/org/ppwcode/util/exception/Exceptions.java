@@ -58,11 +58,9 @@ public class Exceptions {
 
 
   /**
-   * Look in the {@link Throwable#getCause() cause},
-   * {@link JspException#getRootCause() "root cause"} or
-   * {@link ELException#getRootCause() "root cause"} for an exception
-   * of type <code>exceptionType</code>. <code>null</code> is returned
-   * if no such cause is found.
+   * Look in the {@link Throwable#getCause() cause}, or root cause ({@code JspException.getRootCause()} and
+   * {@code ELException.getRootCause()}) for an exception of type <code>exceptionType</code>. <code>null</code>
+   * is returned if no such cause is found.
    *
    * @todo This method makes this library dependent on the JEE JSP API.
    *       This should be circumvented: this dependency should be optional.
