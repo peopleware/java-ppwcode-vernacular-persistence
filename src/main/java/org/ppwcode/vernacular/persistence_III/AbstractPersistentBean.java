@@ -42,7 +42,7 @@ import org.toryt.annotations_I.MethodContract;
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
-    implements PersistentBean<_Id_>, Serializable {
+    implements PersistentBean<_Id_> {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
