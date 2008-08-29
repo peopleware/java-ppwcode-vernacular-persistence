@@ -116,7 +116,7 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
   @Version
   @Column(name="version")
   @Basic(init = @Expression("null"))
-  long getPersistenceVersion();
+  Long getPersistenceVersion();
 
   /*</property>*/
 
