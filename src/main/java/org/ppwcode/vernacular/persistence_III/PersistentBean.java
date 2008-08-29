@@ -21,11 +21,6 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Version;
-
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -75,9 +70,6 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  @Id
-  @GeneratedValue
-  @Column(name="id")
   @Basic(init = @Expression("null"))
   _Id_ getId();
 
@@ -113,8 +105,6 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
   /*<property name="persistence version">*/
   //------------------------------------------------------------------
 
-  @Version
-  @Column(name="version")
   @Basic(init = @Expression("null"))
   Long getPersistenceVersion();
 
