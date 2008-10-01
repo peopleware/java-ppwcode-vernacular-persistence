@@ -19,9 +19,10 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.dependency;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.pre;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrors.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -47,7 +48,6 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.ProgrammingErrors;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.AsyncCrudDao;
@@ -346,7 +346,7 @@ public class Hibernate2AsyncCrudDao extends AbstractHibernate2Dao implements Asy
       result = persistentBean;
     }
     catch (ClassCastException ccExc) {
-      ProgrammingErrors.unexpectedException(ccExc, "retrieved object was not a PersistentBean");
+      unexpectedException(ccExc, "retrieved object was not a PersistentBean");
     }
     catch (HibernateException hExc) {
       // this cannot be that we did not find an object with that id, since we use get

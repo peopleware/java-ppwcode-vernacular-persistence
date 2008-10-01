@@ -149,14 +149,14 @@ public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _
     }
     assertNotNull(pb);
 //    validateTypeInvariants(pb);
-    boolean civilized = pb.isCivilized();
+    boolean civilized = pb.civilized();
     /* data in DB must not really be civilized. What we STORE must be,
      * but what we get doesn't have to be (as long as type invariants
      * are ok.
      * But it is something weird: WARN.
      */
     if (LOG.isWarnEnabled() && (!civilized)) {
-      CompoundPropertyException cpe = pb.getWildExceptions();
+      CompoundPropertyException cpe = pb.wildExceptions();
       LOG.warn("Not civilized: " + pb);
       for (PropertyException pe : cpe.getAllElementExceptions()) {
         LOG.warn("    " + pe.getLocalizedMessage());

@@ -102,8 +102,8 @@ public class AbstractPersistentBeanTest {
     }
 
     @Override
-    public CompoundPropertyException getWildExceptions() {
-      CompoundPropertyException cpe = super.getWildExceptions();
+    public CompoundPropertyException wildExceptions() {
+      CompoundPropertyException cpe = super.wildExceptions();
       cpe.addElementException(new PropertyException(this, "property1", null, null));
       cpe.addElementException(new PropertyException(this, "property1", null, null));
       cpe.addElementException(new PropertyException(this, "property2", null, null));
@@ -258,7 +258,7 @@ public class AbstractPersistentBeanTest {
 
   public static CompoundPropertyException testGetWildExceptions(AbstractPersistentBean<?> subject) {
     // execute
-    CompoundPropertyException result = subject.getWildExceptions();
+    CompoundPropertyException result = subject.wildExceptions();
     // validate
     PersistentBeanContract.contractGetWildExceptions(subject, result);
     assertInvariants(subject);
@@ -282,7 +282,7 @@ public class AbstractPersistentBeanTest {
 
   public static void testIsCivilized(AbstractPersistentBean<?> subject) {
     // execute
-    boolean result = subject.isCivilized();
+    boolean result = subject.civilized();
     // validate
     PersistentBeanContract.contractIsCivilized(subject, result);
     assertInvariants(subject);
@@ -296,7 +296,7 @@ public class AbstractPersistentBeanTest {
   }
 
   public static void testCheckCivility(AbstractPersistentBean<?> subject) {
-    boolean OLDcivilized = subject.isCivilized();
+    boolean OLDcivilized = subject.civilized();
     try {
       subject.checkCivility();
       PersistentBeanContract.contractPostCheckCivility(OLDcivilized, subject);
