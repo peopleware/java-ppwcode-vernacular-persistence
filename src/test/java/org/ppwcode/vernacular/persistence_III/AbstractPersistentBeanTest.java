@@ -19,6 +19,7 @@ package org.ppwcode.vernacular.persistence_III;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -217,16 +218,16 @@ public class AbstractPersistentBeanTest {
 
   public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?> subject, int nrOfProperties) {
     Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringA(subject, nrOfProperties);
-    assertTrue(result.contains("wildExceptions"));
-    assertTrue(result.contains("civilized"));
+    assertFalse(result.contains("wildExceptions"));
+    assertFalse(result.contains("civilized"));
     assertInvariants(subject);
     return result;
   }
 
   public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?> subject, int nrOfProperties) {
     Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringB(subject, nrOfProperties);
-    assertTrue(result.contains("wildExceptions"));
-    assertTrue(result.contains("civilized"));
+    assertFalse(result.contains("wildExceptions"));
+    assertFalse(result.contains("civilized"));
     assertInvariants(subject);
     return result;
   }
@@ -234,13 +235,13 @@ public class AbstractPersistentBeanTest {
   @Test
   public void testPropertyNamesForToString2() {
     AbstractPersistentBean<?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
-    testPropertyNamesForToStringA(subject, 4);
+    testPropertyNamesForToStringA(subject, 2);
   }
 
   @Test
   public void testPropertyNamesForToString1() {
     for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject, 6);
+      testPropertyNamesForToStringB(subject, 4);
     }
   }
 
