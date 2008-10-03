@@ -22,6 +22,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.toryt.annotations_I.Basic;
 
 /**
  * <p>Data Access Object. This interface is mainly used for documentation purposes, to flag a type as a
@@ -58,6 +59,7 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
          date     = "$Date$")
 public interface Dao {
 
+  @Basic
   boolean isOperational();
 
 }

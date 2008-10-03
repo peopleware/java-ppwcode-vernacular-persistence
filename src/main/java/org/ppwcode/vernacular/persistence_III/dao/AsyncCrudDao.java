@@ -52,7 +52,7 @@ import org.toryt.annotations_I.Throw;
  *   {@link #commitTransaction()}.</p>
  * <p>Before a {@link PersistentBean} is written to the persistent storage (see
  *   {@link #createPersistentBean(PersistentBean)} and {@link #updatePersistentBean(PersistentBean)}, it is
- *   {@link RousseauBean#normalize() normalized} and checked for {@link RousseauBean#isCivilized() civility}.</p>
+ *   {@link RousseauBean#normalize() normalized} and checked for {@link RousseauBean#civilized() civility}.</p>
  * <p>We understand that the limited functionality of this DAO cannot cope with the complete needs of
  *   persistence access. There is e.g., no notion of locking, versioning, etcetera. However, we do know
  *   from experience that this functionality covers a very large part of the needs, and that there are
