@@ -43,7 +43,8 @@ import org.toryt.annotations_I.MethodContract;
  *
  */
 @MappedSuperclass
-public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractRousseauBean implements PersistentBean<Integer> {
+public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractRousseauBean
+    implements VersionedPersistentBean<Integer, Integer> {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
@@ -92,7 +93,7 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
   @MethodContract(
     post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  final void setPersistenceVersion(final Integer persistenceVersion) {
+  public final void setPersistenceVersion(final Integer persistenceVersion) {
     $persistenceVersion = persistenceVersion;
   }
 
