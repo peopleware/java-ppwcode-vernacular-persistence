@@ -24,9 +24,6 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
 
 
 /**
@@ -60,37 +57,6 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
   }
 
   private _Id_ $id;
-
-  /*</property>*/
-
-
-
-  /*<property name="version">*/
-  //------------------------------------------------------------------
-
-  @Basic(init = @Expression("Long.MIN_VALUE"))
-  public final Long getPersistenceVersion() {
-    return $version;
-  }
-
-  /**
-   * @param     version
-   *            The new value
-   *
-   * @note      This method is only available for testing purposes, and therefor is
-   *            package accessible.
-   */
-  @MethodContract(
-    post = @Expression("persistenceVersion == _version")
-  )
-  final void setPersistenceVersion(final Long version) {
-    $version = version;
-  }
-
-//  @Version
-//  @Column(name="version")
-  private Long $version;
-  //private long $version = Long.MIN_VALUE;
 
   /*</property>*/
 
