@@ -18,12 +18,16 @@ package org.ppwcode.vernacular.persistence_III.junit.hibernate3;
 
 
 import static org.junit.Assert.assertNotNull;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.PagingList;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
@@ -45,6 +49,10 @@ import org.toryt.annotations_I.MethodContract;
  * @author  Tom Mahieu
  * @author  Peopleware n.v.
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class AbstractHibernate3PersistentBeanTest<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
     extends AbstractHibernate3Test {
 

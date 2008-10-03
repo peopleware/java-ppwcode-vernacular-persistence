@@ -42,12 +42,9 @@ import org.toryt.annotations_I.Throw;
 
 
 /**
- * A list of lists, that contains the result of a query
- * using paging. Each page, except for the last,
- * has size {@link #getPageSize()}.
- * When the virtual resultset on the DB changes during iteration,
- * we throw a {@link ConcurrentModificationException} when the next
- * page is requested.
+ * A list of lists, that contains the result of a query using paging. Each page, except for the last,
+ * has size {@link #getPageSize()}. When the virtual resultset on the DB changes during iteration,
+ * we throw a {@link ConcurrentModificationException} when the next page is requested.
  *
  * @author Jan Dockx
  * @author Ruben Vandeginste
@@ -58,7 +55,6 @@ import org.toryt.annotations_I.Throw;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-
 public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   extends AbstractSequentialList<List<_PersistentBean_>>{
 

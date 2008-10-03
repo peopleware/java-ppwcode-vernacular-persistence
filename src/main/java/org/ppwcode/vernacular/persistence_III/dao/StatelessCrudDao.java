@@ -17,11 +17,16 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.dao;
 
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+
 import java.io.Serializable;
 import java.util.Set;
 
 import javax.ejb.Remote;
 
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
@@ -60,6 +65,10 @@ import org.toryt.annotations_I.Throw;
  *
  * @mudo contracts
  */
+@Copyright("2004 - $Date: 2008-08-29 10:41:30 +0200 (Fri, 29 Aug 2008) $, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision: 2342 $",
+         date     = "$Date: 2008-08-29 10:41:30 +0200 (Fri, 29 Aug 2008) $")
 @Remote
 public interface StatelessCrudDao extends Dao {
 
