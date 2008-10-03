@@ -62,8 +62,6 @@ import org.toryt.annotations_I.Throw;
  * <p>We understand that the limited functionality of this DAO cannot cope with the complete needs of persistence access.
  *   There is e.g., no notion of locking, e.g.. However, we do know from experience that this functionality covers a very
  *   large part of the needs, and that there are many applications that need no other functionality than this.</p>
- *
- * @mudo contracts
  */
 @Copyright("2004 - $Date: 2008-08-29 10:41:30 +0200 (Fri, 29 Aug 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -131,12 +129,23 @@ public interface StatelessCrudDao extends Dao {
   Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses);
 
   /**
-   * Create or update. Create id ID is null, update if not.
+   * Create or update the object graph reachable from {@code pb}. Object with a {@link PersistentBean#getPersistenceId()} {@code null}
+   * will be created, objects with an effective {@link PersistentBean#getPersistenceId()} will be updated. Note that not only {@code pb}
+   * is created or updated, but all beans in the object graph that is reachable from {@code pb}, depending on the cascade settings.
+   * This method is an atomic transaction.
+   *
+   * @mudo specific exception for rollback, or InternalException
+   * @mudo contract
    */
   public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ mergePersistentBean(_PB_ pb) throws InternalException;
 
   /**
+   * Delete the bean {@code pb}, and associated beans, depending on cascade settings.
    * The entire bean is returned, for reasons of consistency with the other methods.
+   * This method is an atomic transaction.
+   *
+   * @mudo specific exception for rollback, or InternalException
+   * @mudo contract
    */
   public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ deletePersistentBean(_PB_ pb) throws InternalException;
 
