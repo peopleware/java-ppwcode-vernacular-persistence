@@ -157,13 +157,13 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
   private void resetId(Set<PersistentBean<?>> persistentBeans) {
     assert persistentBeans != null;
     for (PersistentBean<?> persistentBean : persistentBeans) {
-      persistentBean.setId(null);
+      persistentBean.setPersistenceId(null);
     }
   }
 
   /**
    * For {@link #isCreated(PersistentBean) created} persistent beans, the
-   * {@link PersistentBean#getId()} is reset to <code>null</code> (part of rollback).
+   * {@link PersistentBean#getPersistenceId()} is reset to <code>null</code> (part of rollback).
    */
   public final void cancelTransaction() {
     LOG.debug("Cancelling transaction.");
@@ -193,7 +193,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     LOG.debug("Creating new record for bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
-    pre(pb.getId() == null, SHOULD_HAVE_NO_ID_IN_PERSISTENT_OBJECT);
+    pre(pb.getPersistenceId() == null, SHOULD_HAVE_NO_ID_IN_PERSISTENT_OBJECT);
     pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       LOG.trace("Gather all beans to be created, taking into account cascade");
@@ -217,7 +217,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
         iter = allToBeCreated.iterator();
         while (iter.hasNext()) {
           PersistentBean<?> current = iter.next();
-          LOG.debug("    generated " + current.getId() + " as id for " + current);
+          LOG.debug("    generated " + current.getPersistenceId() + " as id for " + current);
         }
       }
     }
@@ -226,7 +226,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
       handleHibernateException(hExc, "Creating");
       // throws InternalException, ExternalError
     }
-    assert pb.getId() != null;
+    assert pb.getPersistenceId() != null;
   }
 
   /**
@@ -243,7 +243,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
   )
   private List<PersistentBean<?>> relatedFreshPersistentBeans(PersistentBean<?> pb) {
     assert pb != null;
-    assert pb.getId() == null;
+    assert pb.getPersistenceId() == null;
     List<PersistentBean<?>> result = new LinkedList<PersistentBean<?>>();
     result.add(pb);
     int current = 0;
@@ -253,7 +253,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
       PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(currentPb);
       for (int i = 0; i < pds.length; i++) {
         PersistentBean<?> related = relatedPeristentBean(currentPb, pds[i]);
-        if ((related != null) && (related.getId() == null) &&  (! result.contains(related))) {
+        if ((related != null) && (related.getPersistenceId() == null) &&  (! result.contains(related))) {
             /* if it is a fresh bean and it is the first time that we encounter it,
              * it is to be part of the result;
              * we also need to process it further: remember it on the agenda */
@@ -351,7 +351,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
       throw new ExternalError("problem getting record from DB", hExc);
     }
     assert result != null;
-    assert result.getId().equals(id);
+    assert result.getPersistenceId().equals(id);
     assert persistentBeanType.isInstance(result);
     if (LOG.isDebugEnabled()) {
       LOG.debug("Retrieval succeeded (" + result + ")");
@@ -410,7 +410,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     }
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
-    pre(pb.getId() != null, NO_ID_IN_PERSISTENT_OBJECT);
+    pre(pb.getPersistenceId() != null, NO_ID_IN_PERSISTENT_OBJECT);
     pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       if (LOG.isTraceEnabled()) {
@@ -446,7 +446,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     LOG.debug("Deleting persistent bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
-    pre(pb.getId() != null, NO_ID_IN_PERSISTENT_OBJECT);
+    pre(pb.getPersistenceId() != null, NO_ID_IN_PERSISTENT_OBJECT);
     pre(isInTransaction(), NO_PENDING_TRANSACTION);
     try {
       getSession().delete(pb);

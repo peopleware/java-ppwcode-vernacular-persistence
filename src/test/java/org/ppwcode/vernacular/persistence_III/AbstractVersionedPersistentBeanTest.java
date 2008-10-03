@@ -44,7 +44,7 @@ public class AbstractVersionedPersistentBeanTest {
     public AbstractVersionedPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
       super();
-      setId(id);
+      setPersistenceId(id);
       $property1 = property1;
       $property2 = property2;
       $property3 = property3;

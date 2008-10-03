@@ -68,11 +68,11 @@ public class _Contract_PersistentBean {
   }
 
   public static <_Id_ extends Serializable> void contractSetId(PersistentBean<_Id_> subject, _Id_ newId) {
-    assertEquals(newId, subject.getId());
+    assertEquals(newId, subject.getPersistenceId());
   }
 
   public static <_Id_ extends Serializable> void contractHasSameId(PersistentBean<_Id_> subject, PersistentBean<_Id_> other, boolean result) {
-    assertEquals((other != null) && eqn(subject.getId(), other.getId()), result);
+    assertEquals((other != null) && eqn(subject.getPersistenceId(), other.getPersistenceId()), result);
   }
 
   private final static boolean eqn(Object one, Object other) {

@@ -365,8 +365,8 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       LOG.debug("validating overlap: expectedKey = " + expectedKey + " for position = " + overlapPosition);
       if ($expectedLastPkOfPreviousPage != null) {
         _PersistentBean_ pb = page.get(overlapPosition);
-        LOG.debug("actual id = " + pb.getId());
-        if (! expectedKey.equals(pb.getId())) {
+        LOG.debug("actual id = " + pb.getPersistenceId());
+        if (! expectedKey.equals(pb.getPersistenceId())) {
           throw new ConcurrentModificationException("resultset for this query changed since last DB access");
         }
       }
@@ -381,7 +381,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       if (! isLastPage) {
         int lastIndex = page.size() - 1;
         _PersistentBean_ pb = page.get(lastIndex);
-        $expectedFirstPkOfNextPage = pb.getId();
+        $expectedFirstPkOfNextPage = pb.getPersistenceId();
         LOG.debug("new $expectedFirstPkOfNextPage: " + $expectedFirstPkOfNextPage);
         page.remove(lastIndex);
       }
@@ -390,7 +390,7 @@ public abstract class PagingList<_Id_ extends Serializable, _PersistentBean_ ext
       }
       if (! isFirstPage) {
         _PersistentBean_ pb = page.get(0);
-        $expectedLastPkOfPreviousPage = pb.getId();
+        $expectedLastPkOfPreviousPage = pb.getPersistenceId();
         LOG.debug("new $expectedLastPkOfPreviousPage: " + $expectedLastPkOfPreviousPage);
         page.remove(0);
       }

@@ -48,7 +48,7 @@ import org.toryt.annotations_I.Throw;
  *   an auto-commit feature often leads to confusion for developers, as it is unclear whether
  *   some code is executing in auto-commit mode or not.</p>
  * <p>{@link #retrievePersistentBean(Class, Serializable)} can be called outside a transaction. Objects that
- *   are deleted have their {@link PersistentBean#getId()} set to null on
+ *   are deleted have their {@link PersistentBean#getPersistenceId()} set to null on
  *   {@link #commitTransaction()}.</p>
  * <p>Before a {@link PersistentBean} is written to the persistent storage (see
  *   {@link #createPersistentBean(PersistentBean)} and {@link #updatePersistentBean(PersistentBean)}, it is
@@ -117,7 +117,7 @@ public interface AsyncCrudDao extends Dao {
    * <p>This instance should keep track of the transaction state
    *   until it is requested to close the transaction.</p>
    * <p>For {@link #isCreated(PersistentBean) created} persistent beans, the
-   *   {@link PersistentBean#getId()} is reset to <code>null</code> (part of rollback).</p>
+   *   {@link PersistentBean#getPersistenceId()} is reset to <code>null</code> (part of rollback).</p>
    */
   @MethodContract(
     pre  = @Expression("'inTransaction"),
@@ -142,7 +142,7 @@ public interface AsyncCrudDao extends Dao {
    * <p>Before a record for <code>pb</code> is created in the persistent storage, first <code>pb.normalize()</code>
    *   is called, and we check whether <code>pb.isCivilized()</code>.
    * <p>This method cascades creation of necessary related objects: all {@link PersistentBean PersistentBeans}
-   *   that are reachable via public properties from <code>pb</code>, whose {@link PersistentBean#getId() id}
+   *   that are reachable via public properties from <code>pb</code>, whose {@link PersistentBean#getPersistenceId() id}
    *   is <code>null</code>, recursively, are also created.</p>
    * <p>After {@link #commitTransaction()}, <code>pb</code> will have an fresh id. Only during commit will
    *   this <code>pb</code> actually be created in the DB, so if that fails, we need

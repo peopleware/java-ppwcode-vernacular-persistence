@@ -20,6 +20,10 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -44,19 +48,22 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  public final _Id_ getId() {
-    return $id;
+  public final _Id_ getPersistenceId() {
+    return $persistenceId;
   }
 
-  public final boolean hasSameId(final PersistentBean<_Id_> other) {
-    return (other != null)  && ((getId() == null) ? other.getId() == null : getId().equals(other.getId()));
+  public final boolean hasSamePersistenceId(final PersistentBean<_Id_> other) {
+    return (other != null)  && ((getPersistenceId() == null) ? other.getPersistenceId() == null : getPersistenceId().equals(other.getPersistenceId()));
   }
 
-  public final void setId(final _Id_ id) {
-    $id = id;
+  public final void setPersistenceId(final _Id_ persistenceId) {
+    $persistenceId = persistenceId;
   }
 
-  private _Id_ $id;
+  @Id
+  @GeneratedValue
+  @Column(name="persistenceId")
+  private _Id_ $persistenceId;
 
   /*</property>*/
 

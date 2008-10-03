@@ -48,22 +48,22 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  public final Integer getId() {
-    return $id;
+  public final Integer getPersistenceId() {
+    return $persistenceId;
   }
 
-  public final boolean hasSameId(final PersistentBean<Integer> other) {
-    return (other != null)  && ((getId() == null) ? other.getId() == null : getId().equals(other.getId()));
+  public final boolean hasSamePersistenceId(final PersistentBean<Integer> other) {
+    return (other != null)  && ((getPersistenceId() == null) ? other.getPersistenceId() == null : getPersistenceId().equals(other.getPersistenceId()));
   }
 
-  public final void setId(final Integer id) {
-    $id = id;
+  public final void setPersistenceId(final Integer persistenceId) {
+    $persistenceId = persistenceId;
   }
 
   @Id
   @GeneratedValue
-  @Column(name="id")
-  private Integer $id;
+  @Column(name="persistenceId")
+  private Integer $persistenceId;
 
   /*</property>*/
 
@@ -79,26 +79,26 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
    */
   @Basic(init = @Expression("Long.MIN_VALUE"))
   public final Integer getPersistenceVersion() {
-    return $version;
+    return $persistenceVersion;
   }
 
   /**
-   * @param     version
+   * @param     persistenceVersion
    *            The new value
    *
    * @note      This method is only available for testing purposes, and therefor is
    *            package accessible.
    */
   @MethodContract(
-    post = @Expression("persistenceVersion == _version")
+    post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  final void setPersistenceVersion(final Integer version) {
-    $version = version;
+  final void setPersistenceVersion(final Integer persistenceVersion) {
+    $persistenceVersion = persistenceVersion;
   }
 
   @Version
-  @Column(name="version")
-  private Integer $version;
+  @Column(name="persistenceVersion")
+  private Integer $persistenceVersion;
 
   /*</property>*/
 

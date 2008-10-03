@@ -21,6 +21,9 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Version;
+
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -54,26 +57,26 @@ public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable>
    */
   @Basic(init = @Expression("Long.MIN_VALUE"))
   public final Integer getPersistenceVersion() {
-    return $version;
+    return $persistenceVersion;
   }
 
   /**
-   * @param     version
+   * @param     persistenceVersion
    *            The new value
    *
-   * @note      This method is only available for testing purposes, and therefor is
+   * @note      This method is only available for testing purposes, and therefore is
    *            package accessible.
    */
   @MethodContract(
-    post = @Expression("persistenceVersion == _version")
+    post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  final void setPersistenceVersion(final Integer version) {
-    $version = version;
+  final void setPersistenceVersion(final Integer persistenceVersion) {
+    $persistenceVersion = persistenceVersion;
   }
 
-//  @Version
-//  @Column(name="version")
-  private Integer $version;
+  @Version
+  @Column(name="persistenceVersion")
+  private Integer $persistenceVersion;
 
   /*</property>*/
 

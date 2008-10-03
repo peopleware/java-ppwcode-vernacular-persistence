@@ -37,14 +37,14 @@ import org.toryt.annotations_I.MethodContract;
  *   behavior. Supporting code is offered by {@link AbstractPersistentBean}.</p>
  * <p>Users should be aware that this means that there can be more than 1 Java object that represents
  *   the same instance in the persistent storage. To check whether 2 persistent objects represent the
- *   same persistent instance, use {@link #hasSameId(PersistentBean)}.</p>
+ *   same persistent instance, use {@link #hasSamePersistenceId(PersistentBean)}.</p>
  * <p>Persistent beans are not {@link Cloneable} however. Implementing clone for a semantic inheritance
  *   tree is a large investment, and should not be enforced. Furthermore, it still is a bad idea to make
  *   any semantic object {@link Cloneable}. From experience we know that it is very difficult to decide
  *   in general how deep a clone should go. Persistent beans are {@link Serializable} though, because
  *   they are often used also as Data Transfer Objects in multi-tier applications.</p>
  *<p>{@code _Id_} must be {@link Serializable}, because PersistentBeans are {@link Serializable}
- *   and the {@link #getId()} is not {@code transient}. (And BTW, id's must be
+ *   and the {@link #getPersistenceId()} is not {@code transient}. (And BTW, id's must be
  *   {@link Serializable} for Hibernate too ... :-) ).</p>
  *
  * @author    Jan Dockx
@@ -54,14 +54,13 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_Id_ extends Serializable>
-    extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
   @Basic(init = @Expression("null"))
-  _Id_ getId();
+  _Id_ getPersistenceId();
 
   /**
    * This instance has the same id as the instance <code>other</code>.
@@ -70,12 +69,12 @@ public interface PersistentBean<_Id_ extends Serializable>
    *            The persistent object to compare to.
    */
   @MethodContract(
-                  post = @Expression("other != null && id == other.id")
+    post = @Expression("_other != null && persistenceId == _other.persistenceId")
   )
-  boolean hasSameId(final PersistentBean<_Id_> other);
+  boolean hasSamePersistenceId(final PersistentBean<_Id_> other);
 
   /**
-   * @param     id
+   * @param     persistenceId
    *            The new value
    *
    * @idea This method should not appear in this interface. Once an id is set,
@@ -84,9 +83,9 @@ public interface PersistentBean<_Id_ extends Serializable>
    *       The question is whether it is possible to do testing than?
    */
   @MethodContract(
-    post = @Expression("id == _id")
+    post = @Expression("persistenceId == _persistenceId")
   )
-  void setId(final _Id_ id);
+  void setPersistenceId(final _Id_ persistenceId);
 
   /*</property>*/
 
