@@ -86,6 +86,16 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
   /*</property>*/
 
 
+
+  @MethodContract(
+    post = @Expression("session != null")
+  )
+  public boolean isOperational() {
+    return $session != null;
+  }
+
+
+
   /**
    * Apart from SQLExceptions thrown by the driver, the server, stored procedures or
    * constraint violations, when using middle-ware, that can throw exceptions too.
