@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2005 - $Date$ by PeopleWare n.v..
+Copyright 2005 - $Date: 2008-10-01 23:35:08 +0200 (Wed, 01 Oct 2008) $ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,12 +36,12 @@ import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
 
-public class AbstractPersistentBeanTest {
+public class AbstractVersionedPersistentBeanTest {
 
-  public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> {
+  public static class AbstractVersionedPersistentBeanSTUB<_Id_ extends Serializable>
+    extends AbstractVersionedPersistentBean<_Id_> {
 
-    public AbstractPersistentBeanSTUB(_Id_ id, String property1,
+    public AbstractVersionedPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
       super();
       setId(id);
@@ -94,10 +94,10 @@ public class AbstractPersistentBeanTest {
 
   }
 
-  public static class AbstractPersistentBeanWILD<_Id_ extends Serializable>
-    extends AbstractPersistentBeanSTUB<_Id_> {
+  public static class AbstractVersionedPersistentBeanWILD<_Id_ extends Serializable>
+    extends AbstractVersionedPersistentBeanSTUB<_Id_> {
 
-    public AbstractPersistentBeanWILD( _Id_ id, String property1,
+    public AbstractVersionedPersistentBeanWILD( _Id_ id, String property1,
         Date property2, Set<String> property3, int[] property4) {
       super(id, property1, property2, property3, property4);
     }
@@ -116,8 +116,8 @@ public class AbstractPersistentBeanTest {
 
   }
 
-  public static class AbstractPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> {
+  public static class AbstractVersionedPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
+    extends AbstractVersionedPersistentBean<_Id_> {
     // NOP
   }
 
@@ -127,8 +127,8 @@ public class AbstractPersistentBeanTest {
   @Before
   public void setUp() throws Exception {
     subjects = new ArrayList<AbstractPersistentBean<?>>();
-    AbstractPersistentBeanSTUB<?> subject =
-      new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, null);
+    AbstractVersionedPersistentBeanSTUB<?> subject =
+      new AbstractVersionedPersistentBeanSTUB<Integer>(null, null, null, null, null);
     subjects.add(subject);
     Integer id = 9;
     Set<String> stringSet = new HashSet<String>();
@@ -136,19 +136,19 @@ public class AbstractPersistentBeanTest {
     stringSet.add("string 2");
     stringSet.add(null);
     int[] intArray = {5, 6, 4, 8};
-    subject = new AbstractPersistentBeanSTUB<Integer>(id, null, null, null, null);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(id, null, null, null, null);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(null,"PROPERTY 1", null, null, null);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(null,"PROPERTY 1", null, null, null);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(null, null, new Date(), null, null);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(null, null, new Date(), null, null);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(null, null, null, stringSet, null);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(null, null, null, stringSet, null);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, intArray);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(null, null, null, null, intArray);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
+    subject = new AbstractVersionedPersistentBeanSTUB<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanWILD<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
+    subject = new AbstractVersionedPersistentBeanWILD<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
     subjects.add(subject);
   }
 
@@ -176,7 +176,7 @@ public class AbstractPersistentBeanTest {
       testEquals(subject, null);
       testEquals(subject, subject);
       testEquals(subject, new Object());
-      testEquals(subject, new AbstractPersistentBeanSTUB<Integer>(null, "hfhfh", null, null, null));
+      testEquals(subject, new AbstractVersionedPersistentBeanSTUB<Integer>(null, "hfhfh", null, null, null));
     }
   }
 
@@ -234,14 +234,14 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testPropertyNamesForToString2() {
-    AbstractPersistentBean<?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
-    testPropertyNamesForToStringA(subject, 1);
+    AbstractPersistentBean<?> subject = new AbstractVersionedPersistentBeanNOPROPERTIES<Integer>();
+    testPropertyNamesForToStringA(subject, 2);
   }
 
   @Test
   public void testPropertyNamesForToString1() {
     for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject, 3);
+      testPropertyNamesForToStringB(subject, 4);
     }
   }
 
@@ -275,7 +275,7 @@ public class AbstractPersistentBeanTest {
   public void testGetWildExceptions() {
     for (AbstractPersistentBean<?> subject : subjects) {
       CompoundPropertyException result = testGetWildExceptions(subject);
-      if (subject.getClass() == AbstractPersistentBeanSTUB.class) {
+      if (subject.getClass() == AbstractVersionedPersistentBeanSTUB.class) {
         contractPROTECTEDGetWildExceptions(subject, result);
       }
     }
