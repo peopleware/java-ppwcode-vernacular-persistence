@@ -26,6 +26,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.MethodContract;
 
 
 /**
@@ -54,6 +55,23 @@ public interface VersionedPersistentBean<_Id_ extends Serializable, _Version_ ex
 
   @Basic(init = @Expression("null"))
   _Version_ getPersistenceVersion();
+
+  /**
+   * @param     persistenceVersion
+   *            The new value
+   *
+   * @idea This method should not appear in this interface. Once a version is set,
+   *       it should always remain the same (final, immutable property).
+   *       Persistence engines need a way to set the property, but that is it.
+   *       The question is whether it is possible to do testing than?
+   *       This was introduced here for the first time for conversion
+   *       to a VersionedPersistentBean from a JSON object: we need property setters
+   *       then (!?).
+   */
+  @MethodContract(
+    post = @Expression("persistenceVersion == _persistenceVersion")
+  )
+  void setPersistenceVersion(final _Version_ persistenceVersion);
 
   /*</property>*/
 

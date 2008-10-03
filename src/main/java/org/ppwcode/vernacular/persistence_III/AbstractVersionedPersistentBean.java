@@ -50,27 +50,23 @@ public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable>
   /*<property name="version">*/
   //------------------------------------------------------------------
 
-  /**
-   * Note that there is no setter for the persistence version. This is controlled by
-   * "magic processes" like JPA, that can write into private fields. The developer
-   * should never set the persistence version.
-   */
+//
+//   * Note that there is no setter for the persistence version. This is controlled by
+//   * "magic processes" like JPA, that can write into private fields. The developer
+//   * should never set the persistence version.
+//   */
   @Basic(init = @Expression("Long.MIN_VALUE"))
   public final Integer getPersistenceVersion() {
     return $persistenceVersion;
   }
 
-  /**
-   * @param     persistenceVersion
-   *            The new value
-   *
-   * @note      This method is only available for testing purposes, and therefore is
-   *            package accessible.
-   */
+//   * @note      This method is only available for testing purposes, and therefore is
+//   *            package accessible.
+//   */
   @MethodContract(
     post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  final void setPersistenceVersion(final Integer persistenceVersion) {
+  public final void setPersistenceVersion(final Integer persistenceVersion) {
     $persistenceVersion = persistenceVersion;
   }
 
