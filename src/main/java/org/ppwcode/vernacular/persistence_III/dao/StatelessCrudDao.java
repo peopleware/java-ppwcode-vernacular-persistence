@@ -63,10 +63,10 @@ import org.toryt.annotations_I.Throw;
  *   There is e.g., no notion of locking, e.g.. However, we do know from experience that this functionality covers a very
  *   large part of the needs, and that there are many applications that need no other functionality than this.</p>
  */
-@Copyright("2004 - $Date: 2008-08-29 10:41:30 +0200 (Fri, 29 Aug 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 2342 $",
-         date     = "$Date: 2008-08-29 10:41:30 +0200 (Fri, 29 Aug 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 @Remote
 public interface StatelessCrudDao extends Dao {
 
