@@ -32,29 +32,18 @@ import org.toryt.annotations_I.MethodContract;
 
 
 /**
- * <p>Persistent classes need a primary key. Persistent objects
- *   always represent real-world objects, and therefore should be
- *   implemented as {@link RousseauBean}s. This interface
- *   enforces the correct behavior. Supporting code is offered by
- *   {@link AbstractPersistentBean}.</p>
- * <p>Users should be aware that this means that there can be more
- *   than 1 Java object that represents the same instance in the persistent storage.
- *   To check whether 2 persistent objects represent the same persistent
- *   instance, use {@link #hasSameId(PersistentBean)}.</p>
- * <p>Persistent beans are not {@link Cloneable} however. Implementing
- *   clone for a semantic inheritance tree is a large investment, and
- *   should not be enforced. Furthermore, it still is a bad idea to make
- *   any semantic object {@link Cloneable}. From experience we know that
- *   it is very difficult to decide in general how deep a clone should go.
- *   Persistent beans are {@link Serializable} though, because
- *   they are often used also as Data Transfer Objects in multi-tier
- *   applications.</p>
- * <p>Persistency should always be implemented with versioning (optimistic
- *   locking). For that, the property {@link #getPersistenceVersion() version}
- *   is added to this interface. There are several different possible types of versioning,
- *   using an integer, date, or event a GUID. For that reason, the type of the property
- *   is generic.</p>
- *<p>_Id_ and _Version_ must be {@link Serializable}, because PersistentBeans are {@link Serializable}
+ * <p>Persistent classes need a primary key. Persistent objects always represent real-world objects,
+ *   and therefore should be implemented as {@link RousseauBean}s. This interface enforces the correct
+ *   behavior. Supporting code is offered by {@link AbstractPersistentBean}.</p>
+ * <p>Users should be aware that this means that there can be more than 1 Java object that represents
+ *   the same instance in the persistent storage. To check whether 2 persistent objects represent the
+ *   same persistent instance, use {@link #hasSameId(PersistentBean)}.</p>
+ * <p>Persistent beans are not {@link Cloneable} however. Implementing clone for a semantic inheritance
+ *   tree is a large investment, and should not be enforced. Furthermore, it still is a bad idea to make
+ *   any semantic object {@link Cloneable}. From experience we know that it is very difficult to decide
+ *   in general how deep a clone should go. Persistent beans are {@link Serializable} though, because
+ *   they are often used also as Data Transfer Objects in multi-tier applications.</p>
+ *<p>{@code _Id_} must be {@link Serializable}, because PersistentBeans are {@link Serializable}
  *   and the {@link #getId()} is not {@code transient}. (And BTW, id's must be
  *   {@link Serializable} for Hibernate too ... :-) ).</p>
  *
@@ -65,7 +54,8 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
+public interface PersistentBean<_Id_ extends Serializable>
+    extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
@@ -97,16 +87,6 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
     post = @Expression("id == _id")
   )
   void setId(final _Id_ id);
-
-  /*</property>*/
-
-
-
-  /*<property name="persistence version">*/
-  //------------------------------------------------------------------
-
-  @Basic(init = @Expression("null"))
-  Long getPersistenceVersion();
 
   /*</property>*/
 
