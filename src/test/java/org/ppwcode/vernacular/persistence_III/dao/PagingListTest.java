@@ -40,7 +40,7 @@ public class PagingListTest {
 
     public AbstractPersistentBeanSTUB(_Id_ id, String str, int i) {
       super();
-      setId(id);
+      setPersistenceId(id);
       $str = str;
       $i = i;
     }

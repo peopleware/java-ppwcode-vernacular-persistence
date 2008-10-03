@@ -140,7 +140,7 @@ public abstract class AbstractHibernate2Test {
     try {
       $session.save(object);
       if (object instanceof PersistentBean) {
-        return ((PersistentBean<?>)object).getId();
+        return ((PersistentBean<?>)object).getPersistenceId();
       }
       else {
         return null;

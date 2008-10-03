@@ -162,7 +162,7 @@ import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
     try {
       $entityManager.persist(object);
       if (object instanceof PersistentBean) {
-        return ((PersistentBean<?>)object).getId();
+        return ((PersistentBean<?>)object).getPersistenceId();
       }
       else {
         return null;
