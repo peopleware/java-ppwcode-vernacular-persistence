@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
 
 import java.sql.SQLException;
 
@@ -27,7 +28,6 @@ import net.sf.hibernate.Session;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.util.exception.Exceptions;
 import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.SemanticException;
@@ -100,7 +100,7 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
    */
   protected final void handleHibernateException(final HibernateException hExc, final String operationName)
       throws InternalException {
-    SQLException sqlExc = (SQLException)Exceptions.huntFor(hExc, SQLException.class);
+    SQLException sqlExc = huntFor(hExc, SQLException.class);
     if ((sqlExc != null) && (getSqlExceptionHandler() != null)) {
       InternalException iExc = getSqlExceptionHandler().handle(sqlExc);
       if (iExc != null) {
@@ -112,7 +112,7 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
     }
     // Now, if it is not a sql exception we are dealing with, maybe there is an internal
     // exception transported by the hibernate exception
-    InternalException iExc = (InternalException)Exceptions.huntFor(hExc, InternalException.class);
+    InternalException iExc = huntFor(hExc, InternalException.class);
     if (iExc != null) {
       throw iExc;
     }
