@@ -234,7 +234,7 @@
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-VI</artifactId>
-      <version>1.0.0-SNAPSHOT</version> <!--  this version is not defined in ppwcode ppwcode parent pom -->
+      <version>1.0.0-SNAPSHOT</version> <!--  MUDO this version is not defined in ppwcode ppwcode parent pom -->
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
@@ -259,11 +259,18 @@
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
+    <!--
     <dependency>
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
       <version>2.2.2</version>
       <classifier>jdk15</classifier>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
