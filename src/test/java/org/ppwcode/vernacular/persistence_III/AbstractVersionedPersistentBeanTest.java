@@ -106,7 +106,7 @@ public class AbstractVersionedPersistentBeanTest {
   public static class AbstractVersionedPersistentBeanWILD<_Id_ extends Serializable>
     extends AbstractVersionedPersistentBeanSTUB<_Id_> {
 
-    public AbstractVersionedPersistentBeanWILD( _Id_ id, String property1,
+    public AbstractVersionedPersistentBeanWILD(_Id_ id, String property1,
         Date property2, Set<String> property3, int[] property4) {
       super(id, property1, property2, property3, property4);
     }
