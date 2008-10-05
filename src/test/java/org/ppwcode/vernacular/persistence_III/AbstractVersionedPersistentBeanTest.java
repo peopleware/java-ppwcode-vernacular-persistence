@@ -32,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBeanTest;
+import org.ppwcode.vernacular.semantics_VI.bean.stubs.NumberOfProperties;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
@@ -39,7 +40,7 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 public class AbstractVersionedPersistentBeanTest {
 
   public static class AbstractVersionedPersistentBeanSTUB<_Id_ extends Serializable>
-    extends AbstractVersionedPersistentBean<_Id_> {
+    extends AbstractVersionedPersistentBean<_Id_> implements NumberOfProperties {
 
     public AbstractVersionedPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
@@ -92,6 +93,14 @@ public class AbstractVersionedPersistentBeanTest {
 
     private int[] $property4;
 
+    public int nrOfProperties() {
+      return 6; // 4 + persistenceId + persistenceVersion
+    }
+
+    public int nrOfSimpleProperties() {
+      return nrOfProperties() - 2;
+    }
+
   }
 
   public static class AbstractVersionedPersistentBeanWILD<_Id_ extends Serializable>
@@ -117,8 +126,16 @@ public class AbstractVersionedPersistentBeanTest {
   }
 
   public static class AbstractVersionedPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
-    extends AbstractVersionedPersistentBean<_Id_> {
-    // NOP
+    extends AbstractVersionedPersistentBean<_Id_> implements NumberOfProperties {
+
+      public int nrOfProperties() {
+        return 2; // 0 + persistenceId + persistenceVersion
+      }
+
+      public int nrOfSimpleProperties() {
+        return nrOfProperties();
+      }
+
   }
 
 
@@ -216,16 +233,16 @@ public class AbstractVersionedPersistentBeanTest {
     // protected in AbstractSemanticBean. This is exactly the intended behaviour.
   }
 
-  public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?> subject, int nrOfProperties) {
-    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringA(subject, nrOfProperties);
+  public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?> subject) {
+    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringA(subject);
     assertFalse(result.contains("wildExceptions"));
     assertFalse(result.contains("civilized"));
     assertInvariants(subject);
     return result;
   }
 
-  public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?> subject, int nrOfProperties) {
-    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringB(subject, nrOfProperties);
+  public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?> subject) {
+    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringB(subject);
     assertFalse(result.contains("wildExceptions"));
     assertFalse(result.contains("civilized"));
     assertInvariants(subject);
@@ -235,13 +252,13 @@ public class AbstractVersionedPersistentBeanTest {
   @Test
   public void testPropertyNamesForToString2() {
     AbstractPersistentBean<?> subject = new AbstractVersionedPersistentBeanNOPROPERTIES<Integer>();
-    testPropertyNamesForToStringA(subject, 2);
+    testPropertyNamesForToStringA(subject);
   }
 
   @Test
   public void testPropertyNamesForToString1() {
     for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject, 4);
+      testPropertyNamesForToStringB(subject);
     }
   }
 
