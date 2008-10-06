@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
 
@@ -36,10 +37,13 @@ import javax.persistence.TransactionRequiredException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ppwcode.util.reflect_I.AssociationHelpers;
+import org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers;
 import org.ppwcode.vernacular.exception_II.SemanticException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.StatelessCrudDao;
+import org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
@@ -49,6 +53,7 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
  * @mudo catch exceptions and log only external exceptions and programming errors
  */
 @Stateless
+//@WebService MUDO find maven dependency for javax.jws
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
 
@@ -114,15 +119,8 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
     }
   }
 
-  private <_Id_ extends Serializable> void normalizeAndValidateGraph(PersistentBean<_Id_> pb) throws CompoundPropertyException {
-    pb.normalize();
-    try {
 
-      CREATE PB HELPERS, DO IT THERE IN PUBLIC: normalize and validate all graph
-
-      pb.checkCivility();
-    }
-  }
+  // MUDO HANDLE SQL EXCEPTIONS
 
   /**
    * Create or update. Create if ID is null, update if not.
@@ -130,24 +128,40 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
   @TransactionAttribute(TransactionAttributeType.REQUIRED)
   public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ mergePersistentBean(_PB_ pb) throws SemanticException {
     _LOG.debug("Merging persistent bean: " + pb);
-    assert preArgumentNotNull(pb, "pb");
     if (_LOG.isDebugEnabled()) {
       _LOG.debug("pb.id = " + pb.getPersistenceId() +
                  ((pb.getPersistenceId() == null) ? " == null: persistent bean will be created" :
                                          " != null: persistent bean will be update"));
     }
+    assert preArgumentNotNull(pb, "pb");
     assert dependency(getEntityManager(), "enitytManager");
+    assert pre(! getEntityManager().contains(pb)); // MUDO contract: this pre is not in the contract!!!
     _PB_ newPb = null;
+    /* first we gather all the beans we received as parameter; most often, pb will be detached.
+     * if not however, we have a problem: gathering all related beans will load the entire
+     * database. see assert pre
+     */
+    Set<PersistentBean<?>> associatedBeans = AssociationHelpers.associatedBeans(pb, PersistentBean.class);
+    /* next, we normalize; we do not want to normalize stuff that did not come in as parameter, so we do
+     * this before we merge
+     */
+    RousseauBeanHelpers.normalize(associatedBeans);
+    /* now we merge; this isn't committed yet, but we want access to lazy loaded sets when we calculate
+     * wild exceptions
+     */
     try {
-      newPb = getEntityManager().merge(pb); // not committed yet
-      /* we merge first, so that we do not need to worry about uninitialized lazy relationships while validating */
-      normalizeAndValidateGraph(pb); // throws PropertyException; if, this transaction will be rolled back
-    }
-    catch (PropertyException exc) {
-      if (_LOG.isDebugEnabled()) {
-        _LOG.debug("persistent bean offered for merge is not civilized", exc);
+      newPb = getEntityManager().merge(pb); // not committed yet, throws load of exceptions
+      /* now all beans in the graph are new; we need to use the variants that are new; find them */
+      Set<PersistentBean<?>> newAssociatedBeans = AssociationHelpers.associatedBeans(pb, PersistentBean.class);
+      /* now, check civility on all new associated beans */
+      CompoundPropertyException cpe = RousseauBeanHelpers.wildExceptions(newAssociatedBeans);
+      /* if there are exceptions, stop and throw them (but log this first) */
+      if (! cpe.isEmpty()) {
+        if (_LOG.isDebugEnabled()) {
+          _LOG.debug("persistent beans offered for merge are not civilized", cpe);
+        }
+        cpe.throwIfNotEmpty();
       }
-      throw exc;
     }
     // MUDO versioning problem??
     catch (IllegalStateException exc) {
