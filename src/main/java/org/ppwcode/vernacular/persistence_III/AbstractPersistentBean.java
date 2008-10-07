@@ -21,14 +21,12 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.jpa.JpaRousseauBeanValidator;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 
 
@@ -49,7 +47,6 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-@EntityListeners({JpaRousseauBeanValidator.class})
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
     implements PersistentBean<_Id_> {
 

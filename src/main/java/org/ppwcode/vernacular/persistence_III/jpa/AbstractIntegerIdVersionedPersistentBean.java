@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III;
+package org.ppwcode.vernacular.persistence_III.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -28,6 +29,10 @@ import javax.persistence.Version;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
+import org.ppwcode.vernacular.persistence_III.AbstractVersionedPersistentBean;
+import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
@@ -52,6 +57,7 @@ import org.toryt.annotations_I.MethodContract;
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 @MappedSuperclass
+@EntityListeners({JpaRousseauBeanValidator.class})
 public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractRousseauBean
     implements VersionedPersistentBean<Integer, Integer> {
 
