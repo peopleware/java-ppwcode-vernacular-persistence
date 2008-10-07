@@ -59,7 +59,8 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
-  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+  @TransactionAttribute(TransactionAttributeType.REQUIRED)
+  /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
       retrieveAllPersistentBeans(Class<_PersistentBean_> persistentBeanType, boolean retrieveSubClasses) {
     _LOG.debug("Retrieving all records of type \"" + persistentBeanType + "\" ...");
@@ -92,7 +93,8 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
     return null; // keep compiler happy
   }
 
-  @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+  @TransactionAttribute(TransactionAttributeType.REQUIRED)
+  /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_Id_ extends Serializable, _PersistentBean_ extends PersistentBean<_Id_>>
   _PersistentBean_ retrievePersistentBean(Class<_PersistentBean_> persistentBeanType, _Id_ id)
       throws IdNotFoundException {
