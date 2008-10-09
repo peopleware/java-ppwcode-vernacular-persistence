@@ -67,7 +67,7 @@ import org.toryt.annotations_I.Throw;
  *   ...
  *
  *   &#64;Remote
- *   public StatelessCrudDao extends org.ppwcode.vernacular.persistence_III.dao.StatelessCrudDao {
+ *   public StatelessCrudTransactionDao extends org.ppwcode.vernacular.persistence_III.dao.StatelessCrudTransactionDao {
  *
  *     // NOP
  *
@@ -102,7 +102,7 @@ import org.toryt.annotations_I.Throw;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public interface StatelessCrudDao extends Dao {
+public interface StatelessCrudTransactionDao extends Dao {
 
   /**
    * <p>Return a persistent bean instance that represents the data of the record with key <code>id</code> of type
