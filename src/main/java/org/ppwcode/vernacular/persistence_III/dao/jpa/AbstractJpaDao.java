@@ -54,7 +54,7 @@ public abstract class AbstractJpaDao extends AbstractDao {
   /*</property>*/
 
 
-  @MethodContract(post = @Expression("entityManager != null"))
+  @MethodContract(post = @Expression("result ? entityManager != null"))
   public boolean isOperational() {
     return $entityManager != null;
   }
