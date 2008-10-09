@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2004 - $Date: 2008-10-09 13:36:39 +0200 (Thu, 09 Oct 2008) $ by PeopleWare n.v..
+Copyright 2004 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -92,10 +92,10 @@ import org.toryt.annotations_I.Throw;
 // *   it might be appropriate to wrap an instance of this type in an {@link AsyncCrudDao} in user code.</p>
 // END MUDO
  */
-@Copyright("2004 - $Date: 2008-10-09 13:36:39 +0200 (Thu, 09 Oct 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 2977 $",
-         date     = "$Date: 2008-10-09 13:36:39 +0200 (Thu, 09 Oct 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public interface StatelessCrudDao extends Dao {
 
   /**
