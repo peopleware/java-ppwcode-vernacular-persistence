@@ -53,7 +53,7 @@ import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.SemanticException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
-import org.ppwcode.vernacular.persistence_III.dao.StatelessCrudDao;
+import org.ppwcode.vernacular.persistence_III.dao.StatelessCrudTransactionDao;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.toryt.annotations_I.Basic;
@@ -68,7 +68,7 @@ import org.toryt.annotations_I.MethodContract;
 @Stateless
 //@WebService MUDO find maven dependency for javax.jws
 @TransactionManagement(TransactionManagementType.CONTAINER)
-public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
+public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrudTransactionDao {
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
