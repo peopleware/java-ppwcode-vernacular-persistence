@@ -25,6 +25,7 @@ import javax.persistence.PreUpdate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ppwcode.vernacular.exception_II.InternalTransportException;
+import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaStatelessCrudDao;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.toryt.annotations_I.Expression;
@@ -55,9 +56,16 @@ import org.toryt.annotations_I.Throw;
  *   are only allowed to throw {@link RuntimeException RuntimeExceptions}. When a listener does throw an exception,
  *   the current transaction is rolled-back, and all instances of session beans implicated in the current
  *   thread are discarded.</p>
- *
- * @note The problem with this approach is that, with multiple updates and inserts in 1 transaction, only the
- *       first validation that fails has the opportunity to express its woes.
+ * <p>The problem with this approach is that, with multiple updates and inserts in 1 transaction, only the
+ *   first validation that fails has the opportunity to express its woes. This validator is to be used as a last resort.
+ *   If you use the {@link JpaStatelessCrudDao} and a persistence strategy (cascade, loading strategy) according to the
+ *   ppwcode vernacular for relations, normally all relevant beans are validated before insertion or update. This
+ *   validator thus does the same work again. Its functionality is less than optimal in reporting all problems in one
+ *   go, but it makes the system completely safe at the cost of extra processing time. This is not a good idea in
+ *   systems with an extreme load, but gives us a buffer against programming errors in normal systems, protecting data
+ *   integrity. For {@link JpaStatelessCrudDao}, it thus has to make sure that the persistence manager will not try to
+ *   persist in cases of problems, since then one problem will be noted twice. Thus {@link JpaStatelessCrudDao} will
+ *   have to abort the transaction before commit is attempted. It does.</p>
  */
 public class JpaRousseauBeanValidator {
 
@@ -84,7 +92,7 @@ public class JpaRousseauBeanValidator {
                  })
   )
   public void validate(Object entity) throws InternalTransportException {
-    _LOG.trace("pre-insert or -update called for " + entity);
+    _LOG.debug("pre-insert or -update called for " + entity);
     assert preArgumentNotNull(entity, "entity");
     try {
       RousseauBean rb = (RousseauBean)entity; // ClassCastException
@@ -103,7 +111,7 @@ public class JpaRousseauBeanValidator {
       throw new InternalTransportException(wildExc);
     }
     finally {
-      _LOG.trace("pre-insert or -update done for " + entity);
+      _LOG.debug("pre-insert or -update done for " + entity);
     }
   }
 
