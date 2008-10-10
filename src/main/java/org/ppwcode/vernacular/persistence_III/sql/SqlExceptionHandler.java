@@ -65,7 +65,7 @@ public interface SqlExceptionHandler {
 
   /**
    * Return an {@link InternalException} wrapping <code>sqlException</code>
-   * if you find the latter of a semantic nature.
+   * if you find the latter of a semantic nature. Otherwise, return null.
    *
    * @param sqlException
    *        The exception to handle.

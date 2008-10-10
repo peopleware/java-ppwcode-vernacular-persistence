@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.ExternalError;
 import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
 
 
@@ -62,31 +61,43 @@ public class MySqlExceptionHandler implements SqlExceptionHandler {
    *             + "parent row: a foreign key constraint fails\""
    * return a {@link MySqlException}.
    *
-   * Never return null.
-   *
    * @mudo walk through the chain of exceptions to find a match
    */
   public MySqlException handle(final SQLException sqlExc) {
     assert sqlExc != null;
-    if (sqlExc.getMessage()
-              .indexOf("Duplicate key or integrity constraint violation,  "
-                       + "message from server: \"Duplicate entry") >= 0
-        || sqlExc.getMessage().indexOf("Duplicate entry") >= 0) {
-      // WATCH OUT: SQL Error message contains 'dual space' after ','.
+    SQLException recognized = lookDeep(sqlExc,
+                                       "Duplicate key or integrity constraint violation,  "
+                                       + "message from server: \"Duplicate entry",
+                                    // WATCH OUT: SQL Error message contains 'dual space' after ','.
+                                       "Duplicate entry");
+    if (recognized != null) {
       MySqlException dkExc = new MySqlException("VALUE_NOT_UNIQUE", sqlExc);
       LOG.debug("recognized MySQL duplicate key exception", dkExc);
       return dkExc;
     }
-    if (sqlExc.getMessage()
-        .indexOf("Duplicate key or integrity constraint violation,  "
-                 + "message from server: \"Cannot delete or update a "
-                 + "parent row: a foreign key constraint fails\"") >= 0) {
-      // WATCH OUT: SQL Error message contains 'dual space' after ','.
+    recognized = lookDeep(sqlExc, "Duplicate key or integrity constraint violation,  " +
+                                  "message from server: \"Cannot delete or update a " +
+                                  "parent row: a foreign key constraint fails\"");
+                                  // WATCH OUT: SQL Error message contains 'dual space' after ','.
+    if (recognized != null) {
       MySqlException cExc = new MySqlException("CONSTRAINT_FAILURE", sqlExc);
       LOG.debug("recognized MySQL constraint violation exception", cExc);
       return cExc;
     }
-    throw new ExternalError("MySQL error not recognized as internal", sqlExc);
+    return null;
+  }
+
+  private SQLException lookDeep(SQLException sqlExc, String... messageFragment) {
+    SQLException current = sqlExc;
+    while (sqlExc != null) {
+      for (int i = 0; i < messageFragment.length; i++) {
+        if (current.getMessage().indexOf(messageFragment[i]) >= 0) {
+          return current;
+        }
+      }
+      current = current.getNextException();
+    }
+    return null;
   }
 
 }
