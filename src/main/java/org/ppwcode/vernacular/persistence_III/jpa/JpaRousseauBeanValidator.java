@@ -49,8 +49,8 @@ import org.toryt.annotations_I.Throw;
  *     &lt;/entity-listeners&gt;
  *   &lt;/entity-mappings&gt;
  * </pre>
- * <p>If you use entities that extend {@code AbstractPersistentBean}, this is not necessary, since that class defines
- *   the listener for itself and all subtypes.</p>
+ * <p>If you use entities that extend {@code AbstractIntegerIdVersionedPersistentBean}, this is not necessary, since that
+ *   class defines the listener for itself and all subtypes.</p>
  * <p>In case validation fails ({@code ! }{@link CompoundPropertyException#isEmpty()}), the exception that expresses
  *   the validation problem is packaged into a {@link InternalTransportException}, because JPA entity listener methods
  *   are only allowed to throw {@link RuntimeException RuntimeExceptions}. When a listener does throw an exception,
