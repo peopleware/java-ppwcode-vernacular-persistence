@@ -29,6 +29,7 @@ import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.toryt.annotations_I.Expression;
@@ -42,8 +43,8 @@ import org.toryt.annotations_I.Throw;
  * <p>{@link #retrievePersistentBean(Class, Serializable)} and {@link #retrieveAllPersistentBeans(Class, boolean)}
  *   can be called outside a transaction. This interface does not define how the other methods interact with
  *   transactions.</p>
- * <p>Before a {@link PersistentBean} is written to the persistent storage (see {@link #createPersistentBean(PersistentBean)}
- *   and {@link #updatePersistentBean(PersistentBean)}, it is {@link RousseauBean#normalize() normalized} and checked for
+ * <p>Before a {@link PersistentBean} is written to the persistent storage (see {@link #createPersistentBean(VersionedPersistentBean)}
+ *   and {@link #updatePersistentBean(VersionedPersistentBean)}, it is {@link RousseauBean#normalize() normalized} and checked for
  *   {@link RousseauBean#civilized() civility}. This entails also checking for civility of all upstream beans, either part
  *   of the submitted object graph, or already in the database. That way, wild conditions concerning collections of children
  *   (e.g., no period overlap for children in the collection) are enforced.</p>
@@ -188,7 +189,8 @@ public interface StatelessCrudDao extends Dao {
       @Throw(type = InternalException.class, cond = {@Expression("true")})
     }
   )
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
    * Update the object {@code pb} in persistent storage. Return that object.
@@ -216,7 +218,8 @@ public interface StatelessCrudDao extends Dao {
       @Throw(type = InternalException.class, cond = {@Expression("true")})
     }
   )
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
    * Delete the bean {@code pb}, and associated beans, depending on cascade DELETE settings, from persistent storage.
@@ -243,6 +246,7 @@ public interface StatelessCrudDao extends Dao {
       @Throw(type = InternalException.class, cond = {@Expression("true")})
     }
   )
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
 }

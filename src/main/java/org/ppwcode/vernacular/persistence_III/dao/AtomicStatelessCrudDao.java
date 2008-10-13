@@ -26,7 +26,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
-import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 
 
 /**
@@ -54,7 +54,8 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    * the methods ends nominally, the transaction is successfully committed. In case of semantic problems (wildness),
    * the transaction is rolled-back only and an {@link InternalException} is thrown.
    */
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
@@ -63,7 +64,8 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    * the methods ends nominally, the transaction is successfully committed. In case of semantic problems (wildness),
    * the transaction is rolled-back only and an {@link InternalException} is thrown.
    */
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
@@ -74,6 +76,7 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    * @mudo specific exception for rollback, or InternalException
    * @mudo contract
    */
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
 }
