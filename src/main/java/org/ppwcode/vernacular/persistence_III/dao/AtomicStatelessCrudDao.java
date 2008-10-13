@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2004 - $Date: 2008-10-09 14:17:31 +0200 (Thu, 09 Oct 2008) $ by PeopleWare n.v..
+Copyright 2004 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -41,10 +41,10 @@ import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
  *   functionality as part of a broader transaction are better of using {@link RequiredTransactionStatelessCrudDao},
  *   at the cost of incomplete exception handling transaction.</p>
  */
-@Copyright("2004 - $Date: 2008-10-09 14:17:31 +0200 (Thu, 09 Oct 2008) $, PeopleWare n.v.")
+@Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 2978 $",
-         date     = "$Date: 2008-10-09 14:17:31 +0200 (Thu, 09 Oct 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public interface AtomicStatelessCrudDao extends StatelessCrudDao {
 
   /**
