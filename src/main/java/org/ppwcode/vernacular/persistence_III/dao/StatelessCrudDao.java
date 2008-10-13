@@ -30,29 +30,31 @@ import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
+import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 import org.toryt.annotations_I.Throw;
 
 
 /**
- * <p>In contrast to the {@link AsyncCrudDao}, this {@link Dao} is stateless. This interface expresses commonality
- *   between {@link StatelessCrudTransactionDao} and {@link StatelessCrudJoinTransactionDao}.</p>
+ * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. . This interface expresses commonality
+ *   between {@link RequiredTransactionStatelessCrudDao} and {@link AtomicStatelessCrudDao}.</p>
  * <p>{@link #retrievePersistentBean(Class, Serializable)} and {@link #retrieveAllPersistentBeans(Class, boolean)}
  *   can be called outside a transaction. This interface does not define how the other methods interact with
- *   transactions. Objects that are deleted have their {@link PersistentBean#getPersistenceId()}
- *   set to {@code null}.</p>
- * <p>Before a {@link PersistentBean} is written to the persistent storage (see {@link #mergePersistentBean(PersistentBean)},
- *   it is {@link RousseauBean#normalize() normalized} and checked for {@link RousseauBean#civilized() civility}. This entails
- *   also checking for civility of all upstream beans, either part of the submitted object graph, or already in the database.
- *   That way, wild conditions concerning collections of children (e.g., no period overlap for children in the collection)
- *   are enforced.</p>
+ *   transactions.</p>
+ * <p>Before a {@link PersistentBean} is written to the persistent storage (see {@link #createPersistentBean(PersistentBean)}
+ *   and {@link #updatePersistentBean(PersistentBean)}, it is {@link RousseauBean#normalize() normalized} and checked for
+ *   {@link RousseauBean#civilized() civility}. This entails also checking for civility of all upstream beans, either part
+ *   of the submitted object graph, or already in the database. That way, wild conditions concerning collections of children
+ *   (e.g., no period overlap for children in the collection) are enforced.</p>
  * <p>In throwing exceptions, we try to make a difference between programming errors, external exceptional conditions, and
- *   internal exceptional conditions. How we handle anything that happens at commit time, is not expressed in this interface,
- *   but differentiated in subtypes.</p>
+ *   internal exceptional conditions (ppwcode exception vernacular). How we handle anything that happens at commit or
+ *   roll-back time, is not expressed in this interface, but differentiated in subtypes.</p>
  * <p>We understand that the limited functionality of this DAO cannot cope with the complete needs of persistence access.
  *   There is e.g., no notion of locking, e.g.. However, we do know from experience that this functionality covers a very
  *   large part of the needs, and that there are many applications that need no other functionality than this.</p>
+ * <p>Do not use this interface directly, since the transaction attributes of the methods are undefined. Use
+ *   one of the subtypes {@link RequiredTransactionStatelessCrudDao} or {@link AtomicStatelessCrudDao} instead.</p>
  * <p>Do not expose this interface or its subtypes as part of the API in your business application directly. A better approach
  *   is to extend the interface in your version of the business logic:</p>
  * <pre>
@@ -61,7 +63,7 @@ import org.toryt.annotations_I.Throw;
  *   ...
  *
  *   &#64;<var>(Remote|Local)</var>
- *   public Stateless<var>XXX</var>CrudDao extends org.ppwcode.vernacular.persistence_III.dao.Stateless<var>XXX</var>CrudDao {
+ *   public interface <var>XXX</var>StatelessCrudDao extends org.ppwcode.vernacular.persistence_III.dao.<var>XXX</var>StatelessCrudDao {
  *
  *     // NOP
  *
@@ -71,15 +73,15 @@ import org.toryt.annotations_I.Throw;
  *   from infecting this library package with a dependency on EJB3 annotations). In this way you have the possibility to keep
  *   backward compatibility when your business application's semantics change, and the class / object model and data model change.
  *   In that case, you develop a new version in package {@code my.business.application_V}, introducing
- *   {@code my.business.application_V.businesslogic.Stateless<var>XXX</var>CrudDao}. With that, your clients can now choose which
+ *   {@code my.business.application_V.businesslogic.<var>XXX</var>StatelessCrudDao}. With that, your clients can now choose which
  *   version they want to use. From the old version, you keep the necessary classes, but since the database structure probably has
  *   changed, retrieving and updating data cannot easily happen the same way. In particular, your semantics (persistent bean
  *   subtypes) will probably no longer map to the database. This means that your original implementation of
- *   {@code my.business.application_IV.businesslogic.Stateless<var>XXX</var>CrudDao} with the old semantics (entities) will no
- *   longer work. By changing the implementation of {@code my.business.application_IV.businesslogic.Stateless<var>XXX</var>CrudDao}
- *   to map old semantic POJO's (now no longer entities) to new entities (if at all possible), you make the new semantics backward
- *   compatible with the old interface. Because this is not always possible with all methods of this interface in all
- *   circumstances, all methods can throw a {@link NoLongerSupportedError}.</p>
+ *   {@code my.business.application_IV.businesslogic.<var>XXX</var>StatelessCrudDao} with the old semantics (entities) will no
+ *   longer work. By changing the implementation of {@code my.business.application_IV.businesslogic.<var>XXX</var>StatelessCrudDao}
+ *   to map old semantic POJO's (now no longer entities) to new entities (if at all possible), you make the old API forward compatible
+ *   with the new semantics. Because this is not always possible with all methods of this interface in all circumstances, all methods can
+ *   throw a {@link NoLongerSupportedError}.</p>
  *
  *
 // MUDO
@@ -161,33 +163,85 @@ public interface StatelessCrudDao extends Dao {
   Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses) throws NoLongerSupportedError;
 
   /**
-   * Create or update the object graph reachable from {@code pb}. Object with a {@link PersistentBean#getPersistenceId()} {@code null}
-   * will be created, objects with an effective {@link PersistentBean#getPersistenceId()} will be updated. Note that not only {@code pb}
-   * is created or updated, but all beans in the object graph that is reachable from {@code pb}, depending on the cascade settings.
+   * Create the object {@code pb} in persistent storage. Return that object with filled-out {@link PersistentBean#getPersistenceId()}.
    *
-   * @mudo specific exception for rollback, or InternalException
    * @mudo contract
    * @idea (jand) security exceptions
+   * @mudo describe effect of cascade settings
    */
   @MethodContract(
-    post = {},
-    exc  =  @Throw(type = NoLongerSupportedError.class,
-                   cond = {@Expression("true")})
+    pre  = {
+      @Expression("pb != null"),
+      @Expression("pb.persistenceId == null"),
+      @Expression("pb.persistenceVersion == null")
+    },
+    post = {
+      @Expression("pb'normalize()"),
+      @Expression("pb'civilized()"),
+      @Expression("hasSameValues(pb, result)"),
+      @Expression("result.persistenceId != null"),
+      @Expression("result.persistenceVersion == 1")
+    },
+    exc  =  {
+      @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
+      @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
+      @Throw(type = InternalException.class, cond = {@Expression("true")})
+    }
   )
-  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ mergePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
-   * Delete the bean {@code pb}, and associated beans, depending on cascade settings.
+   * Update the object {@code pb} in persistent storage. Return that object.
+   *
+   * @mudo contract
+   * @idea (jand) security exceptions
+   * @mudo describe effect of cascade settings
+   */
+  @MethodContract(
+    pre  = {
+      @Expression("pb != null"),
+      @Expression("pb.persistenceId != null"),
+      @Expression("pb.persistenceVersion != null")
+    },
+    post = {
+      @Expression("pb'normalize()"),
+      @Expression("pb'civilized()"),
+      @Expression("hasSameValues(pb, result)"),
+      @Expression("result.persistenceId == pb'persistenceId"),
+      @Expression("result.persistenceVersion == pb'persistenceVersion + 1")
+    },
+    exc  =  {
+      @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
+      @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
+      @Throw(type = InternalException.class, cond = {@Expression("true")})
+    }
+  )
+  public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+
+  /**
+   * Delete the bean {@code pb}, and associated beans, depending on cascade DELETE settings, from persistent storage.
    * The entire bean is returned, for reasons of consistency with the other methods.
    *
-   * @mudo specific exception for rollback, or InternalException
    * @mudo contract
    * @idea (jand) security exceptions
    */
   @MethodContract(
-    post = {},
-    exc  =  @Throw(type = NoLongerSupportedError.class,
-                   cond = {@Expression("true")})
+    pre  = {
+      @Expression("pb != null"),
+      @Expression("pb.persistenceId != null"),
+      @Expression("pb.persistenceVersion != null")
+    },
+    post = {
+      @Expression("pb'normalize()"),
+      @Expression("pb'civilized()"),
+      @Expression("hasSameValues(pb, result)"),
+      @Expression("result.persistenceId == null"),
+      @Expression("result.persistenceVersion == null")
+    },
+    exc  =  {
+      @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
+      @Throw(type = InternalException.class, cond = {@Expression("true")})
+    }
   )
   public <_Id_ extends Serializable, _PB_ extends PersistentBean<_Id_>> _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
