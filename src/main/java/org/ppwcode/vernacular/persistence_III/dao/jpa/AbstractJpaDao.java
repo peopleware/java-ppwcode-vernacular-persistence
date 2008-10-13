@@ -18,7 +18,6 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Basic;
@@ -31,6 +30,9 @@ import org.toryt.annotations_I.MethodContract;
  * Since some subclasses do not commit themselves, we cannot in general say that we handle SQL
  * exceptions in these types. So, in general, we do not need a Sql Exception Handler. So,
  * we do not inherit from AbstractDao.
+ *
+ * When used in an EJB container, add dependency injection for the entity manager
+ * (e.g., <code>@#64;PersistenceContext(unitName="<var>persistence_unit_name</var>)</code>.
  *
  * @mudo generalize persistence context injection and explain
  */
@@ -51,7 +53,6 @@ public abstract class AbstractJpaDao implements Dao {
     $entityManager = manager;
   }
 
-  @PersistenceContext(unitName="be_hdp_contracts_I") // MUDO MUDO MUDO <<<<<<<<< BIG PROBLEM HERE!!! RUBEN, HELP!!!!
   private EntityManager $entityManager;
 
   /*</property>*/
