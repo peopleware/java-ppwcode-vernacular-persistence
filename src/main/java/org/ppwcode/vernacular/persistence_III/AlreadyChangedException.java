@@ -30,7 +30,7 @@ import org.toryt.annotations_I.MethodContract;
 
 /**
  * <p>This exception signals a versioning conflict: we tried to change data in persistent
- *   storage for {@link #getPersistentBean()}, but the data in persistent storage has
+ *   storage for {@link #getObject()}, but the data in persistent storage has
  *   changed already, since the last time we looked. We will not overwrite this more
  *   recent data without user interaction.</p>
  *
@@ -48,18 +48,18 @@ public class AlreadyChangedException extends PersistenceException {
 
   @MethodContract(
     pre = {
-      @Expression("persistentBean != null")
+      @Expression("object != null")
     },
     post = {
-      @Expression("persistentBean == _persistentBeanType"),
-      @Expression("message == _message"),
+      @Expression("object == _object"),
+      @Expression("message == DEFAULT_MESSAGE_KEY"),
       @Expression("cause == _cause")
     }
   )
-  public AlreadyChangedException(PersistentBean<?> persistentBean, String message, Throwable cause) {
-    super(message, cause);
-    assert persistentBean != null;
-    $persistentBean = persistentBean;
+  public AlreadyChangedException(Object object, Throwable cause) {
+    super(null, cause);
+    assert object != null;
+    $object = object;
   }
 
   /*</construction;>*/
@@ -69,13 +69,13 @@ public class AlreadyChangedException extends PersistenceException {
   /*<property name="persistentBean">*/
   //------------------------------------------------------------------
 
-  @Basic(invars = @Expression("persistentBean != null"))
-  public final PersistentBean<?> getPersistentBean() {
-    return $persistentBean;
+  @Basic(invars = @Expression("object != null"))
+  public final Object getObject() {
+    return $object;
   }
 
-  @Invars(@Expression("$persistentBean != null"))
-  private final PersistentBean<?> $persistentBean;
+  @Invars(@Expression("$object != null"))
+  private final Object $object;
 
   /*</property>*/
 
