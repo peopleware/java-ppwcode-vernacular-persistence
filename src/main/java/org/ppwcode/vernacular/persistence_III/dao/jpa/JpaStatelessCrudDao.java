@@ -69,9 +69,9 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
  *
  * @mudo unit tests
  */
-public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
+public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
 
-  private final static Log _LOG = LogFactory.getLog(JpaRequiredTransactionStatelessCrudDao.class);
+  private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
 
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
