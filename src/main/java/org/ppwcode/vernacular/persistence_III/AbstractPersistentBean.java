@@ -20,10 +20,6 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
@@ -65,9 +61,9 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
     $persistenceId = persistenceId;
   }
 
-  @Id
-  @GeneratedValue
-  @Column(name="persistenceId")
+//  @Id
+//  @GeneratedValue
+//  @Column(name="persistenceId")
   private _Id_ $persistenceId;
 
   /*</property>*/
