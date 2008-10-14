@@ -50,7 +50,7 @@ import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
-import org.ppwcode.vernacular.persistence_III.dao.StatelessCrudDao;
+import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
@@ -69,7 +69,7 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
  *
  * @mudo unit tests
  */
-public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
+public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTransactionStatelessCrudDao {
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
@@ -136,11 +136,6 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
     }
   }
 
-  /**
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
-   * {@link InternalException} is thrown.
-   */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ createPersistentBean(_PB_ pb) throws InternalException {
     _LOG.debug("Creating persistent bean: " + pb);
@@ -203,9 +198,7 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
   }
 
   /**
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
-   * {@link InternalException} is thrown.
+   * {@inheritDoc}
    *
    * @mudo on change of an upstream association, the civility of the old parent is not checked in the current implementation
    */
@@ -359,11 +352,6 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements StatelessCrud
     }
   }
 
-  /**
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
-   * {@link InternalException} is thrown.
-   */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ deletePersistentBean(_PB_ pb) throws SemanticException {
     _LOG.debug("Deleting persistent bean: " + pb);

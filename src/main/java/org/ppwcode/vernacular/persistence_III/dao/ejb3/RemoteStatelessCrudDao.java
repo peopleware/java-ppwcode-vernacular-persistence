@@ -65,7 +65,7 @@ import org.toryt.annotations_I.MethodContract;
  *
  *   }
  * </pre>
- * <p>Furthermore, you need to inject a {@link #getStatelessCrudJoinTransactionDao() LocalStatelessCrudDao}
+ * <p>Furthermore, you need to inject a {@link #getRequiredTransactionStatelessCrudDao() RequiredTransactionStatelessCrudDao}
  *    and an {@link #getExceptionHandler() ExceptionHandler}. A {@link #getUserTransaction() UserTransaction} is injected
  *    as a &#64;Resource.</p>
  * <p>That is why this class does not have the {@code &#64;Stateless}, {@code &#64;WebService} nor {@code &#64;TransactionManagement}
@@ -97,7 +97,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
   -------------------------------------------------------------------------*/
 
   @Basic
-  public final RequiredTransactionStatelessCrudDao getStatelessCrudJoinTransactionDao() {
+  public final RequiredTransactionStatelessCrudDao getRequiredTransactionStatelessCrudDao() {
     return $requiredTransactionStatelessCrudDao;
   }
 
@@ -169,7 +169,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
-      Set<_PersistentBean_> result = getStatelessCrudJoinTransactionDao().retrieveAllPersistentBeans(persistentBeanType, retrieveSubClasses);
+      Set<_PersistentBean_> result = getRequiredTransactionStatelessCrudDao().retrieveAllPersistentBeans(persistentBeanType, retrieveSubClasses);
       getUserTransaction().commit();
       return result;
     }
@@ -184,7 +184,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
-      _PersistentBean_ result = getStatelessCrudJoinTransactionDao().retrievePersistentBean(persistentBeanType, id);
+      _PersistentBean_ result = getRequiredTransactionStatelessCrudDao().retrievePersistentBean(persistentBeanType, id);
       getUserTransaction().commit();
       return result;
     }
@@ -199,7 +199,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
-      _PB_ result = getStatelessCrudJoinTransactionDao().updatePersistentBean(pb);
+      _PB_ result = getRequiredTransactionStatelessCrudDao().updatePersistentBean(pb);
       getUserTransaction().commit();
       return result;
     }
@@ -214,7 +214,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
-      _PB_ result = getStatelessCrudJoinTransactionDao().createPersistentBean(pb);
+      _PB_ result = getRequiredTransactionStatelessCrudDao().createPersistentBean(pb);
       getUserTransaction().commit();
       return result;
     }
@@ -228,7 +228,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
   _PB_ deletePersistentBean(_PB_ pb) throws InternalException {
     try {
       getUserTransaction().begin();
-      _PB_ result = getStatelessCrudJoinTransactionDao().deletePersistentBean(pb);
+      _PB_ result = getRequiredTransactionStatelessCrudDao().deletePersistentBean(pb);
       getUserTransaction().commit();
       return result;
     }

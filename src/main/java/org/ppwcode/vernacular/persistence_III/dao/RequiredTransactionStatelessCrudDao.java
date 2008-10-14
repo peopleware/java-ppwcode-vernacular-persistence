@@ -30,10 +30,9 @@ import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 
 
 /**
- * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here are executed either in an existing
- *   transaction or, if no transaction exists, in a new transaction (~ required transaction). Methods follow the
- *   ppwcode exception vernacular as much as possible. Exceptions thrown during commit or roll-back are not handled
- *   according to the vernacular.</p>
+ * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here require a transaction (~ required).
+ *   Methods follow the ppwcode exception vernacular as much as possible. Exceptions thrown during commit or roll-back
+ *   are not handled according to the vernacular.</p>
  * <p>This interface allows the use of the stateless CRUD dao as local or remote session beans, and outside the container,
  *   as part of the <acronym title="Data Access Layer">DAL</acronym>. Clients that want to consider a method call
  *   on an interface as an isolated atomic action are better of using {@link AtomicStatelessCrudDao}, which offers
@@ -48,9 +47,8 @@ public interface RequiredTransactionStatelessCrudDao extends StatelessCrudDao {
   /**
    * {@inheritDoc}
    *
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
-   * {@link InternalException} is thrown.
+   * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
+   * roll-back only and an {@link InternalException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
@@ -58,9 +56,8 @@ public interface RequiredTransactionStatelessCrudDao extends StatelessCrudDao {
   /**
    * {@inheritDoc}
    *
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
-   * {@link InternalException} is thrown.
+   * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
+   * roll-back only and an {@link InternalException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
@@ -68,8 +65,8 @@ public interface RequiredTransactionStatelessCrudDao extends StatelessCrudDao {
   /**
    * {@inheritDoc}
    *
-   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
-   * (~ required).
+   * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
+   * roll-back only and an {@link InternalException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
