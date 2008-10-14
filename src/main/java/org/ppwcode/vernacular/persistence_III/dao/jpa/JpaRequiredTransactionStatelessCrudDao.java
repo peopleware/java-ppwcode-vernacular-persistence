@@ -49,13 +49,16 @@ import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
-import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
+import org.ppwcode.vernacular.persistence_III.dao.Dao;
+import org.ppwcode.vernacular.persistence_III.dao.StatelessCrudDao;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
 /**
- * <p>This implementation doesn't deal with transactions, but only with JPA. You are supposed to call these methods
- *   inside a transaction. Also, exceptions are not handled.</p>
+ * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here are executed either in an existing
+ *   transaction or, if no transaction exists, in a new transaction (~ required transaction). Methods follow the
+ *   ppwcode exception vernacular as much as possible. Exceptions thrown during commit or roll-back are not handled
+ *   according to the vernacular.</p>
  * <p>When used as a session bean, add</p>
  * <pre>
  * &#64;TransactionManagement(TransactionManagementType.BEAN)
@@ -66,7 +69,7 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
  *
  * @mudo unit tests
  */
-public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao implements RequiredTransactionStatelessCrudDao {
+public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao implements StatelessCrudDao {
 
   private final static Log _LOG = LogFactory.getLog(JpaRequiredTransactionStatelessCrudDao.class);
 
@@ -133,6 +136,11 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
     }
   }
 
+  /**
+   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
+   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
+   * {@link InternalException} is thrown.
+   */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ createPersistentBean(_PB_ pb) throws InternalException {
     _LOG.debug("Creating persistent bean: " + pb);
@@ -194,7 +202,13 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
     }
   }
 
-
+  /**
+   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
+   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
+   * {@link InternalException} is thrown.
+   *
+   * @mudo on change of an upstream association, the civility of the old parent is not checked in the current implementation
+   */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ updatePersistentBean(_PB_ pb) throws InternalException {
     _LOG.debug("Updating persistent bean: " + pb);
@@ -345,6 +359,11 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
     }
   }
 
+  /**
+   * This method requires a transaction, and will use the transaction of the calling context, or create one itself
+   * (~ required). In case of semantic problems (wildness), the transaction is set to roll-back only and an
+   * {@link InternalException} is thrown.
+   */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ deletePersistentBean(_PB_ pb) throws SemanticException {
     _LOG.debug("Deleting persistent bean: " + pb);

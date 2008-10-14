@@ -27,6 +27,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
+import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
@@ -83,17 +84,6 @@ import org.toryt.annotations_I.Throw;
  *   to map old semantic POJO's (now no longer entities) to new entities (if at all possible), you make the old API forward compatible
  *   with the new semantics. Because this is not always possible with all methods of this interface in all circumstances, all methods can
  *   throw a {@link NoLongerSupportedError}.</p>
- *
- *
-// MUDO
-// * <p>Because a transaction that is atomic on the scale of the end user can be quite extensive, and include
-// *   updates of existing entities, creation of new entities, and deletion of other entities, the create, update and
-// *   delete functionality is also available gathered in 1 method
-// *   -@link #writePersistentBeans(Set toBeCreated, Set toBeUpdated, Set toBeDeleted)}.
-// *   User code should gather the {@link PersistentBean}s to be created, updated and deleted in a set, and then call
-// *   this method to write information to persistent storage (possibly remotely). To support this stateful functionality,
-// *   it might be appropriate to wrap an instance of this type in an {@link AsyncCrudDao} in user code.</p>
-// END MUDO
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -165,6 +155,10 @@ public interface StatelessCrudDao extends Dao {
 
   /**
    * Create the object {@code pb} in persistent storage. Return that object with filled-out {@link PersistentBean#getPersistenceId()}.
+   * Before commit, the {@link RousseauBean#civilized() civility} is verified on {@code pb} and all of its upstream beans
+   * (to-one relationships), in their state such as they exist in the database. All upstream beans should exist in the database, and
+   * be unchanged. Otherwise, an {@link AlreadyChangedException} is thrown. No validation is done on downstream beans: there should
+   * be no downstream beans in {@code pb}. It is a programming error to submit a bean with downstream associated beans.
    *
    * @mudo contract
    * @idea (jand) security exceptions
@@ -193,7 +187,12 @@ public interface StatelessCrudDao extends Dao {
   _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
 
   /**
-   * Update the object {@code pb} in persistent storage. Return that object.
+   * Update the object {@code pb} in persistent storage. Return that object. Before commit, the
+   * {@link RousseauBean#civilized() civility} is verified on {@code pb} and all of its upstream beans
+   * (to-one relationships), in their state such as they exist in the database. All upstream beans
+   * should exist in the database, and be unchanged. Otherwise, an {@link AlreadyChangedException}
+   * is thrown. No validation is done on downstream beans: there should be no downstream beans in
+   * {@code pb}.
    *
    * @mudo contract
    * @idea (jand) security exceptions
