@@ -19,6 +19,7 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
+import static org.ppwcode.util.reflect_I.PropertyHelpers.setPropertyValue;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
@@ -29,7 +30,6 @@ import static org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers.wildE
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -39,10 +39,8 @@ import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_II.ExceptionHelpers;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.SemanticException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
@@ -186,7 +184,7 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
         /* Check that this is an association; this we would be able to see in the generic paramater of the
            collection (PersistentBean), but that is erased. So, to see the difference with a to-many attribute,
            we need a special note, an annotation.
-           MUDO for now, we don't do this, and consider all collections as to-many associations. We check civility and
+           TODO for now, we don't do this, and consider all collections as to-many associations. We check civility and
                 persist for all PersistentBeans in the collection */
         Collection<?> downstreamObjects = propertyValue(pb, pd.getName(), Collection.class);
         // we consider this a true association if there is at least one persistent bean in the collection
@@ -200,7 +198,7 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
   /**
    * {@inheritDoc}
    *
-   * @mudo on change of an upstream association, the civility of the old parent is not checked in the current implementation
+   * @todo on change of an upstream association, the civility of the old parent is not checked in the current implementation
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ updatePersistentBean(_PB_ pb) throws InternalException {
@@ -280,25 +278,6 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
       }
     }
     return false;
-  }
-
-  // MUDO create a helper method in reflection for this
-  private static void setPropertyValue(Object bean, String propertyName, Object value) throws InternalException {
-    try {
-      PropertyUtils.setProperty(bean, propertyName, value);
-    }
-    catch (InvocationTargetException exc) {
-      InternalException internalExc = ExceptionHelpers.huntFor(exc, InternalException.class);
-      if (internalExc != null) {
-        throw internalExc; // MUDO gather all internal exceptions, this for all upstreams, + wildness
-      }
-    }
-    catch (IllegalAccessException exc) {
-      unexpectedException(exc);
-    }
-    catch (NoSuchMethodException exc) {
-      unexpectedException(exc);
-    }
   }
 
   private void validate(PersistentBean<?> newPb) throws PropertyException {
