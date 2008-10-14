@@ -21,6 +21,7 @@ import static org.apache.commons.beanutils.PropertyUtils.getProperty;
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
 import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
@@ -51,12 +52,16 @@ import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ppwcode.util.reflect_I.PropertyHelpers;
+import org.ppwcode.vernacular.exception_II.ExceptionHelpers;
 import org.ppwcode.vernacular.exception_II.InternalException;
 import org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers;
 import org.ppwcode.vernacular.exception_II.SemanticException;
 import org.ppwcode.vernacular.exception_II.handle.ExceptionHandler;
+import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
@@ -341,32 +346,42 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
     assert pre(pb.getPersistenceId() == null);
     assert pre(pb.getPersistenceVersion() == null);
     assert dependency(getEntityManager(), "enitytManager");
-    _PB_ newPb = null;
     // Since we are only persisting pb, we only need to normalize pb
-
-    /* first we gather all the beans we received as parameter; most often, pb will be detached.
-     * if not however, we have a problem: gathering all related beans will load the entire
-     * database. see assert pre
+    pb.normalize();
+    /* for all first level upstream associations (to-one): replace the referenced object with a fresh copy
+     * with that id from the database.
      */
-    Set<PersistentBean<?>> associatedBeans = associatedBeans(pb, PersistentBean.GENERIC_SUPER_TYPE);
-    /* next, we normalize; we do not want to normalize stuff that did not come in as parameter, so we do
-     * this before we merge
-     */
-    normalize(associatedBeans);
-    /* now we merge; this isn't committed yet, but we want access to lazy loaded sets when we calculate
+    PropertyDescriptor[] pds = getPropertyDescriptors(pb);
+    for (PropertyDescriptor pd : pds) {
+      if (VersionedPersistentBean.class.isAssignableFrom(pd.getPropertyType())) {
+        // it's a to-one association
+        String propertyName = pd.getName();
+        PersistentBean<?> upstreamDetachedBean = propertyValue(pb, propertyName, PersistentBean.class);
+        if (upstreamDetachedBean != null) {
+          PersistentBean<?> upstreamManagedBean =
+              getEntityManager().find(upstreamDetachedBean.getClass(), upstreamDetachedBean.getPersistenceId());
+          if (upstreamManagedBean == null) {
+            throw new AlreadyChangedException(upstreamDetachedBean, null);
+          }
+          setPropertyValue(pb, propertyName, upstreamManagedBean);
+        }
+      }
+    }
+    /* now we persist; this isn't committed yet, but we want access to lazy loaded sets when we calculate
      * wild exceptions
      */
     try {
-      newPb = getEntityManager().merge(pb); // not committed yet, throws load of exceptions
-      /* now all beans in the graph are new; we need to use the variants that are new;
-       * we only validate upstream bean; find them
-       * MUDO SINCE WE DO NOT VALIDATE DOWNSTREAM, THERE IS CURRENTLY A LOOPHOLE TO GET WILD DATA IN THE DATABASE
-       * if you submit a pb with associated beans over a many relationship, in which there is a new bean or a changed
-       * bean, and Cascade is on for persist and / or merge, that data will reach the database unchecked;
-       * We do not dare to check that now, since, if we do it for all to-many relationships, they will be loaded
-       * lazily, and we will load the entire database if we are unlucky
-       */
-      Set<PersistentBean<?>> newAssociatedBeans = upstreamBeans(pb, PersistentBean.GENERIC_SUPER_TYPE);
+      getEntityManager().persist(pb); // not committed yet, throws load of exceptions
+       /* we only validate upstream bean; find them
+        * MUDO SINCE WE DO NOT VALIDATE DOWNSTREAM, THERE IS CURRENTLY A LOOPHOLE TO GET WILD DATA IN THE DATABASE
+        *      IF PB HAS DOWNSTREAM DATA AND CASCADE PERSIST:
+        *      FIX: check wildness for downstream from pb too
+        * if you submit a pb with associated beans over a many relationship, in which there is a new bean or a changed
+        * bean, and Cascade is on for persist and / or merge, that data will reach the database unchecked;
+        * We do not dare to check that now, since, if we do it for all to-many relationships, they will be loaded
+        * lazily, and we will load the entire database if we are unlucky
+        */
+      Set<PersistentBean<?>> managedUpstreamBeans = upstreamBeans(pb, PersistentBean.GENERIC_SUPER_TYPE);
       /* we lock all the upstream beans before we do wild exception checks; otherwise, it is possible that somebody else
        * is in the mean time adding or changing another pb to our upstream bean; since we depend on optimistic locking,
        * we need to force that our commit invalidates the other commit; because it happens at the same time, the other
@@ -381,24 +396,41 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
        * Getting a write lock is the easiest way to increment the version number for a potentially unchanged object.
        * There is no need to lock pb itself.
        */
-      for (PersistentBean<?> upstreamBean : newAssociatedBeans) {
+      for (PersistentBean<?> upstreamBean : managedUpstreamBeans) {
         if (upstreamBean.getPersistenceId() != null) { // new record; assuming id is set on commit, and not sooner
           getEntityManager().lock(upstreamBean, LockModeType.WRITE); // throws load of exceptions
         }
       }
-      assert newPb != null;
-      /* now, check civility on all new associated beans */
-      CompoundPropertyException cpe = wildExceptions(newAssociatedBeans); // also on new entities
+      /* now, check civility on all upstream beans */
+      CompoundPropertyException cpe = wildExceptions(managedUpstreamBeans);
+      /* Downstream beans might be here; maybe we have a cascade persist on downstream beans, or they exist already.
+       * In the future, it might be possible to deal with that case (validation is not trivial. For now, we do the
+       * effort to throw an exception.
+       */
+      for (PropertyDescriptor pd : pds) {
+        if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
+          /* Check that this is an association; this we would be able to see in the generic paramater of the
+             collection (PersistentBean), but that is erased. So, to see the difference with a to-many attribute,
+             we need a special note, an annotation.
+             MUDO for now, we don't do this, and consider all collections as to-many associations. We check civility and
+                  persist for all PersistentBeans in the collection */
+          Collection<?> downstreamObjects = propertyValue(pb, pd.getName(), Collection.class);
+          // we consider this a true association if there is at least one persistent bean in the collection
+          if (containsPersistentBean(downstreamObjects)) {
+            newAssertionError("to-many associations (downstream) of beans to persist must be empty", null);
+          }
+        }
+      }
       /* if there are exceptions, stop and throw them (but log this first) */
       if (! cpe.isEmpty()) {
         if (_LOG.isDebugEnabled()) {
-          _LOG.debug("persistent beans offered for merge are not civilized; rollback", cpe);
+          _LOG.debug("persistent bean offered for persist os not civilized; rollback", cpe);
         }
         getEntityManager().getTransaction().setRollbackOnly();
         cpe.throwIfNotEmpty();
       }
       else {
-        _LOG.debug("merge succeeded; attempting commit and returning new persistent bean: " + newPb);
+        _LOG.debug("persist succeeded; attempting commit and returning new persistent bean: " + pb);
       }
     }
     catch (IllegalStateException exc) {
@@ -410,8 +442,36 @@ public class JpaRequiredTransactionStatelessCrudDao extends AbstractJpaDao imple
     catch (TransactionRequiredException exc) {
       unexpectedException(exc, "transaction is required!");
     }
-    return newPb;
+    return pb;
     // now we will get a commit; the exceptions raised here need to be handled still
+  }
+
+  private boolean containsPersistentBean(Collection<?> downstreamObjects) {
+    for (Object o : downstreamObjects) {
+      if (o instanceof PersistentBean<?>) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // MUDO create a helper method in reflection for this
+  private static void setPropertyValue(Object bean, String propertyName, Object value) throws InternalException {
+    try {
+      PropertyUtils.setProperty(bean, propertyName, value);
+    }
+    catch (InvocationTargetException exc) {
+      InternalException internalExc = ExceptionHelpers.huntFor(exc, InternalException.class);
+      if (internalExc != null) {
+        throw internalExc; // MUDO gather all internal exceptions, this for all upstreams, + wildness
+      }
+    }
+    catch (IllegalAccessException exc) {
+      ProgrammingErrorHelpers.unexpectedException(exc);
+    }
+    catch (NoSuchMethodException exc) {
+      ProgrammingErrorHelpers.unexpectedException(exc);
+    }
   }
 
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
