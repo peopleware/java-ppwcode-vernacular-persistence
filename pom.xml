@@ -25,8 +25,6 @@
   <!-- NOTE: you probably have to give Maven more memory:
     export MAVEN_OPTS=-Xmx1024M -->
 
-  <!-- MUDO add version nr (spec / impl) to manifest -->
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -45,7 +43,7 @@
 
   <!-- GROUP ID, VERSION, PACKAGING, NAME & DESCRIPTION: OVERWRITE IN YOUR CHILD POM (know what you are doing :-) ) -->
   <!-- for ppwcode projects, groupId and artifactId are calculated, and used in the magic mantra (see below) -->
-  <version>1.0.0-SNAPSHOT</version> <!-- MUDO add Svn release number as implementation version -->
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>ppwcode persistence vernacular</name>
   <description>
@@ -234,7 +232,7 @@
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-VI</artifactId>
-      <version>1.0.0-SNAPSHOT</version> <!--  MUDO this version is not defined in ppwcode ppwcode parent pom -->
+      <version>1.0.0-SNAPSHOT</version> <!--  this version is not defined in ppwcode ppwcode parent pom -->
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
