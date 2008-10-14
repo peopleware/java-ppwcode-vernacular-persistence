@@ -82,7 +82,6 @@ import org.toryt.annotations_I.MethodContract;
  *   with the new semantics. Because this is not always possible with all methods of this interface in all circumstances, all methods
  *   can throw a {@code NoLongerSupportedError}.</p>
  *
- * @mudo work on transaction annotations
  * @mudo unit tests
  */
 @Stateless

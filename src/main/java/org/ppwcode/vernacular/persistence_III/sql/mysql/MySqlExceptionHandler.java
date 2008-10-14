@@ -37,7 +37,7 @@ import org.ppwcode.vernacular.persistence_III.sql.SqlExceptionHandler;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  *
- * @mudo i18n
+ * @todo i18n
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)

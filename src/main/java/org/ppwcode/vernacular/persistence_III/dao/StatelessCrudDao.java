@@ -65,7 +65,7 @@ import org.toryt.annotations_I.Throw;
  *   ...
  *
  *   &#64;<var>(Remote|Local)</var>
- *   public interface <var>XXX</var>StatelessCrudDao extends org.ppwcode.vernacular.persistence_III.dao.<var>XXX</var>StatelessCrudDao {
+ *   public interface <var>Something</var>StatelessCrudDao extends org.ppwcode.vernacular.persistence_III.dao.<var>Something</var>StatelessCrudDao {
  *
  *     // NOP
  *
@@ -75,12 +75,12 @@ import org.toryt.annotations_I.Throw;
  *   from infecting this library package with a dependency on EJB3 annotations). In this way you have the possibility to keep
  *   backward compatibility when your business application's semantics change, and the class / object model and data model change.
  *   In that case, you develop a new version in package {@code my.business.application_V}, introducing
- *   {@code my.business.application_V.businesslogic.<var>XXX</var>StatelessCrudDao}. With that, your clients can now choose which
+ *   {@code my.business.application_V.businesslogic.<var>Something</var>StatelessCrudDao}. With that, your clients can now choose which
  *   version they want to use. From the old version, you keep the necessary classes, but since the database structure probably has
  *   changed, retrieving and updating data cannot easily happen the same way. In particular, your semantics (persistent bean
  *   subtypes) will probably no longer map to the database. This means that your original implementation of
- *   {@code my.business.application_IV.businesslogic.<var>XXX</var>StatelessCrudDao} with the old semantics (entities) will no
- *   longer work. By changing the implementation of {@code my.business.application_IV.businesslogic.<var>XXX</var>StatelessCrudDao}
+ *   {@code my.business.application_IV.businesslogic.<var>Something</var>StatelessCrudDao} with the old semantics (entities) will no
+ *   longer work. By changing the implementation of {@code my.business.application_IV.businesslogic.<var>Something</var>StatelessCrudDao}
  *   to map old semantic POJO's (now no longer entities) to new entities (if at all possible), you make the old API forward compatible
  *   with the new semantics. Because this is not always possible with all methods of this interface in all circumstances, all methods can
  *   throw a {@link NoLongerSupportedError}.</p>

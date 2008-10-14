@@ -31,7 +31,7 @@ import org.toryt.annotations_I.MethodContract;
  * Superclass that gathers internal exceptions that are specific for
  * persistence operations.
  *
- * @mudo need to work on i18n messages
+ * @todo need to work on i18n messages
  *
  * @author    Jan Dockx
  * @author    David Van Keer

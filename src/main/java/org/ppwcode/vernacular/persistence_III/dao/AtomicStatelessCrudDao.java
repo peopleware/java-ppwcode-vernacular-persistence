@@ -72,9 +72,6 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    *
    * This method is an atomic transaction. Any exception that is thrown signals a roll-back of the transaction. If the methods ends nominally,
    * the transaction is successfully committed.
-   *
-   * @mudo specific exception for rollback, or InternalException
-   * @mudo contract
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
   _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
