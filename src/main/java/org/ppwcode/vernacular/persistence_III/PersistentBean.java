@@ -89,9 +89,4 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
 
   /*</property>*/
 
-
-
-  @SuppressWarnings("unchecked")
-  public final static Class<? extends PersistentBean<?>> GENERIC_SUPER_TYPE = (Class<? extends PersistentBean<?>>)PersistentBean.class;
-
 }
