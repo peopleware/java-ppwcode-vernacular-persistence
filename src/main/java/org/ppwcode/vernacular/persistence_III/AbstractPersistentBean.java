@@ -17,7 +17,9 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.serialization_I.SerializationHelpers.replace;
 
+import java.io.NotSerializableException;
 import java.io.Serializable;
 
 import org.ppwcode.metainfo_I.Copyright;
@@ -28,6 +30,9 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 
 /**
  * A partial implementation of the interface {@link PersistentBean}.
+ * This adds the use of the ppwcode util serialization alternative for serialization.
+ * This means that <code>&#64;DoNotSerialize</code can be used where you want transient serialization, but you
+ * cannot use that keyword because of its effect on JPA and possibly other persistence solutions.
  *
  * @author    Nele Smeets
  * @author    Ruben Vandeginste
@@ -67,5 +72,17 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
   private _Id_ $persistenceId;
 
   /*</property>*/
+
+
+
+  /**
+   * Use the ppwcode serialization util alternative for serialization.
+   * This means that <code>&#64;DoNotSerialize</code can be used where
+   * you want transient serialization, but you cannot use that keyword because
+   * of its effect on JPA and possibly other persistence solutions.
+   */
+  protected final Object writeReplace() throws NotSerializableException {
+    return replace(this);
+  }
 
 }

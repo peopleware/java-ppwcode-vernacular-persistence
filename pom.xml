@@ -208,6 +208,10 @@
       <artifactId>ppwcode-metainfo-I</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.ppwcode.util</groupId>
+      <artifactId>ppwcode-util-serialization-I</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.toryt</groupId>
       <artifactId>Toryt-annotations-I</artifactId>
     </dependency>
