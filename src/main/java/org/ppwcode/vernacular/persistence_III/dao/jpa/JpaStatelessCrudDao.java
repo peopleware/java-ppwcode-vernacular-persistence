@@ -81,13 +81,11 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
     try {
       Query query = null;
       if (retrieveSubClasses) {
-        query = getEntityManager().createQuery("FROM " + persistentBeanType.getName());
+        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb");
       }
       else {
-        query = getEntityManager().createQuery("FROM " + persistentBeanType.getName() +
-                                           " as persistentObject WHERE persistentObject.class = " +
-                                           persistentBeanType.getName());
-        // MUDO this approach is untested with JPA
+        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb" +
+                                               " WHERE pb.class = " + persistentBeanType.getName());
       }
       @SuppressWarnings("unchecked")
       List<_PersistentBean_> result = query.getResultList();
