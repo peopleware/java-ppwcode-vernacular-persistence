@@ -18,6 +18,9 @@ package org.ppwcode.vernacular.persistence_III.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.serialization_I.SerializationHelpers.replace;
+
+import java.io.NotSerializableException;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -50,6 +53,9 @@ import org.toryt.annotations_I.MethodContract;
  * <p>This is very sad, an we hope this will be resolved in the future. Classes that now
  *   {@code ... extends AbstractIntegerIdVersionedPersistentBean} can be changed later, when the workaround is no
  *   longer needed, to {@code ... extends AbstractVersionedPersistentBean<Integer>}.</p>
+ * <p>This adds the use of the ppwcode util serialization alternative for serialization.
+ *   This means that <code>&#64;DoNotSerialize</code can be used where you want transient serialization, but you
+ *   cannot use that keyword because of its effect on JPA and possibly other persistence solutions.</p>
  *
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
@@ -117,5 +123,17 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
   private Integer $persistenceVersion;
 
   /*</property>*/
+
+
+
+  /**
+   * Use the ppwcode serialization util alternative for serialization.
+   * This means that <code>&#64;DoNotSerialize</code can be used where
+   * you want transient serialization, but you cannot use that keyword because
+   * of its effect on JPA and possibly other persistence solutions.
+   */
+  protected final Object writeReplace() throws NotSerializableException {
+    return replace(this);
+  }
 
 }
