@@ -17,7 +17,13 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Basic;
@@ -37,6 +43,45 @@ import org.toryt.annotations_I.MethodContract;
  * @mudo generalize persistence context injection and explain
  */
 public abstract class AbstractJpaDao implements Dao {
+
+  /*<construction>
+  -------------------------------------------------------------------------*/
+
+  /**
+   * Default constructor. Use this if you want to set the entity manager yourself,
+   * or inject in one way or another.
+   */
+  @MethodContract(post = @Expression("entityManager == null"))
+  protected AbstractJpaDao() {
+    // NOP
+  }
+
+  /**
+   * With this constructor, the entity manager is set to an entity manager of
+   * the persistence unit with name {@code persistenceUnitName}.
+   */
+  @MethodContract(pre  = {
+                    @Expression("_persistenceUnitName != null"),
+                    @Expression(value = "! Persistence.createEntityManagerFactory(persistenceUnitName) throws",
+                                description = "_persistenceUnitName must be an existing persistence unit name")
+                  },
+                  post = @Expression("entityManager == Persistence.createEntityManagerFactory(_persistenceUnitName).createEntityManager()"))
+  protected AbstractJpaDao(String persistenceUnitName) {
+    preArgumentNotNull(persistenceUnitName, "persistenceUnitName");
+    EntityManagerFactory emf = null;
+    try {
+      emf = Persistence.createEntityManagerFactory(persistenceUnitName);
+    }
+    catch (PersistenceException pExc) {
+      unexpectedException(pExc);
+    }
+    $entityManager = emf.createEntityManager();
+  }
+
+
+  /*</construction>*/
+
+
 
   /*<property name="entity manager">
   -------------------------------------------------------------------------*/
