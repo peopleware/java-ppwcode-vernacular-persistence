@@ -348,7 +348,8 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
       _LOG.error("transaction is required!");
       unexpectedException(exc);
     }
-    pb.setPersistenceId(null);
+    // JPA complains about manipulating persistence id of a managed object
+    // pb.setPersistenceId(null);
     _LOG.debug("delete succeeded; attempting commit and returning new persistent bean: " + pb);
     return pb;
   }
