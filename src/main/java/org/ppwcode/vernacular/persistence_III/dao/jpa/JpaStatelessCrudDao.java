@@ -71,6 +71,12 @@ public class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTrans
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
+  protected JpaStatelessCrudDao() {
+  }
+
+  protected JpaStatelessCrudDao(String persistenceUnitName) {
+    super(persistenceUnitName);
+  }
 
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
