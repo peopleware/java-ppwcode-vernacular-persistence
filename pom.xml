@@ -201,6 +201,71 @@
     </repository>
   </repositories>
 
+
+  <!-- PLUGINS AND SETTINGS FOR OPENJPA TESTS -->
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <!-- Initialize directories for temporary files for in-memory DB for tests. -->
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <configuration>
+              <tasks>
+                <mkdir dir="target/TestDB" />
+                <mkdir dir="target/log/jpa" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <!-- Make sure that during unit test entities are JPA enhanced by an agent.
+             This requires the agent in a certain location. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-javaagent:${basedir}/target/openjpa-1.2.0.jar</argLine>
+          <workingDirectory>${basedir}/target</workingDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <!-- Makes OpenJPA jar available in certain location for unit tests. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openjpa</groupId>
+                  <artifactId>openjpa</artifactId>
+                  <version>1.2.0</version>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+    </plugins>
+  </build>
+
   <!-- activating dependencies used in this project. Versions are choosen in the grandparent pom -->
   <dependencies>
     <dependency>
@@ -280,6 +345,12 @@
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+
   </dependencies>
 
 </project>
