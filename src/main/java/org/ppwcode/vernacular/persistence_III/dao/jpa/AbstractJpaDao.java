@@ -54,6 +54,27 @@ import org.toryt.annotations_I.MethodContract;
  * </pre>
  * .
  *
+ * MUDO doc unfinished
+ *   /*<property name="entity manager">
+  -------------------------------------------------------------------------ASTERIX/
+
+  @Basic(init = @Expression("null"))
+  public EntityManager getEntityManager() {
+    return $entityManager;
+  }
+
+  @MethodContract(
+    post = @Expression("entityManager == _manager")
+  )
+  public final void setEntityManager(EntityManager manager) {
+    $entityManager = manager;
+  }
+
+  private EntityManager $entityManager;
+
+  /*</property>ASTERIX/
+
+ *
  * @node We tried to generalize injection of the entity manager via a constructor with the
  *       persistence unit name as parameter, and then using
  *       <code>$entityManager = Persistence.createEntityManagerFactory(persistenceUnitName)</code>
@@ -92,29 +113,13 @@ public abstract class AbstractJpaDao implements Dao {
 
 
 
-  /*<property name="entity manager">
-  -------------------------------------------------------------------------*/
-
-  @Basic(init = @Expression("null"))
-  public EntityManager getEntityManager() {
-    return $entityManager;
-  }
-
-  @MethodContract(
-    post = @Expression("entityManager == _manager")
-  )
-  public final void setEntityManager(EntityManager manager) {
-    $entityManager = manager;
-  }
-
-  private EntityManager $entityManager;
-
-  /*</property>*/
+  @Basic
+  public abstract EntityManager getEntityManager();
 
 
   @MethodContract(post = @Expression("result ? entityManager != null"))
   public boolean isOperational() {
-    return $entityManager != null;
+    return getEntityManager() != null;
   }
 
 }
