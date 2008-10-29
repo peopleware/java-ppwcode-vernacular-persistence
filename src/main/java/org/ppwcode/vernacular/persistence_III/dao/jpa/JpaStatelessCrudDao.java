@@ -138,7 +138,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() == null);
     assert pre(pb.getPersistenceVersion() == null);
-    assert dependency(getEntityManager(), "enitytManager");
+    assert dependency(getEntityManager(), "entityManager");
     // Since we are only persisting pb, we only need to normalize pb
     pb.normalize();
     /* for all first level upstream associations (to-one): replace the referenced object with a fresh copy
@@ -204,7 +204,10 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() != null);
     assert pre(pb.getPersistenceVersion() != null);
-    assert dependency(getEntityManager(), "enitytManager");
+    assert dependency(getEntityManager(), "entityManager");
+    // check whether the pb exists, because we do not want to create a new entity
+    // will throw an IdNotFoundException, if the pb does not exist
+    findManagedEntity(pb);
     // Since we are only persisting pb, we only need to normalize pb
     pb.normalize();
 //    /* MUDO not done for merg now (it is for persist); we hypothesize that merge does this for us;
@@ -330,13 +333,30 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     }
   }
 
+  /**
+   * helper method, find the managed entity for the given detached entity
+   */
+  private <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  _PB_ findManagedEntity(_PB_ pb) throws IdNotFoundException {
+    @SuppressWarnings("unchecked")
+    _PB_ mpb = getEntityManager().find((Class<_PB_>)pb.getClass(), pb.getPersistenceId());
+    if (mpb == null) {
+      @SuppressWarnings("unchecked")
+      IdNotFoundException exc =  new IdNotFoundException((Class<_PB_>)pb.getClass(), pb.getPersistenceId());
+      throw exc;
+    } else {
+      return mpb;
+    }
+  }
+
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws SemanticException {
+  _PB_ deletePersistentBean(_PB_ pb) throws SemanticException, IdNotFoundException {
     _LOG.debug("Deleting persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
-    assert dependency(getEntityManager(), "enitytManager");
+    assert dependency(getEntityManager(), "entityManager");
     try {
-      getEntityManager().remove(pb); // database will hurl when not possible, depending on cascade settings
+      _PB_ fpb = findManagedEntity(pb);
+      getEntityManager().remove(fpb); // database will hurl when not possible, depending on cascade settings
       // checking civility here makes no sense
     }
     catch (IllegalStateException exc) {
