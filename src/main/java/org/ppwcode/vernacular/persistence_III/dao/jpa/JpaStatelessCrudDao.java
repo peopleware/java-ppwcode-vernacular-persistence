@@ -217,8 +217,9 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     /* now we merge; this isn't committed yet, but we want access to lazy loaded sets when we calculate
      * wild exceptions
      */
+    _PB_ newPb = null;
     try {
-      _PB_ newPb = getEntityManager().merge(pb); // not committed yet, throws load of exceptions
+      newPb = getEntityManager().merge(pb); // not committed yet, throws load of exceptions
        validate(newPb);
     }
     catch (IllegalStateException exc) {
@@ -230,7 +231,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     catch (TransactionRequiredException exc) {
       unexpectedException(exc, "transaction is required!");
     }
-    return pb;
+    return newPb;
     // now we will get a commit; the exceptions raised here need to be handled still
   }
 
