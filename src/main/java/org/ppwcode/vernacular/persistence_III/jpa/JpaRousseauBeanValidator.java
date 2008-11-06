@@ -71,6 +71,10 @@ public class JpaRousseauBeanValidator {
 
   private final static Log _LOG = LogFactory.getLog(JpaRousseauBeanValidator.class);
 
+  public JpaRousseauBeanValidator() {
+
+  }
+
   @PrePersist
   @PreUpdate
   @MethodContract(
