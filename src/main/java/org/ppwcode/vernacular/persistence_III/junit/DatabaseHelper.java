@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -45,10 +45,10 @@ import java.io.LineNumberReader;
  * @author Olivier Sinnaeve
  * @author Ruben Vandeginste
  */
-@Copyright("2008 - $Date: $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: $",
-         date     = "$Date: $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class DatabaseHelper extends JdbcDaoSupport {
 
   private final static Log logger = LogFactory.getLog(DatabaseHelper.class);
