@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 
-@Copyright("2008 - $Date: $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: $",
-         date     = "$Date: $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class JpaTestConstants {
 
   public static String PERSISTENCE_UNIT_DAO_JPA_TEST = "dao_jpa_test";

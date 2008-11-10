@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -30,10 +30,10 @@ import org.ppwcode.vernacular.persistence_III.jpa.test.semantics.X;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
 
-@Copyright("2008 - $Date: $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: $",
-         date     = "$Date: $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class DummyProviderX {
 
   public static X getX(String desc, E e, boolean locked, Date period, Y y) {

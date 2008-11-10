@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,10 +53,10 @@ import java.util.Locale;
  * This so the the test code could be shared !!
  *
  */
-@Copyright("2008 - $Date: $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: $",
-         date     = "$Date: $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class JpaStatelessCrudDaoTestsProvider {
 
   public static void testRetrievePersistentBean(RequiredTransactionStatelessCrudDao jscd)

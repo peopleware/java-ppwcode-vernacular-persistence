@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ import org.toryt.annotations_I.Throw;
  */
 @Entity
 @Table(name = "x")
-@Copyright("2008 - $Date: $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: $",
-         date     = "$Date: $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class X extends AbstractIntegerIdVersionedPersistentBean {
 
     public static final String EMPTY = "";
