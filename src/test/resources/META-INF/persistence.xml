@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+  <!-- Persistence unit for testing purpose: using OpenJPA;
+      explicit provider declaration and automatic ddl injection in database -->
+  <persistence-unit name="dao_jpa_test" transaction-type="RESOURCE_LOCAL">
+
+    <class>org.ppwcode.vernacular.persistence_III.jpa.AbstractIntegerIdVersionedPersistentBean</class>
+    <class>org.ppwcode.vernacular.persistence_III.jpa.test.semantics.E</class>
+    <class>org.ppwcode.vernacular.persistence_III.jpa.test.semantics.SubY</class>
+    <class>org.ppwcode.vernacular.persistence_III.jpa.test.semantics.Y</class>
+    <class>org.ppwcode.vernacular.persistence_III.jpa.test.semantics.X</class>
+    <class>org.ppwcode.vernacular.persistence_III.jpa.test.semantics.Q</class>
+
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+    <properties>
+      <property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbcDriver"/>
+      <!-- dummy is the db name used in the default DatabaseHelper setup. See generic-test properties -->
+      <property name="openjpa.ConnectionURL" value="jdbc:hsqldb:mem:dummy"/>
+      <property name="openjpa.ConnectionUserName" value="sa"/>
+      <property name="openjpa.ConnectionPassword" value=""/>
+
+      <property name="openjpa.Log" value="DefaultLevel=WARN"/>
+
+      <!-- execute the ddl script on the database -->
+      <property name="openjpa.jdbc.MappingDefaults"
+                value="ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+    </properties>
+  </persistence-unit>
+
+</persistence>
