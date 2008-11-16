@@ -45,6 +45,7 @@ public class JpaStatelessCrudDao
   @PersistenceContext
   private EntityManager $entityManager;
 
+  @Override
   @Basic
   public EntityManager getEntityManager() {
     return $entityManager;

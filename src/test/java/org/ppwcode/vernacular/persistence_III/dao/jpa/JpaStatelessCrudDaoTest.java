@@ -28,7 +28,7 @@ import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa.JpaStatelessCrudDao;
 import org.ppwcode.vernacular.persistence_III.jpa.test.util.dummy.JpaStatelessCrudDaoTestsProvider;
 import org.ppwcode.vernacular.persistence_III.junit.DatabaseTest;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 
 import javax.persistence.Persistence;
 import java.text.ParseException;
@@ -47,6 +47,7 @@ public class JpaStatelessCrudDaoTest extends DatabaseTest {
         "META-INF/perTest/JpaStatelessCrudDaoTest.properties");
   }
 
+  @Override
   @Before
   public void createTablesAndPopulate() throws Exception {
     jscd = new JpaStatelessCrudDao();
@@ -75,28 +76,28 @@ public class JpaStatelessCrudDaoTest extends DatabaseTest {
   }
 
   @Test
-  public void testCreatePersistentBean() throws InternalException {
+  public void testCreatePersistentBean() throws ApplicationException {
     JpaStatelessCrudDaoTestsProvider.testCreatePersistentBean(jscd, jscd.getEntityManager().getTransaction());
   }
 
   @Test
-  public void testUpdateTimeCardPersistentBean() throws InternalException {
+  public void testUpdateTimeCardPersistentBean() throws ApplicationException {
     JpaStatelessCrudDaoTestsProvider.testUpdateTimeCardPersistentBean(jscd, jscd.getEntityManager().getTransaction());
   }
 
   @Test
-  public void testUpdateEmployeePersistentBean() throws InternalException {
+  public void testUpdateEmployeePersistentBean() throws ApplicationException {
     JpaStatelessCrudDaoTestsProvider.testUpdateEmployeePersistentBean(jscd, jscd.getEntityManager().getTransaction());
   }
 
   @Test
   public void testUpdateLocalizedNameDescriptionPersistentBean()
-      throws InternalException {
+      throws ApplicationException {
     JpaStatelessCrudDaoTestsProvider.testUpdateLocalizedNameDescriptionPersistentBean(jscd, jscd.getEntityManager().getTransaction());
   }
 
   @Test
-  public void testUpdateGeneralTaskPersistentBean() throws InternalException {
+  public void testUpdateGeneralTaskPersistentBean() throws ApplicationException {
     JpaStatelessCrudDaoTestsProvider.testUpdateGeneralTaskPersistentBean(jscd, jscd.getEntityManager().getTransaction());
   }
 
