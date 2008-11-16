@@ -27,12 +27,12 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.exception_III.NoLongerSupportedError;
+import org.ppwcode.vernacular.exception_III.SemanticException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 import org.toryt.annotations_I.Throw;
@@ -179,7 +179,7 @@ public interface StatelessCrudDao extends Dao {
     },
     exc  =  {
       @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
-      @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
+      @Throw(type = SemanticException.class, cond = @Expression("! 'pb.civilized()")),
       @Throw(type = ApplicationException.class, cond = {@Expression("true")})
     }
   )
@@ -213,7 +213,7 @@ public interface StatelessCrudDao extends Dao {
     },
     exc  =  {
       @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
-      @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
+      @Throw(type = SemanticException.class, cond = @Expression("! 'pb.civilized()")),
       @Throw(type = ApplicationException.class, cond = {@Expression("true")})
     }
   )

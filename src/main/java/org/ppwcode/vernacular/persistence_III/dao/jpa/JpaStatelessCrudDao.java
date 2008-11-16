@@ -18,13 +18,13 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
-import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
-import static org.ppwcode.util.reflect_I.PropertyHelpers.setPropertyValue;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.pre;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
+import static org.ppwcode.util.reflect_I.PropertyHelpers.setPropertyValue;
 import static org.ppwcode.vernacular.persistence_III.PersistentBeanHelpers.upstreamPersistentBeans;
 import static org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers.wildExceptions;
 
@@ -42,6 +42,7 @@ import javax.persistence.TransactionRequiredException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.CompoundSemanticException;
 import org.ppwcode.vernacular.exception_III.SemanticException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
@@ -49,8 +50,6 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
-import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
 /**
  * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here are executed either in an existing
@@ -282,7 +281,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     return false;
   }
 
-  private void validate(PersistentBean<?> newPb) throws PropertyException {
+  private void validate(PersistentBean<?> newPb) throws SemanticException {
      /* we only validate upstream bean; find them
       * If you submit a pb with associated beans over a to-many relationship, in which there is a new bean or a changed
       * bean, and Cascade is on for persist and / or merge, that data would reach the database unchecked;
@@ -309,7 +308,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
       }
     }
     /* now, check civility on all upstream beans */
-    CompoundPropertyException cpe = wildExceptions(managedUpstreamBeans);
+    CompoundSemanticException cpe = wildExceptions(managedUpstreamBeans);
     /* Downstream beans might be here. However, we are not adding changing that set, because the association
      * is owned by the many-side (for which we are a to one). If our detached version had downstream beans,
      * those references are discarded by the merge already.
@@ -320,7 +319,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
   /**
    * If there are exceptions, stop and throw them (but log this first).
    */
-  private <_PB_> void handleWildExceptions(_PB_ pb, CompoundPropertyException cpe) throws PropertyException {
+  private <_PB_> void handleWildExceptions(_PB_ pb, CompoundSemanticException cpe) throws SemanticException {
     if (! cpe.isEmpty()) {
       if (_LOG.isDebugEnabled()) {
         _LOG.debug("persistent bean offered for persist os not civilized; rollback", cpe);
