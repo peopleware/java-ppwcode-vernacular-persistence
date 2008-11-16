@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence_III.junit;
 
+
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import org.apache.commons.logging.Log;
@@ -53,25 +54,25 @@ public class DatabaseHelper extends JdbcDaoSupport {
 
   private final static Log logger = LogFactory.getLog(DatabaseHelper.class);
 
-  private String createScript;
-  private String populateScript;
-  private String dropScript;
-  private boolean executeDatabaseMethods;
+  private String $createScript;
+  private String $populateScript;
+  private String $dropScript;
+  private boolean $executeDatabaseMethods;
 
 
   public void createTables() throws Exception {
-    int statements = executeStatementsFromFile(createScript);
+    int statements = executeStatementsFromFile($createScript);
     logger.info("Number of statements executed : " + statements);
   }
 
   public void populateTables() throws Exception {
-    logger.info("script: "+populateScript);
-    int statements = executeStatementsFromFile(populateScript);
+    logger.info("script: "+$populateScript);
+    int statements = executeStatementsFromFile($populateScript);
     logger.info("Number of statements executed : " + statements);
   }
 
   public void dropTables() throws Exception {
-    int statements = executeStatementsFromFile(dropScript);
+    int statements = executeStatementsFromFile($dropScript);
     logger.info("Number of statements executed : " + statements);
   }
 
@@ -124,26 +125,26 @@ public class DatabaseHelper extends JdbcDaoSupport {
 
   @Required
   public void setCreateScript(String createScript) {
-    this.createScript = createScript;
+    this.$createScript = createScript;
   }
 
   @Required
   public void setPopulateScript(String populateScript) {
-    this.populateScript = populateScript;
+    this.$populateScript = populateScript;
   }
 
   @Required
   public void setDropScript(String dropScript) {
-    this.dropScript = dropScript;
+    this.$dropScript = dropScript;
   }
 
   public boolean isExecuteDatabaseMethods() {
-    return executeDatabaseMethods;
+    return $executeDatabaseMethods;
   }
 
   @Required
   public void setExecuteDatabaseMethods(boolean executeDatabaseMethods) {
-    this.executeDatabaseMethods = executeDatabaseMethods;
+    this.$executeDatabaseMethods = executeDatabaseMethods;
   }
 
 }

@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence_III.junit;
 
+
 import org.junit.After;
 import static org.junit.Assert.assertNotNull;
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+
 /**
  * <p>Helps creating tables and populating them before a test is run.
  * Helps dropping tables after every test run.</p>
@@ -38,10 +40,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * <p/>
  * <p>Default properties are:</p>
  * <pre>
- *  databaseHelper.createScript=scripts/create_ddl.sql
- *  databaseHelper.populateScript=scripts/dml.sql
- *  databaseHelper.dropScript=scripts/drop_ddl.sql
- *  databaseHelper.executeDatabaseMethods=true
+ *  $databaseHelper.createScript=scripts/create_ddl.sql
+ *  $databaseHelper.populateScript=scripts/dml.sql
+ *  $databaseHelper.dropScript=scripts/drop_ddl.sql
+ *  $databaseHelper.executeDatabaseMethods=true
  * <p/>
  *  datasource.driverClassName=org.hsqldb.jdbcDriver
  *  datasource.url=jdbc:hsqldb:mem:dummy
@@ -58,14 +60,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 24-jul-2008
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:databaseHelper.xml")
+@ContextConfiguration(locations = "classpath:$databaseHelper.xml")
 @Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 public abstract class DatabaseTest {
 
-  private DatabaseHelper databaseHelper;
+  private DatabaseHelper $databaseHelper;
 
   /**
    * creates the tables
@@ -75,9 +77,9 @@ public abstract class DatabaseTest {
    */
   @Before
   public void createTablesAndPopulate() throws Exception {
-    if (databaseHelper.isExecuteDatabaseMethods()) {
-      databaseHelper.createTables();
-      databaseHelper.populateTables();
+    if ($databaseHelper.isExecuteDatabaseMethods()) {
+      $databaseHelper.createTables();
+      $databaseHelper.populateTables();
     }
   }
 
@@ -89,25 +91,25 @@ public abstract class DatabaseTest {
    */
   @After
   public void dropTables() throws Exception {
-    if (databaseHelper.isExecuteDatabaseMethods()) {
-      databaseHelper.dropTables();
+    if ($databaseHelper.isExecuteDatabaseMethods()) {
+      $databaseHelper.dropTables();
     }
   }
 
   /**
-   * Spring auto injected databaseHelper.
+   * Spring auto injected $databaseHelper.
    * Contains the locations of the scripts and executes them.
    *
    * @param databaseHelper the helper to create, populate and drop the tables
    */
   @Autowired
   public void setDatabaseHelper(DatabaseHelper databaseHelper) {
-    this.databaseHelper = databaseHelper;
-    assertNotNull(this.databaseHelper);
+    this.$databaseHelper = databaseHelper;
+    assertNotNull(this.$databaseHelper);
   }
 
   public DatabaseHelper getDatabaseHelper() {
-    return databaseHelper;
+    return $databaseHelper;
   }
 
 }
