@@ -18,7 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate3;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
 
 import java.sql.SQLException;
 

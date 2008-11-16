@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.ejb_I;
 
 
-import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
 import javax.ejb.AccessLocalException;
 import javax.ejb.ConcurrentAccessException;

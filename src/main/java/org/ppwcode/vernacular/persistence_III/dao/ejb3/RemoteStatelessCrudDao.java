@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.dao.ejb3;
 
 
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.dependency;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.unexpectedException;
 
 import java.io.Serializable;
 import java.util.Set;

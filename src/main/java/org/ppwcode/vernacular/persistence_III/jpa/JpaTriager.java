@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.jpa;
 
 
-import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;

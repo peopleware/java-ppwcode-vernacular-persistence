@@ -17,7 +17,7 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.sql;
 
 
-import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
 
 import java.sql.SQLException;
 

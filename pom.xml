@@ -276,6 +276,10 @@
       <artifactId>commons-logging-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.ppwcode.util</groupId>
+      <artifactId>ppwcode-util-exception-III</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-exception-III</artifactId>
     </dependency>

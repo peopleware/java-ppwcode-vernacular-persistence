@@ -20,11 +20,11 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.setPropertyValue;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.dependency;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.pre;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
-import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.unexpectedException;
 import static org.ppwcode.vernacular.persistence_III.PersistentBeanHelpers.upstreamPersistentBeans;
 import static org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers.wildExceptions;
 
