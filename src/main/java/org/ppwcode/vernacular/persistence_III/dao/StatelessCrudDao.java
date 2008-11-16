@@ -25,8 +25,8 @@ import java.util.Set;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.NoLongerSupportedError;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
@@ -180,11 +180,11 @@ public interface StatelessCrudDao extends Dao {
     exc  =  {
       @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
       @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
-      @Throw(type = InternalException.class, cond = {@Expression("true")})
+      @Throw(type = ApplicationException.class, cond = {@Expression("true")})
     }
   )
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * Update the object {@code pb} in persistent storage. Return that object. Before commit, the
@@ -214,11 +214,11 @@ public interface StatelessCrudDao extends Dao {
     exc  =  {
       @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
       @Throw(type = CompoundPropertyException.class, cond = @Expression("! 'pb.civilized()")),
-      @Throw(type = InternalException.class, cond = {@Expression("true")})
+      @Throw(type = ApplicationException.class, cond = {@Expression("true")})
     }
   )
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * Delete the bean {@code pb}, and associated beans, depending on cascade DELETE settings, from persistent storage.
@@ -242,10 +242,10 @@ public interface StatelessCrudDao extends Dao {
     },
     exc  =  {
       @Throw(type = NoLongerSupportedError.class, cond = {@Expression("true")}),
-      @Throw(type = InternalException.class, cond = {@Expression("true")})
+      @Throw(type = ApplicationException.class, cond = {@Expression("true")})
     }
   )
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ deletePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
 }

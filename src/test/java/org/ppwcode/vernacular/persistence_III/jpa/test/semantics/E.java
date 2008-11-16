@@ -18,8 +18,8 @@ package org.ppwcode.vernacular.persistence_III.jpa.test.semantics;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.RequiredTransactionStatelessCrudDao;
 import org.ppwcode.vernacular.persistence_III.jpa.test.semantics.E;
@@ -104,7 +104,7 @@ public class JpaStatelessCrudDaoTestsProvider {
   }
 
   public static void testCreatePersistentBean(RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx)
-      throws InternalException {
+      throws ApplicationException {
 
     Q q1 = getQ(Locale.ENGLISH, "name 1", "description 1");
     Q q2 = getQ(Locale.FRENCH, "name 2", "description 2");
@@ -148,7 +148,7 @@ public class JpaStatelessCrudDaoTestsProvider {
   }
 
   public static void testUpdateTimeCardPersistentBean(RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx)
-      throws InternalException {
+      throws ApplicationException {
     String NEW_DESCRIPTION = "new description for test";
 
     E e = getE("new E");
@@ -186,7 +186,7 @@ public class JpaStatelessCrudDaoTestsProvider {
   }
 
   public static void testUpdateEmployeePersistentBean(RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx)
-      throws InternalException {
+      throws ApplicationException {
     String NAME = "newName";
 
     startTransaction(tx);
@@ -202,7 +202,7 @@ public class JpaStatelessCrudDaoTestsProvider {
   }
 
   public static void testUpdateLocalizedNameDescriptionPersistentBean(
-      RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx) throws InternalException {
+      RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx) throws ApplicationException {
     String NEW_NAME = "new name for test";
     String NEW_DESCRIPTION = "new description for test";
 
@@ -225,7 +225,7 @@ public class JpaStatelessCrudDaoTestsProvider {
   }
 
   public static void testUpdateGeneralTaskPersistentBean(RequiredTransactionStatelessCrudDao jscd, EntityTransaction tx)
-      throws InternalException {
+      throws ApplicationException {
     startTransaction(tx);
     Q newQ = getQ(Locale.FRENCH, "new Name", "new description");
     SubY suby = jscd.retrievePersistentBean(SubY.class, 1);

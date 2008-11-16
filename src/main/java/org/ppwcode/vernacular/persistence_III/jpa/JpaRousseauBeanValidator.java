@@ -17,14 +17,14 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.jpa;
 
 
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_II.InternalTransportException;
+import org.ppwcode.vernacular.exception_III.ApplicationExceptionTransportException;
 import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaStatelessCrudDao;
 import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
@@ -52,7 +52,7 @@ import org.toryt.annotations_I.Throw;
  * <p>If you use entities that extend {@code AbstractIntegerIdVersionedPersistentBean}, this is not necessary, since that
  *   class defines the listener for itself and all subtypes.</p>
  * <p>In case validation fails ({@code ! }{@link CompoundPropertyException#isEmpty()}), the exception that expresses
- *   the validation problem is packaged into a {@link InternalTransportException}, because JPA entity listener methods
+ *   the validation problem is packaged into a {@link ApplicationExceptionTransportException}, because JPA entity listener methods
  *   are only allowed to throw {@link RuntimeException RuntimeExceptions}. When a listener does throw an exception,
  *   the current transaction is rolled-back, and all instances of session beans implicated in the current
  *   thread are discarded.</p>
@@ -82,7 +82,7 @@ public class JpaRousseauBeanValidator {
                       "nothing can make this postcondition true, and thus an " +
                       "exception must be thrown")
     },
-    exc = @Throw(type = InternalTransportException.class,
+    exc = @Throw(type = ApplicationExceptionTransportException.class,
                  cond = {
                    @Expression("! entity'civilized"),
                    @Expression("thrown.cause != null"),
@@ -91,7 +91,7 @@ public class JpaRousseauBeanValidator {
                    @Expression("thrown.cause.closed")
                  })
   )
-  public void validate(Object entity) throws InternalTransportException {
+  public void validate(Object entity) throws ApplicationExceptionTransportException {
     _LOG.debug("pre-insert or -update called for " + entity);
     assert preArgumentNotNull(entity, "entity");
     try {
@@ -108,7 +108,7 @@ public class JpaRousseauBeanValidator {
     catch (CompoundPropertyException wildExc) {
       _LOG.debug("entity is normalized, and found wild; the exception will be thrown, " +
                  "packaged in a InternalTransportException", wildExc);
-      throw new InternalTransportException(wildExc);
+      throw new ApplicationExceptionTransportException(wildExc);
     }
     finally {
       _LOG.debug("pre-insert or -update done for " + entity);

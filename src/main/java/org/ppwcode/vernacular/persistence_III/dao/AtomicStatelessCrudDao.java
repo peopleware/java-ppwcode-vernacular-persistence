@@ -24,8 +24,8 @@ import java.io.Serializable;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.NoLongerSupportedError;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 
 
@@ -52,20 +52,20 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    *
    * This method is an atomic transaction. Any exception that is thrown signals a roll-back of the transaction. If
    * the methods ends nominally, the transaction is successfully committed. In case of semantic problems (wildness),
-   * the transaction is rolled-back only and an {@link InternalException} is thrown.
+   * the transaction is rolled-back only and an {@link ApplicationException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
    *
    * This method is an atomic transaction. Any exception that is thrown signals a roll-back of the transaction. If
    * the methods ends nominally, the transaction is successfully committed. In case of semantic problems (wildness),
-   * the transaction is rolled-back only and an {@link InternalException} is thrown.
+   * the transaction is rolled-back only and an {@link ApplicationException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
@@ -74,6 +74,6 @@ public interface AtomicStatelessCrudDao extends StatelessCrudDao {
    * the transaction is successfully committed.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ deletePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
 }

@@ -18,7 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.pre;
 
 import java.io.Serializable;
 import java.util.AbstractSequentialList;

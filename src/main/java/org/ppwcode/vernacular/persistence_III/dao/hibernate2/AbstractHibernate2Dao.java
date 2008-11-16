@@ -18,7 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate2;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
 
 import java.sql.SQLException;
 
@@ -28,9 +28,9 @@ import net.sf.hibernate.Session;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.SemanticException;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.SemanticException;
 import org.ppwcode.vernacular.persistence_III.dao.AbstractDao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
@@ -109,20 +109,20 @@ public abstract class AbstractHibernate2Dao extends AbstractDao {
    * handle it.
    */
   protected final void handleHibernateException(final HibernateException hExc, final String operationName)
-      throws InternalException {
+      throws ApplicationException {
     SQLException sqlExc = huntFor(hExc, SQLException.class);
     if ((sqlExc != null) && (getSqlExceptionHandler() != null)) {
-      InternalException iExc = getSqlExceptionHandler().handle(sqlExc);
+      ApplicationException iExc = getSqlExceptionHandler().handle(sqlExc);
       if (iExc != null) {
         throw iExc;
       }
-      // if we are here, the above handler did not translate into an InternalException
+      // if we are here, the above handler did not translate into an ApplicationException
       // cannot be that the record is not found
       // the sql exception is thus considered an external problem (thrown by handle)
     }
     // Now, if it is not a sql exception we are dealing with, maybe there is an internal
     // exception transported by the hibernate exception
-    InternalException iExc = huntFor(hExc, InternalException.class);
+    ApplicationException iExc = huntFor(hExc, ApplicationException.class);
     if (iExc != null) {
       throw iExc;
     }

@@ -17,15 +17,15 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.sql;
 
 
-import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
 
 import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.handle.ExceptionTriager;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -33,7 +33,7 @@ import org.toryt.annotations_I.MethodContract;
 
 /**
  * Triage {@link SQLException SQLExceptions}. A {@link SqlExceptionHandler} is used to
- * try to discern {@link InternalException InternalExceptions} from database exceptions.
+ * try to discern {@link ApplicationException ApplicationExceptions} from database exceptions.
  * Since other {@link SQLException SQLExceptions} in production (past testing) are probably
  * deployment issues, they are translated into {@link ExternalError ExternalErrors}.
  * The {@link SqlExceptionHandler} should be set to a handler specific for the type of
@@ -77,7 +77,7 @@ public class SqlExceptionTriager implements ExceptionTriager {
     SQLException sqlExc = huntFor(t, SQLException.class);
     if (sqlExc != null) {
       if (getSqlExceptionHandler() != null) {
-        InternalException iExc = getSqlExceptionHandler().handle(sqlExc); // errors are errors in the handler, let it pass
+        ApplicationException iExc = getSqlExceptionHandler().handle(sqlExc); // errors are errors in the handler, let it pass
         if (iExc != null) {
           return iExc;
         }

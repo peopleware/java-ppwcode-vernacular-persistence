@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.ejb_I;
 
 
-import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
 import javax.ejb.AccessLocalException;
 import javax.ejb.ConcurrentAccessException;
@@ -33,8 +33,8 @@ import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.TransactionRequiredLocalException;
 import javax.ejb.TransactionRolledbackLocalException;
 
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.handle.ExceptionTriager;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -81,8 +81,8 @@ public class EjbTriager implements ExceptionTriager {
   )
   public Throwable triage(Throwable t) {
     /* We do not handle CreateException, FinderException, ObjectNotFoundException, RemoveException
-     * These exceptions are intended as application exceptions, which is similar to InternalExceptions in
-     * the ppwcode vernacular. If anything, they should be transformed into some form of InternalException
+     * These exceptions are intended as application exceptions, which is similar to ApplicationExceptions in
+     * the ppwcode vernacular. If anything, they should be transformed into some form of ApplicationException
      * before they reach us.
      */
     NoSuchEntityException nseExc = huntFor(t, NoSuchEntityException.class);

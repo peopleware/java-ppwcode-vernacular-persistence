@@ -24,8 +24,8 @@ import java.sql.SQLException;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -41,12 +41,12 @@ import org.toryt.annotations_I.Throw;
  *   ppwcode exception vernacular, they should be encapsulated in an {@link ExternalError}. The latter kinds
  *   are semantic exceptions. Normally, they would result in a roll-back, user feedback, and continuation
  *   of the normal operation of the application. According to ppwcode exception vernacular, they should be
- *   encapsulated in an {@link InternalException}</p>
+ *   encapsulated in an {@link ApplicationException}</p>
  * <p>It is impossible for {@link Dao Dao's} to decide of which kind the {@link SQLException} is in general.
  *   Database exceptions are not much more than a string, and there is no standardization over different
  *   database engines. Furthermore, exceptions raised by triggers and stored procedures, and constraints,
  *   are application specific.</p>
- * <p>Implementations of {@link #handle(SQLException)} should return an {@link InternalException}
+ * <p>Implementations of {@link #handle(SQLException)} should return an {@link ApplicationException}
  *   that wraps the given {@link SQLException} if they find it of an internal (semantic, persistent) nature. If not,
  *   they should not end nominally, but throw an {@link ExternalError} or {@link AssertionError} instead.
  *   Implementation methods should have no side effects. During this process, it is possible that access of the
@@ -64,7 +64,7 @@ import org.toryt.annotations_I.Throw;
 public interface SqlExceptionHandler {
 
   /**
-   * Return an {@link InternalException} wrapping <code>sqlException</code>
+   * Return an {@link ApplicationException} wrapping <code>sqlException</code>
    * if you find the latter of a semantic nature. Otherwise, return null.
    *
    * @param sqlException
@@ -84,6 +84,6 @@ public interface SqlExceptionHandler {
                                               "which we consider external"))
     }
   )
-  InternalException handle(SQLException sqlException);
+  ApplicationException handle(SQLException sqlException);
 
 }

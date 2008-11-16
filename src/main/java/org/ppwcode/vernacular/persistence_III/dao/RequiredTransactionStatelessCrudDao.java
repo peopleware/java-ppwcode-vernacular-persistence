@@ -24,8 +24,8 @@ import java.io.Serializable;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.NoLongerSupportedError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.NoLongerSupportedError;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 
 
@@ -48,27 +48,27 @@ public interface RequiredTransactionStatelessCrudDao extends StatelessCrudDao {
    * {@inheritDoc}
    *
    * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
-   * roll-back only and an {@link InternalException} is thrown.
+   * roll-back only and an {@link ApplicationException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
    *
    * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
-   * roll-back only and an {@link InternalException} is thrown.
+   * roll-back only and an {@link ApplicationException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
   /**
    * {@inheritDoc}
    *
    * This method requires a transaction (~ required). In case of semantic problems (wildness), the transaction is set to
-   * roll-back only and an {@link InternalException} is thrown.
+   * roll-back only and an {@link ApplicationException} is thrown.
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws InternalException, NoLongerSupportedError;
+  _PB_ deletePersistentBean(_PB_ pb) throws ApplicationException, NoLongerSupportedError;
 
 }

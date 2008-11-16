@@ -20,11 +20,11 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
 import static org.ppwcode.util.reflect_I.PropertyHelpers.setPropertyValue;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.unexpectedException;
 import static org.ppwcode.vernacular.persistence_III.PersistentBeanHelpers.upstreamPersistentBeans;
 import static org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers.wildExceptions;
 
@@ -41,8 +41,8 @@ import javax.persistence.TransactionRequiredException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.SemanticException;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.SemanticException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
@@ -133,7 +133,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
   }
 
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws InternalException {
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException {
     _LOG.debug("Creating persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() == null);
@@ -199,7 +199,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
    * @todo on change of an upstream association, the civility of the old parent is not checked in the current implementation
    */
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws InternalException {
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException {
     _LOG.debug("Updating persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() != null);
@@ -238,7 +238,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     // now we will get a commit; the exceptions raised here need to be handled still
   }
 
-  private void replaceUpstreamBeansWithManagedEntity(VersionedPersistentBean<?, ?> pb) throws AlreadyChangedException, InternalException {
+  private void replaceUpstreamBeansWithManagedEntity(VersionedPersistentBean<?, ?> pb) throws AlreadyChangedException, ApplicationException {
     PropertyDescriptor[] pds = getPropertyDescriptors(pb);
     for (PropertyDescriptor pd : pds) {
       if (VersionedPersistentBean.class.isAssignableFrom(pd.getPropertyType())) {

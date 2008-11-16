@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.dao.ejb3;
 
 
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.unexpectedException;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -32,9 +32,9 @@ import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.InternalException;
-import org.ppwcode.vernacular.exception_II.handle.ExceptionHandler;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.handle.ExceptionHandler;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
@@ -194,7 +194,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
   }
 
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws InternalException {
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
@@ -203,13 +203,13 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
       return result;
     }
     catch (Throwable t) {
-      handleForInternalException(t);
+      handleForApplicationException(t);
     }
     return null; // keep compiler happy
   }
 
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws InternalException {
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
@@ -218,13 +218,13 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
       return result;
     }
     catch (Throwable t) {
-      handleForInternalException(t);
+      handleForApplicationException(t);
     }
     return null; // keep compiler happy
   }
 
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws InternalException {
+  _PB_ deletePersistentBean(_PB_ pb) throws ApplicationException {
     try {
       getUserTransaction().begin();
       _PB_ result = getRequiredTransactionStatelessCrudDao().deletePersistentBean(pb);
@@ -232,7 +232,7 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
       return result;
     }
     catch (Throwable t) {
-      handleForInternalException(t);
+      handleForApplicationException(t);
     }
     return null; // keep compiler happy
   }
@@ -242,8 +242,8 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     try {
       getExceptionHandler().handleException(finalException, _LOG);
     }
-    catch (InternalException metaExc) {
-      unexpectedException(metaExc, "handleException can throw no InternalExceptions");
+    catch (ApplicationException metaExc) {
+      unexpectedException(metaExc, "handleException can throw no ApplicationExceptions");
     }
   }
 
@@ -256,15 +256,15 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     catch (IdNotFoundException infExc) {
       throw infExc;
     }
-    catch (InternalException metaExc) {
-      unexpectedException(metaExc, "handleException can throw no InternalExceptions");
+    catch (ApplicationException metaExc) {
+      unexpectedException(metaExc, "handleException can throw no ApplicationExceptions");
     }
   }
 
   @SuppressWarnings("unchecked")
-  private void handleForInternalException(Throwable t) throws ExternalError, AssertionError, InternalException {
+  private void handleForApplicationException(Throwable t) throws ExternalError, AssertionError, ApplicationException {
     Throwable finalException = robustRollback(t);
-    getExceptionHandler().handleException(finalException, _LOG, InternalException.class);
+    getExceptionHandler().handleException(finalException, _LOG, ApplicationException.class);
   }
 
   private Throwable robustRollback(Throwable reasonForRollback) {

@@ -27,7 +27,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ppwcode.vernacular.exception_II.ExternalError;
+import org.ppwcode.vernacular.exception_III.ExternalError;
 import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 

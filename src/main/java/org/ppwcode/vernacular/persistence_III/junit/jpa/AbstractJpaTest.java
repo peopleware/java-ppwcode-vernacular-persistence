@@ -40,7 +40,7 @@ import org.junit.BeforeClass;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.ExternalError;
+import org.ppwcode.vernacular.exception_III.ExternalError;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
 

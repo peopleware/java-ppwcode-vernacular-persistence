@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.jpa;
 
 
-import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -28,7 +28,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 import javax.persistence.TransactionRequiredException;
 
-import org.ppwcode.vernacular.exception_II.handle.ExceptionTriager;
+import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;

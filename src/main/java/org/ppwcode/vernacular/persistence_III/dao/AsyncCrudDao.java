@@ -25,7 +25,7 @@ import java.util.Set;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
@@ -102,14 +102,14 @@ public interface AsyncCrudDao extends Dao {
                               "So the only option for the implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = InternalException.class,
+      @Throw(type = ApplicationException.class,
              cond = @Expression(value = "true",
                                 description = "the commit was stopped for semantic reasons, either wild exceptions, " +
                                           "or exceptions from the persistent storage (which probably cannot be " +
                                           "translated into property exceptions)"))
     }
   )
-  void commitTransaction() throws InternalException;
+  void commitTransaction() throws ApplicationException;
 
   /**
    * <p>Cancel a transaction. The transaction was started by
@@ -176,12 +176,12 @@ public interface AsyncCrudDao extends Dao {
                                 "(_pb.wildExceptions.size > 1 ? " +
                                    "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
                                    "thrown.like(_pb.wildExceptions.anElement)")),
-      @Throw(type = InternalException.class,
+      @Throw(type = ApplicationException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem"))
     }
   )
-  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException;
+  void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, ApplicationException;
 
   /**
    * <p>Return a persistent bean instance that represents the data of the record with key <code>id</code> of type
@@ -288,7 +288,7 @@ public interface AsyncCrudDao extends Dao {
                                 "(_pb.wildExceptions.size > 1 ? " +
                                    "(thrown.like(_pb.wildExceptions) && thrown.closed) : " +
                                    "thrown.like(_pb.wildExceptions.anElement)")),
-      @Throw(type = InternalException.class,
+      @Throw(type = ApplicationException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem")),
       @Throw(type = IdNotFoundException.class,
@@ -309,7 +309,7 @@ public interface AsyncCrudDao extends Dao {
              })
     }
   )
-  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException, IdNotFoundException, AlreadyChangedException;
+  void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, ApplicationException, IdNotFoundException, AlreadyChangedException;
 
   /**
    * <p>Take a persistent bean instance <code>pb</code> that exists in memory and represents an existing record in the persistent
@@ -342,7 +342,7 @@ public interface AsyncCrudDao extends Dao {
                                 "implementer is to throw an exception when this occurs.")
     },
     exc = {
-      @Throw(type = InternalException.class,
+      @Throw(type = ApplicationException.class,
              cond = @Expression(value = "true", description = "another mechanism then our RousseauBean mechanism " +
                                                               "signals a semantic problem")),
       @Throw(type = IdNotFoundException.class,
@@ -355,7 +355,7 @@ public interface AsyncCrudDao extends Dao {
              })
     }
   )
-  void deletePersistentBean(final PersistentBean<?> pb) throws InternalException, IdNotFoundException;
+  void deletePersistentBean(final PersistentBean<?> pb) throws ApplicationException, IdNotFoundException;
 
   /**
    * Returns true when the given persistent bean has been created (i.e.,

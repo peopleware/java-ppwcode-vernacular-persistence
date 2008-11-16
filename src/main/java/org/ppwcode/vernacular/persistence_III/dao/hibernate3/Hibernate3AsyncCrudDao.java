@@ -19,10 +19,10 @@ package org.ppwcode.vernacular.persistence_III.dao.hibernate3;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.dependency;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.pre;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.preArgumentNotNull;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.unexpectedException;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.dependency;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.pre;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.unexpectedException;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -45,8 +45,8 @@ import org.hibernate.Transaction;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.AsyncCrudDao;
@@ -126,7 +126,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     LOG.debug("Hibernate transaction started.");
   }
 
-  public final void commitTransaction() throws InternalException {
+  public final void commitTransaction() throws ApplicationException {
     LOG.debug("Starting commit ...");
     pre(! isInTransaction(), PENDING_TRANSACTION);
     assert $tx != null;
@@ -142,7 +142,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     catch (HibernateException hExc) {
       LOG.debug("Commit failed.", hExc);
       handleHibernateException(hExc, "Committing");
-      // throws InternalException, PersistenceExternalError
+      // throws ApplicationException, PersistenceExternalError
     }
   }
 
@@ -189,7 +189,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public final void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
+  public final void createPersistentBean(final PersistentBean<?> pb) throws PropertyException, ApplicationException {
     LOG.debug("Creating new record for bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
@@ -224,7 +224,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     catch (HibernateException hExc) {
       LOG.debug("Creation of new record failed.");
       handleHibernateException(hExc, "Creating");
-      // throws InternalException, ExternalError
+      // throws ApplicationException, ExternalError
     }
     assert pb.getPersistenceId() != null;
   }
@@ -404,7 +404,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public final void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, InternalException {
+  public final void updatePersistentBean(final PersistentBean<?> pb) throws PropertyException, ApplicationException {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Updating bean \"" + pb + "\" ...");
     }
@@ -433,7 +433,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     catch (HibernateException hExc) {
       LOG.debug("Update failed.");
       handleHibernateException(hExc, "updating");
-      // throws InternalException, PersistenceExternalError
+      // throws ApplicationException, PersistenceExternalError
       // MUDO need code to throw IdNotFoundException
     }
   }
@@ -442,7 +442,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     pre  = @Expression("session != null"),
     post = {}
   )
-  public void deletePersistentBean(final PersistentBean<?> pb) throws InternalException {
+  public void deletePersistentBean(final PersistentBean<?> pb) throws ApplicationException {
     LOG.debug("Deleting persistent bean \"" + pb + "\" ...");
     dependency(getSession(), "session");
     preArgumentNotNull(pb, "pb");
@@ -456,7 +456,7 @@ public class Hibernate3AsyncCrudDao extends AbstractHibernate3Dao implements Asy
     catch (HibernateException hExc) {
       LOG.debug("Deletion failed.");
       handleHibernateException(hExc, "Deleting");
-      // throws InternalException, PersistenceExternalError
+      // throws ApplicationException, PersistenceExternalError
       // MUDO need code to throw IdNotFoundException
     }
     LOG.debug("Deletion succeeded.");

@@ -22,7 +22,7 @@ import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_II.InternalException;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
@@ -41,7 +41,7 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public class PersistenceException extends InternalException {
+public class PersistenceException extends ApplicationException {
 
   /**
    * @param     messageKey

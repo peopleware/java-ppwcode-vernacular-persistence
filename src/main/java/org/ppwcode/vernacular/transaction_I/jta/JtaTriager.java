@@ -17,8 +17,8 @@ limitations under the License.
 package org.ppwcode.vernacular.transaction_I.jta;
 
 
-import static org.ppwcode.vernacular.exception_II.ExceptionHelpers.huntFor;
-import static org.ppwcode.vernacular.exception_II.ProgrammingErrorHelpers.newAssertionError;
+import static org.ppwcode.vernacular.exception_III.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
 import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
@@ -28,8 +28,8 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionRequiredException;
 
-import org.ppwcode.vernacular.exception_II.ExternalError;
-import org.ppwcode.vernacular.exception_II.handle.ExceptionTriager;
+import org.ppwcode.vernacular.exception_III.ExternalError;
+import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
 
