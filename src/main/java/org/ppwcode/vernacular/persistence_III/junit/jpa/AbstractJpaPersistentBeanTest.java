@@ -166,7 +166,7 @@ public abstract class AbstractJpaPersistentBeanTest<_Id_ extends Serializable, _
     if (LOG.isWarnEnabled() && (!civilized)) {
       CompoundPropertyException cpe = pb.wildExceptions();
       LOG.warn("Not civilized: " + pb);
-      for (PropertyException pe : cpe.getAllElementExceptions()) {
+      for (PropertyException pe : cpe.getElementExceptions()) {
         LOG.warn("    " + pe.getLocalizedMessage());
         LOG.warn("    originType: " + pe.getOriginType());
         LOG.warn("    origin: " + pe.getOrigin());
