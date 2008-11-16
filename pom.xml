@@ -277,7 +277,7 @@
     </dependency>
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
-      <artifactId>ppwcode-vernacular-exception-II</artifactId>
+      <artifactId>ppwcode-vernacular-exception-III</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
