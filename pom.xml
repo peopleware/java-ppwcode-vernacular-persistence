@@ -273,7 +273,7 @@
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
-      <artifactId>commons-logging-api</artifactId>
+      <artifactId>commons-logging</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ppwcode.util</groupId>
@@ -342,14 +342,6 @@
       <artifactId>${jpa.artifactid}</artifactId>
       <optional>true</optional>
     </dependency>
-
-    <!-- should removed in the end -->
-<!--    <dependency>-->
-<!--      <groupId>be.arista</groupId>-->
-<!--      <artifactId>generic-test</artifactId>-->
-<!--      <version>1.0.5-SNAPSHOT</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework</groupId>
