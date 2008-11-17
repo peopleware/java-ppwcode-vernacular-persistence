@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2008 - $Date: 2008-11-16 01:16:48 +0100 (Sun, 16 Nov 2008) $ by PeopleWare n.v..
+Copyright 2008 - $Date$ by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,10 +61,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:p-v-p-databaseHelper.xml")
-@Copyright("2008 - $Date: 2008-11-16 01:16:48 +0100 (Sun, 16 Nov 2008) $, PeopleWare n.v.")
+@Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 3593 $",
-         date     = "$Date: 2008-11-16 01:16:48 +0100 (Sun, 16 Nov 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class DatabaseTest {
 
   private DatabaseHelper $databaseHelper;
