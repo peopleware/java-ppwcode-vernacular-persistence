@@ -60,7 +60,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 24-jul-2008
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:p-vp-databaseHelper.xml")
+@ContextConfiguration(locations = "classpath:p-v-p-databaseHelper.xml")
 @Copyright("2008 - $Date: 2008-11-16 01:16:48 +0100 (Sun, 16 Nov 2008) $, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision: 3593 $",
