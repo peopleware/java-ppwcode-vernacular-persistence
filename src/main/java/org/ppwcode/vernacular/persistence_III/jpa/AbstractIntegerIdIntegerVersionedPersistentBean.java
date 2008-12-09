@@ -18,14 +18,9 @@ package org.ppwcode.vernacular.persistence_III.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.util.serialization_I.SerializationHelpers.replace;
-
-import java.io.NotSerializableException;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
@@ -34,9 +29,7 @@ import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
 import org.ppwcode.vernacular.persistence_III.AbstractVersionedPersistentBean;
-import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
-import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -45,18 +38,14 @@ import org.toryt.annotations_I.MethodContract;
 /**
  * <p>It turns out that, at least with OpenJPA, we cannot use a {@Link MappedSuperclass} annotation on classes
  *   that have a generic type parameter. For that reason, this class is introduced as a full code copy of
- *   {@link AbstractPersistentBean} and {@link AbstractVersionedPersistentBean}, with the {@code _Id_} fixed to
- *   {@link Integer}.</p>
+ *   {@link AbstractPersistentBean} and {@link AbstractVersionedPersistentBean}, with the {@code _Id_}
+ *   and {@code _Version_} fixed to {@link Integer}.</p>
  * <p>We tried to use an intermediate class where we resolve the generic parameter, but it turns out that the
  *   problem occurs whenever there is a generic parameter in the class hierarchy. Generic parameters in the
  *   interface hierarchy are not a problem.</p>
  * <p>This is very sad, an we hope this will be resolved in the future. Classes that now
- *   {@code ... extends AbstractIntegerIdVersionedPersistentBean} can be changed later, when the workaround is no
+ *   {@code ... extends AbstractIntegerIdIntegerVersionedPersistentBean} can be changed later, when the workaround is no
  *   longer needed, to {@code ... extends AbstractVersionedPersistentBean<Integer>}.</p>
- * <p>This adds the use of the ppwcode util serialization alternative for serialization.
- *   This means that <code>&#64;DoNotSerialize</code can be used where you want transient serialization, but you
- *   cannot use that keyword because of its effect on JPA and possibly other persistence solutions.</p>
- *
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
@@ -64,32 +53,8 @@ import org.toryt.annotations_I.MethodContract;
          date     = "$Date$")
 @MappedSuperclass
 @EntityListeners({JpaRousseauBeanValidator.class})
-public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractRousseauBean
+public abstract class AbstractIntegerIdIntegerVersionedPersistentBean extends AbstractIntegerIdPersistentBean<Integer>
     implements VersionedPersistentBean<Integer, Integer> {
-
-  /*<property name="id">*/
-  //------------------------------------------------------------------
-
-  public final Integer getPersistenceId() {
-    return $persistenceId;
-  }
-
-  public final boolean hasSamePersistenceId(final PersistentBean<Integer> other) {
-    return (other != null)  && ((getPersistenceId() == null) ? other.getPersistenceId() == null : getPersistenceId().equals(other.getPersistenceId()));
-  }
-
-  public final void setPersistenceId(final Integer persistenceId) {
-    $persistenceId = persistenceId;
-  }
-
-  @Id
-  @GeneratedValue
-  @Column(name="persistenceId")
-  private Integer $persistenceId;
-
-  /*</property>*/
-
-
 
   /*<property name="version">*/
   //------------------------------------------------------------------
@@ -99,7 +64,7 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
    * "magic processes" like JPA, that can write into private fields. The developer
    * should never set the persistence version.
    */
-  @Basic(init = @Expression("Long.MIN_VALUE"))
+  @Basic(init = @Expression("null"))
   public final Integer getPersistenceVersion() {
     return $persistenceVersion;
   }
@@ -123,17 +88,5 @@ public abstract class AbstractIntegerIdVersionedPersistentBean extends AbstractR
   private Integer $persistenceVersion;
 
   /*</property>*/
-
-
-
-  /**
-   * Use the ppwcode serialization util alternative for serialization.
-   * This means that <code>&#64;DoNotSerialize</code can be used where
-   * you want transient serialization, but you cannot use that keyword because
-   * of its effect on JPA and possibly other persistence solutions.
-   */
-  protected final Object writeReplace() throws NotSerializableException {
-    return replace(this);
-  }
 
 }

@@ -34,7 +34,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.util.serialization_I.DoNotSerialize;
-import org.ppwcode.vernacular.persistence_III.jpa.AbstractIntegerIdVersionedPersistentBean;
+import org.ppwcode.vernacular.persistence_III.jpa.AbstractIntegerIdIntegerVersionedPersistentBean;
 import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 import org.toryt.annotations_I.Basic;
@@ -53,7 +53,7 @@ import org.toryt.annotations_I.Throw;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public class E extends AbstractIntegerIdVersionedPersistentBean {
+public class E extends AbstractIntegerIdIntegerVersionedPersistentBean {
 
   public static final String EMPTY = "";
 
