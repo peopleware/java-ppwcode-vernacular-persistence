@@ -16,10 +16,68 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence_III;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.Serializable;
+
+import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
+
 
 public class _Contract_VersionedPersistentBean {
 
-  // Nothing extra
+
+  // interface, not actual tests, only contract
+
+  public static void assertInvariants(VersionedPersistentBean<?, ?> subject) {
+    _Contract_PersistentBean.assertInvariants(subject);
+    // no local invariants
+  }
+
+  public static void contractEquals(VersionedPersistentBean<?, ?> subject, Object other, boolean result) {
+    // validate
+    _Contract_PersistentBean.contractEquals(subject, other, result);
+  }
+
+  public static void contractHashCode(VersionedPersistentBean<?, ?> subject, int result) {
+    _Contract_PersistentBean.contractHashCode(subject, result);
+  }
+
+  public static void contractToString(VersionedPersistentBean<?, ?> subject, String result) {
+    _Contract_PersistentBean.contractToString(subject, result);
+  }
+
+  public static void contractWildExceptions(VersionedPersistentBean<?, ?> subject, CompoundPropertyException result) {
+    _Contract_PersistentBean.contractWildExceptions(subject, result);
+  }
+
+  public static void contractCivilized(VersionedPersistentBean<?, ?> subject, boolean result) {
+    _Contract_PersistentBean.contractCivilized(subject, result);
+  }
+
+  public static void contractPostCheckCivility(boolean OLDCivilized, VersionedPersistentBean<?, ?> subject) {
+    _Contract_PersistentBean.contractPostCheckCivility(OLDCivilized, subject);
+  }
+
+  public static void contractExcCheckCivility(boolean OLDCivilized, VersionedPersistentBean<?, ?> subject, CompoundPropertyException thrown) {
+    _Contract_PersistentBean.contractExcCheckCivility(OLDCivilized, subject, thrown);
+  }
+
+  public static void contractNormalize(VersionedPersistentBean<?, ?> subject, boolean result) {
+    _Contract_PersistentBean.contractNormalize(subject, result);
+  }
+
+  public static <_Id_ extends Serializable> void contractSetId(VersionedPersistentBean<_Id_, ?> subject, _Id_ newId) {
+    _Contract_PersistentBean.contractSetId(subject, newId);
+  }
+
+  public static <_Id_ extends Serializable> void contractHasSameId(VersionedPersistentBean<_Id_, ?> subject, VersionedPersistentBean<_Id_, ?> other, boolean result) {
+    _Contract_PersistentBean.contractHasSameId(subject, other, result);
+  }
+
+  public static <_Version_ extends Serializable> void contractSetPersistenceVersion(VersionedPersistentBean<?, _Version_> subject, _Version_ newVersion) {
+    assertEquals(newVersion, subject.getPersistenceVersion());
+  }
 
 }
+
 
