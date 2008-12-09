@@ -40,7 +40,7 @@ import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 public class AbstractVersionedPersistentBeanTest {
 
   public static class AbstractVersionedPersistentBeanSTUB<_Id_ extends Serializable>
-    extends AbstractVersionedPersistentBean<_Id_> implements NumberOfProperties {
+    extends AbstractVersionedPersistentBean<_Id_, Integer> implements NumberOfProperties {
 
     public AbstractVersionedPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
@@ -126,7 +126,7 @@ public class AbstractVersionedPersistentBeanTest {
   }
 
   public static class AbstractVersionedPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
-    extends AbstractVersionedPersistentBean<_Id_> implements NumberOfProperties {
+    extends AbstractVersionedPersistentBean<_Id_, Integer> implements NumberOfProperties {
 
       public int nrOfProperties() {
         return 2; // 0 + persistenceId + persistenceVersion
