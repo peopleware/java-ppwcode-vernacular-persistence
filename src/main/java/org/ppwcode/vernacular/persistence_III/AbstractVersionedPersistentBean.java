@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.reflect_I.CloneHelpers.safeReference;
 
 import java.io.Serializable;
 
@@ -34,9 +35,7 @@ import org.toryt.annotations_I.MethodContract;
 
 /**
  * A partial implementation of the interface {@link VersionedPersistentBean}.
- * Here, we enforce the {@link #getPersistenceVersion()} to be an {@link Integer}.
  *
- * @author    Nele Smeets
  * @author    Ruben Vandeginste
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
@@ -45,34 +44,28 @@ import org.toryt.annotations_I.MethodContract;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable> extends AbstractPersistentBean<_Id_> {
+public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable, _Version_ extends Serializable>
+    extends AbstractPersistentBean<_Id_>
+    implements VersionedPersistentBean<_Id_, _Version_> {
 
   /*<property name="version">*/
   //------------------------------------------------------------------
 
-//
-//   * Note that there is no setter for the persistence version. This is controlled by
-//   * "magic processes" like JPA, that can write into private fields. The developer
-//   * should never set the persistence version.
-//   */
-  @Basic(init = @Expression("Long.MIN_VALUE"))
-  public final Integer getPersistenceVersion() {
-    return $persistenceVersion;
+  @Basic(init = @Expression("null"))
+  public final _Version_ getPersistenceVersion() {
+    return safeReference($persistenceVersion);
   }
 
-//   * @note      This method is only available for testing purposes, and therefore is
-//   *            package accessible.
-//   */
   @MethodContract(
     post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  public final void setPersistenceVersion(final Integer persistenceVersion) {
-    $persistenceVersion = persistenceVersion;
+  public final void setPersistenceVersion(final _Version_ persistenceVersion) {
+    $persistenceVersion = safeReference(persistenceVersion);
   }
 
   @Version
   @Column(name="persistenceVersion")
-  private Integer $persistenceVersion;
+  private _Version_ $persistenceVersion;
 
   /*</property>*/
 

@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.reflect_I.CloneHelpers.klone;
 
 import java.sql.Timestamp;
 
@@ -69,7 +70,7 @@ public abstract class AbstractIntegerIdTimestampVersionedPersistentBean extends 
    */
   @Basic(init = @Expression("null"))
   public final Timestamp getPersistenceVersion() {
-    return $persistenceVersion;
+    return klone($persistenceVersion);
   }
 
   /**
@@ -83,7 +84,7 @@ public abstract class AbstractIntegerIdTimestampVersionedPersistentBean extends 
     post = @Expression("persistenceVersion == _persistenceVersion")
   )
   public final void setPersistenceVersion(final Timestamp persistenceVersion) {
-    $persistenceVersion = persistenceVersion;
+    $persistenceVersion = klone(persistenceVersion);
   }
 
   @Version
