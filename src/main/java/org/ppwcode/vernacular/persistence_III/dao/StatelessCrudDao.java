@@ -20,6 +20,7 @@ package org.ppwcode.vernacular.persistence_III.dao;
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import org.ppwcode.metainfo_I.Copyright;
@@ -152,6 +153,39 @@ public interface StatelessCrudDao extends Dao {
   )
   <_PersistentBean_ extends PersistentBean<?>>
   Set<_PersistentBean_> retrieveAllPersistentBeans(final Class<_PersistentBean_> persistentBeanType, final boolean retrieveSubClasses) throws NoLongerSupportedError;
+
+
+  /**
+   * <p>Return the set of all persistent bean instances that represent the data of the records of type
+   *   <code>persistentBeanType</code> in the persistent storage that are changed since {@code since}.</p>
+   * <p>If this is too much data, consider using the {@link PagingList}.</p>
+   * <p>Of particular note is the fact that returned beans <em>need not necessarily need to be civilized</em>.
+   *   This is strange, and probably a bad practice, but we have encountered situations where our code
+   *   needs to be more stringent (in creates and updates) than legacy data existing already in the database.</p>
+   *
+   * @param  retrieveSubClasses
+   *         whether or not to also retrieve instances of subtypes of {@code persistentBeanType}; if
+   *         {@code persistentBeanType} is  abstract, an empty set will be returned if {@code retrieveSubclasses}
+   *         is false
+   *
+   * @idea (jand) security exceptions
+   */
+  @MethodContract(
+    pre  = {
+      @Expression("_persistentBeanType != null"),
+      @Expression("_since != null")
+    },
+    post = {
+      @Expression("result != null"),
+      @Expression("! result.contains(null)"),
+      @Expression("for (PersistentBean pb : result) {pb.persistenceId != null}"),
+      @Expression("for (VersionedPersistentBean vpb : result) {vpb.persistenceVersion != null && vpb.persistenceVersion > since}")
+    },
+    exc  =  @Throw(type = NoLongerSupportedError.class,
+                   cond = {@Expression("true")})
+  )
+  <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>>
+  Set<_VersionedPersistentBean_> retrieveAllPersistentBeans(final Class<_VersionedPersistentBean_> persistentBeanType, final boolean retrieveSubClasses, Timestamp since) throws NoLongerSupportedError;
 
   /**
    * Create the object {@code pb} in persistent storage. Return that object with filled-out {@link PersistentBean#getPersistenceId()}.

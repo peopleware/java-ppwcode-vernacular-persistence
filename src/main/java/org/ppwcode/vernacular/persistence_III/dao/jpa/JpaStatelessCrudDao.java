@@ -30,6 +30,7 @@ import static org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanHelpers.wildE
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -83,13 +84,48 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
         query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb");
       }
       else {
-        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb" +
-                                               " WHERE pb.class = " + persistentBeanType.getName());
+        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb " +
+                                               "WHERE pb.class = " + persistentBeanType.getName());
       }
       @SuppressWarnings("unchecked")
       List<_PersistentBean_> result = query.getResultList();
       assert result != null;
       Set<_PersistentBean_> setResult = new HashSet<_PersistentBean_>(result);
+      _LOG.debug("Retrieval succeeded (" + setResult.size() + " objects retrieved)");
+      return setResult;
+    }
+    catch (IllegalArgumentException iaExc) {
+      unexpectedException(iaExc, "query string problem");
+    }
+    catch (IllegalStateException isExc) {
+      unexpectedException(isExc);
+    }
+    return null; // keep compiler happy
+  }
+
+  /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
+  public <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>> Set<_VersionedPersistentBean_>
+  retrieveAllPersistentBeans(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
+    _LOG.debug("Retrieving all records of type \"" + persistentBeanType + "\" since " + since + " ...");
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    assert preArgumentNotNull(since, "since");
+    assert dependency(getEntityManager(), "entityManager");
+    try {
+      Query query = null;
+      if (retrieveSubClasses) {
+        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb " +
+                                               "WHERE pb.$persistenceVersion > :since");
+      }
+      else {
+        query = getEntityManager().createQuery("SELECT pb FROM " + persistentBeanType.getName() + " pb " +
+                                               "WHERE pb.class = " + persistentBeanType.getName() + " " +
+                                               "AND pb.$persistenceVersion > :since");
+      }
+      query.setParameter("since", since);
+      @SuppressWarnings("unchecked")
+      List<_VersionedPersistentBean_> result = query.getResultList();
+      assert result != null;
+      Set<_VersionedPersistentBean_> setResult = new HashSet<_VersionedPersistentBean_>(result);
       _LOG.debug("Retrieval succeeded (" + setResult.size() + " objects retrieved)");
       return setResult;
     }

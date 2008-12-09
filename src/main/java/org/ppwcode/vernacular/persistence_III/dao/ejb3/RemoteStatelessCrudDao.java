@@ -21,6 +21,7 @@ import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.unexpectedException;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -169,6 +170,21 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
     try {
       getUserTransaction().begin();
       Set<_PersistentBean_> result = getRequiredTransactionStatelessCrudDao().retrieveAllPersistentBeans(persistentBeanType, retrieveSubClasses);
+      getUserTransaction().commit();
+      return result;
+    }
+    catch (Throwable t) {
+      handleForNoException(t);
+    }
+    return null; // keep compiler happy
+  }
+
+  public <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>> Set<_VersionedPersistentBean_>
+  retrieveAllPersistentBeans(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
+    assert dependency(getExceptionHandler(), "exceptionHandler");
+    try {
+      getUserTransaction().begin();
+      Set<_VersionedPersistentBean_> result = getRequiredTransactionStatelessCrudDao().retrieveAllPersistentBeans(persistentBeanType, retrieveSubClasses, since);
       getUserTransaction().commit();
       return result;
     }
