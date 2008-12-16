@@ -105,7 +105,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
 
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>> Set<_VersionedPersistentBean_>
-  retrieveAllPersistentBeans(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
+  retrieveAllPersistentBeansChangedSince(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
     _LOG.debug("Retrieving all records of type \"" + persistentBeanType + "\" since " + since + " ...");
     assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
     assert preArgumentNotNull(since, "since");

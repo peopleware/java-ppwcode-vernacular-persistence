@@ -180,11 +180,11 @@ public class RemoteStatelessCrudDao implements AtomicStatelessCrudDao {
   }
 
   public <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>> Set<_VersionedPersistentBean_>
-  retrieveAllPersistentBeans(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
+  retrieveAllPersistentBeansChangedSince(Class<_VersionedPersistentBean_> persistentBeanType, boolean retrieveSubClasses, Timestamp since) {
     assert dependency(getExceptionHandler(), "exceptionHandler");
     try {
       getUserTransaction().begin();
-      Set<_VersionedPersistentBean_> result = getRequiredTransactionStatelessCrudDao().retrieveAllPersistentBeans(persistentBeanType, retrieveSubClasses, since);
+      Set<_VersionedPersistentBean_> result = getRequiredTransactionStatelessCrudDao().retrieveAllPersistentBeansChangedSince(persistentBeanType, retrieveSubClasses, since);
       getUserTransaction().commit();
       return result;
     }

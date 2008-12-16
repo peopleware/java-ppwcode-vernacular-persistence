@@ -185,7 +185,7 @@ public interface StatelessCrudDao extends Dao {
                    cond = {@Expression("true")})
   )
   <_VersionedPersistentBean_ extends VersionedPersistentBean<?, Timestamp>>
-  Set<_VersionedPersistentBean_> retrieveAllPersistentBeans(final Class<_VersionedPersistentBean_> persistentBeanType, final boolean retrieveSubClasses, Timestamp since) throws NoLongerSupportedError;
+  Set<_VersionedPersistentBean_> retrieveAllPersistentBeansChangedSince(final Class<_VersionedPersistentBean_> persistentBeanType, final boolean retrieveSubClasses, Timestamp since) throws NoLongerSupportedError;
 
   /**
    * Create the object {@code pb} in persistent storage. Return that object with filled-out {@link PersistentBean#getPersistenceId()}.
