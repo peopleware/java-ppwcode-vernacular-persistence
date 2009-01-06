@@ -366,6 +366,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+
   </dependencies>
 
 </project>
