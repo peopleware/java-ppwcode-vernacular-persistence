@@ -54,6 +54,8 @@ import org.toryt.annotations_I.MethodContract;
  *   only consistent if you use all methods through the bridge, and never
  *   directly on the encapsulated {@link EntityTransaction}. This makes this
  *   class a hack.</p>
+ *
+ * @todo untested and unused
  */
 public class EntityUserTransactionBridge implements UserTransaction {
 
