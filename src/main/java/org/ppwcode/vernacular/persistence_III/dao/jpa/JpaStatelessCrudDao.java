@@ -39,6 +39,8 @@ import java.util.Set;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,6 +72,9 @@ import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCr
 public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTransactionStatelessCrudDao {
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
+
+
+  public abstract UserTransaction getUserTransaction();
 
 
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
@@ -360,7 +365,15 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
       if (_LOG.isDebugEnabled()) {
         _LOG.debug("persistent bean offered for persist os not civilized; rollback", cpe);
       }
-      getEntityManager().getTransaction().setRollbackOnly();
+      try {
+        getUserTransaction().setRollbackOnly();
+      }
+      catch (IllegalStateException exc) {
+        unexpectedException(exc, "could not perform necessary rollback");
+      }
+      catch (SystemException exc) {
+        unexpectedException(exc, "could not perform necessary rollback");
+      }
       cpe.throwIfNotEmpty();
     }
     else {

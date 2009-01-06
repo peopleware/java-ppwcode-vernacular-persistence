@@ -28,6 +28,7 @@ import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa.JpaStatelessCrudDao;
 import org.ppwcode.vernacular.persistence_III.jpa.test.util.dummy.JpaStatelessCrudDaoTestsProvider;
 import org.ppwcode.vernacular.persistence_III.junit.DatabaseTest;
+import org.ppwcode.vernacular.transaction_I.jta.EntityUserTransactionBridge;
 import org.ppwcode.vernacular.exception_III.ApplicationException;
 
 import javax.persistence.Persistence;
@@ -53,7 +54,7 @@ public class JpaStatelessCrudDaoTest extends DatabaseTest {
     jscd = new JpaStatelessCrudDao();
     jscd.setEntityManager(Persistence.createEntityManagerFactory(
         JpaTestConstants.PERSISTENCE_UNIT_DAO_JPA_TEST).createEntityManager());
-
+    jscd.setUserTransaction(new EntityUserTransactionBridge(jscd.getEntityManager().getTransaction()));
     super.createTablesAndPopulate();
   }
 

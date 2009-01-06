@@ -20,9 +20,11 @@ package org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
 
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
@@ -54,4 +56,17 @@ public class JpaStatelessCrudDao
   public void setEntityManager(EntityManager entityManager) {
     this.$entityManager = entityManager;
   }
+
+  @Override
+  public UserTransaction getUserTransaction() {
+    return $ut;
+  }
+
+  public void setUserTransaction(UserTransaction ut) {
+    $ut = ut;
+  }
+
+  @Resource
+  private UserTransaction $ut;
+
 }
