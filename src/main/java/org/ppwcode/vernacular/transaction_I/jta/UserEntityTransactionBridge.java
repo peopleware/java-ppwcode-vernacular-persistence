@@ -22,6 +22,7 @@ import static javax.transaction.Status.STATUS_COMMITTING;
 import static javax.transaction.Status.STATUS_MARKED_ROLLBACK;
 import static javax.transaction.Status.STATUS_PREPARED;
 import static javax.transaction.Status.STATUS_PREPARING;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.unexpectedException;
 
@@ -34,6 +35,9 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
@@ -48,6 +52,10 @@ import org.toryt.annotations_I.MethodContract;
  *   provided by JTA (see {@link UserTransaction}. This is a bridge to
  *   use a {@link UserTransaction} as an {@link EntityTransaction}.</p>
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class UserEntityTransactionBridge implements EntityTransaction {
 
 

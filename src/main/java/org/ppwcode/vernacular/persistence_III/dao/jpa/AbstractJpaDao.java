@@ -17,8 +17,13 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+
 import javax.persistence.EntityManager;
 
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
@@ -83,6 +88,10 @@ import org.toryt.annotations_I.MethodContract;
  *       was a locked database. We presume the reason for that was that 2 entity managers,
  *       one from the container, and the one we got ourselfs, are fighting for the resource.
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class AbstractJpaDao implements Dao {
 
   /*

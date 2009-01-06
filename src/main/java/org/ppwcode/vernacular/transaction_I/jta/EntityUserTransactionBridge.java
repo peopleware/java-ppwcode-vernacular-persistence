@@ -24,6 +24,7 @@ import static javax.transaction.Status.STATUS_MARKED_ROLLBACK;
 import static javax.transaction.Status.STATUS_NO_TRANSACTION;
 import static javax.transaction.Status.STATUS_ROLLEDBACK;
 import static javax.transaction.Status.STATUS_ROLLING_BACK;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
 
 import javax.persistence.EntityTransaction;
@@ -32,6 +33,9 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.Invars;
@@ -57,6 +61,10 @@ import org.toryt.annotations_I.MethodContract;
  *
  * @todo untested and unused
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class EntityUserTransactionBridge implements UserTransaction {
 
 

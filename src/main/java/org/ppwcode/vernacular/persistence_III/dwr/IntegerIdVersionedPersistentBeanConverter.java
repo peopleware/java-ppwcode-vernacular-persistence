@@ -1,5 +1,7 @@
 package org.ppwcode.vernacular.persistence_III.dwr;
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -14,7 +16,15 @@ import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 
+// MUDO documentation etc.
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class IntegerIdVersionedPersistentBeanConverter extends BeanConverter {
 
   /* (non-Javadoc)

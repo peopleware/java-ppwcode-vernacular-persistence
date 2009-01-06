@@ -17,6 +17,7 @@ limitations under the License.
 package org.ppwcode.vernacular.transaction_I.jta;
 
 
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
 
@@ -28,6 +29,9 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionRequiredException;
 
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_III.ExternalError;
 import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
 import org.toryt.annotations_I.Expression;
@@ -44,6 +48,10 @@ import org.toryt.annotations_I.MethodContract;
  * <p>All other expcetions are considered programming errors. They should not occur in a correct system,
  *   or be dealt with closer to their occurence, higher in the stack.</p>
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class JtaTriager implements ExceptionTriager {
 
   @MethodContract(

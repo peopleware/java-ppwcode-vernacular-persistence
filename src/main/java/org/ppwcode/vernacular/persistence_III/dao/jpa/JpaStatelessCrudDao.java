@@ -18,6 +18,7 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 
 import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
+import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.pre;
@@ -45,6 +46,9 @@ import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ppwcode.metainfo_I.Copyright;
+import org.ppwcode.metainfo_I.License;
+import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.exception_III.CompoundSemanticException;
 import org.ppwcode.vernacular.exception_III.SemanticException;
@@ -72,6 +76,10 @@ import org.toryt.annotations_I.MethodContract;
  *
  * @mudo unit tests
  */
+@Copyright("2004 - $Date$, PeopleWare n.v.")
+@License(APACHE_V2)
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements RequiredTransactionStatelessCrudDao {
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);

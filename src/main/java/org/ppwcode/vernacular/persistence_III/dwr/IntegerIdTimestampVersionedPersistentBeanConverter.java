@@ -18,6 +18,8 @@ import org.directwebremoting.util.Messages;
 /**
  *
  * @author rvdginste
+ *
+ * @mudo documentation etc.
  */
 public class IntegerIdTimestampVersionedPersistentBeanConverter extends BeanConverter {
 
