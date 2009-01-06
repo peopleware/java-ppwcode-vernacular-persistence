@@ -30,7 +30,7 @@
   </properties>
   <body>
 
-    <release version="III v1.0.0/1.0" date="2008-06-??" description="Port to ppwcode">
+    <release version="III v1.0" date="2009-06-??" description="Port to ppwcode">
       <action dev="jand" type="update">
         Changed package to ppwcode structure.
       </action>
@@ -78,6 +78,9 @@
       <action dev="jand" type="remove">
         RamStorage package removed. This was used to do "quick" unit tests. We are grown-ups now,
         and can do tests in memory with HSQLDB or Derby.
+      </action>
+      <action dev="jand" type="added">
+        Added dwr support.
       </action>
     </release>
 
