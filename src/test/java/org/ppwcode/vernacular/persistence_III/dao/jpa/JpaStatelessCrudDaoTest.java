@@ -19,20 +19,20 @@ package org.ppwcode.vernacular.persistence_III.dao.jpa;
 import static org.junit.Assert.assertNotNull;
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
+import java.text.ParseException;
+
+import javax.persistence.Persistence;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.exception_III.ApplicationException;
 import org.ppwcode.vernacular.persistence_III.IdNotFoundException;
 import org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa.JpaStatelessCrudDao;
 import org.ppwcode.vernacular.persistence_III.jpa.test.util.dummy.JpaStatelessCrudDaoTestsProvider;
 import org.ppwcode.vernacular.persistence_III.junit.DatabaseTest;
-import org.ppwcode.vernacular.transaction_I.jta.EntityUserTransactionBridge;
-import org.ppwcode.vernacular.exception_III.ApplicationException;
-
-import javax.persistence.Persistence;
-import java.text.ParseException;
 
 
 @Copyright("2008 - $Date$, PeopleWare n.v.")
@@ -54,7 +54,6 @@ public class JpaStatelessCrudDaoTest extends DatabaseTest {
     jscd = new JpaStatelessCrudDao();
     jscd.setEntityManager(Persistence.createEntityManagerFactory(
         JpaTestConstants.PERSISTENCE_UNIT_DAO_JPA_TEST).createEntityManager());
-    jscd.setUserTransaction(new EntityUserTransactionBridge(jscd.getEntityManager().getTransaction()));
     super.createTablesAndPopulate();
   }
 

@@ -20,11 +20,8 @@ package org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
-import javax.annotation.Resource;
-import javax.ejb.*;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
+import javax.persistence.EntityTransaction;
 
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
@@ -37,14 +34,14 @@ import org.toryt.annotations_I.Basic;
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
-@Stateless
-@TransactionManagement(TransactionManagementType.CONTAINER)
-@TransactionAttribute(value = TransactionAttributeType.REQUIRED)
+//@Stateless
+//@TransactionManagement(TransactionManagementType.CONTAINER)
+//@TransactionAttribute(value = TransactionAttributeType.REQUIRED)
 public class JpaStatelessCrudDao
     extends org.ppwcode.vernacular.persistence_III.dao.jpa.JpaStatelessCrudDao
     implements RequiredTransactionStatelessCrudDao {
 
-  @PersistenceContext
+//  @PersistenceContext
   private EntityManager $entityManager;
 
   @Override
@@ -58,15 +55,8 @@ public class JpaStatelessCrudDao
   }
 
   @Override
-  public UserTransaction getUserTransaction() {
-    return $ut;
+  public EntityTransaction getEntityTransaction() {
+    return entityTransactionFromEntityManager();
   }
-
-  public void setUserTransaction(UserTransaction ut) {
-    $ut = ut;
-  }
-
-  @Resource
-  private UserTransaction $ut;
 
 }

@@ -36,10 +36,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
-import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
@@ -53,6 +54,8 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
+import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.MethodContract;
 
 /**
  * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here are executed either in an existing
@@ -73,8 +76,54 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
 
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
+  /**
+   * <p>The entity transaction used to roll-back transactions when persistent beans to be persisted or updated
+   *   are not civilized. When using with pure JPA, this can be implemented as
+   *   {@link #getEntityManager()}{@link EntityManager#getTransaction()}. However, this method does work when
+   *   using this class as a session bean, with JTA transactions. In that case, a transaction must be gotten
+   *   from the server. This however is a {@link UserTransaction}. {@link org.ppwcode.vernacular.transaction_I.jta.UserEntityTransactionBridge}
+   *   can then be used to wrap around the {@link UserTransaction}.</p>
+   * <p>When this class is used outside a container, you can implement this method as:</p>
+   * <pre>
+   *   &#64;MethodContract(pre  = &#64;Expression(&quot;entityManager != null&quot;),
+   *                   post = &#64;Expression(&quot;entityManager.transaction&quot;))
+   *   public final EntityTransaction getEntityTransaction() {
+   *     return entityTransactionFromEntityManager();
+   *   }
+   * </pre>
+   * <p>When this class is used as the implementation of an EJB3 session bean, you can implement this method as:</p>
+   * <pre>
+   *   &#64;Basic
+   *   &#64;Resource
+   *   public final UserTransaction getUserTransaction() {
+   *     return $userTransaction;
+   *   }
+   *
+   *   &#64;MethodContract(post = &#64;Expression(&quot;userTransaction == _userTransaction&quot;))
+   *   public final void setUserTransaction(UserTransaction userTransaction) {
+   *     $userTransaction = userTransaction;
+   *   }
+   *
+   *   &#64;Invars(&#64;Expression(&quot;$userTransaction != null&quot;))
+   *   private UserTransaction $userTransaction;
+   *
+   *   &#64;MethodContract(post = &#64;Expression(&quot;new UserEntityTransactionBridge(userTransaction)&quot;))
+   *   public final EntityTransaction getEntityTransaction() {
+   *     return new UserEntityTransactionBridge(getUserTransaction());
+   *   }
+   * </pre>
+   */
+  @MethodContract(pre  = @Expression("entityManager != null"),
+                  post = @Expression("result != null"))
+  public abstract EntityTransaction getEntityTransaction();
 
-  public abstract UserTransaction getUserTransaction();
+
+  @MethodContract(pre  = @Expression("entityManager != null"),
+                  post = @Expression("entityManager.transaction"))
+  protected final EntityTransaction entityTransactionFromEntityManager() {
+    assert dependency(getEntityManager(), "entityManager");
+    return getEntityManager().getTransaction();
+  }
 
 
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
@@ -366,12 +415,9 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
         _LOG.debug("persistent bean offered for persist os not civilized; rollback", cpe);
       }
       try {
-        getUserTransaction().setRollbackOnly();
+        getEntityTransaction().setRollbackOnly();
       }
       catch (IllegalStateException exc) {
-        unexpectedException(exc, "could not perform necessary rollback");
-      }
-      catch (SystemException exc) {
         unexpectedException(exc, "could not perform necessary rollback");
       }
       cpe.throwIfNotEmpty();
