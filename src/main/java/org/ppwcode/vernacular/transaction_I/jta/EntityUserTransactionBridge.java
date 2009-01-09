@@ -59,7 +59,7 @@ import org.toryt.annotations_I.MethodContract;
  *   directly on the encapsulated {@link EntityTransaction}. This makes this
  *   class a hack.</p>
  *
- * @todo untested and unused
+ * @todo untested and unused DELETE THIS
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)

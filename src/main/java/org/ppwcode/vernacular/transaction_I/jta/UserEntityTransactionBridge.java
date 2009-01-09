@@ -51,6 +51,8 @@ import org.toryt.annotations_I.MethodContract;
  *   (see {@link EntityTransaction}), slightly different from the interface
  *   provided by JTA (see {@link UserTransaction}. This is a bridge to
  *   use a {@link UserTransaction} as an {@link EntityTransaction}.</p>
+ *
+ * @todo untested and unused DELETE THIS
  */
 @Copyright("2004 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
