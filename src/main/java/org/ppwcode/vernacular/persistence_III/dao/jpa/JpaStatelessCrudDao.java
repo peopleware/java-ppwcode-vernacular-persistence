@@ -37,12 +37,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
-import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,8 +55,10 @@ import org.ppwcode.vernacular.persistence_III.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.Dao;
 import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
+import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
+import org.toryt.annotations_I.Throw;
 
 /**
  * <p>A stateless {@link Dao DAO} that offers generalized CRUD methods. Methods here are executed either in an existing
@@ -85,55 +84,182 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
   private final static Log _LOG = LogFactory.getLog(JpaStatelessCrudDao.class);
 
   /**
-   * <p>The entity transaction used to roll-back transactions when persistent beans to be persisted or updated
-   *   are not civilized. When using with pure JPA, this can be implemented as
-   *   {@link #getEntityManager()}{@link EntityManager#getTransaction()}. However, this method does work when
-   *   using this class as a session bean, with JTA transactions. In that case, a transaction must be gotten
-   *   from the server. This however is a {@link UserTransaction}. {@link org.ppwcode.vernacular.transaction_I.jta.UserEntityTransactionBridge}
-   *   can then be used to wrap around the {@link UserTransaction}.</p>
+   * <p>Because of the need for abstraction with respect to rolling back a transaction
+   *   (see {@link #setRollbackOnly()}), this method is introduced to complete the
+   *   encapsulation.</p>
+   * <p>This method calls {@link #getRollbackOnlyImpl()}, and handles exceptions. Any problem
+   *   is considered a programming error.</p>
+   */
+  @MethodContract(pre  = @Expression("! rollbackOnlyPrecondition() throws"),
+                  post = @Expression("getRollbackOnlyImpl()"))
+  protected final boolean getRollbackOnly() {
+    rollbackOnlyPrecondition();
+    return getRollbackOnlyImpl();
+  }
+
+  /**
+   * <p>Called by the framework when persistent beans to be persisted or updated are not civilized.</p>
+   * <p>This method calls {@link #setRollbackOnlyImpl()}, and handles exceptions. Any problem with
+   *   attempting to set the transaction to roll-back only is considered a programming error.</p>
+   */
+  @MethodContract(pre  = @Expression("! rollbackOnlyPrecondition() throws"),
+                  post = {@Expression("getRollbackOnly() == true"),
+                          @Expression("result = getRollbackOnlyImpl()")})
+  protected final void setRollbackOnly() {
+    rollbackOnlyPrecondition();
+    try {
+      setRollbackOnlyImpl();
+    }
+    catch (IllegalStateException isExc) {
+      unexpectedException(isExc);
+    }
+  }
+
+  /**
+   * <p>Called by {@link #getRollbackOnly}.</p>
+   * <p>When this class is used with pure JPA, this can be implemented as
+   *   {@code getEntityManager().getTransaction().getRollbackOnly()}. However, this approach does not work
+   *   when using this class as a session bean, with JTA transactions. In this case, we need to call
+   *   {@code getRollbackOnly()} on the {@code EJBContext}.</p>
    * <p>When this class is used outside a container, you can implement this method as:</p>
    * <pre>
    *   &#64;MethodContract(pre  = &#64;Expression(&quot;entityManager != null&quot;),
-   *                   post = &#64;Expression(&quot;entityManager.transaction&quot;))
-   *   public final EntityTransaction getEntityTransaction() {
-   *     return entityTransactionFromEntityManager();
+   *                   post = &#64;Expression(&quot;entityManager.transaction.getRollbackOnly()&quot;),
+   *                   exc  = {&#64;Throw(type = IllegalStateException.class,
+   *                                  cond = &#64;Expression(&quot;! entityManager.transaction.active&quot;)),
+   *                           &#64;Throw(type = IllegalStateException.class,
+   *                                  cond = &#64;Expression(value = &quot;true&quot;, description = &quot;entity manager is a JTA entity manager &quot;))}
+   *   )
+   *   public final boolean getRollbackOnlyImpl() throws IllegalStateException {
+   *     return getEntityManager().getTransaction().getRollbackOnly();
    *   }
    * </pre>
-   * <p>When this class is used as the implementation of an EJB3 session bean, you can implement this method as:</p>
+   * <p>When this class is used as the implementation of an EJB3 session bean with container managed transactions,
+   *   you can implement this method as:</p>
    * <pre>
    *   &#64;Basic
+   *   public final SessionContext getSessionContext() {
+   *     return $sessionContext;
+   *   }
+   *
+   *   &#64;MethodContract(post = &#64;Expression(&quot;sessionContext == _sessionContext&quot;))
+   *   public final void setSessionContext(SessionContext sessionContext) {
+   *     $sessionContext = sessionContext;
+   *   }
+   *
    *   &#64;Resource
-   *   public final UserTransaction getUserTransaction() {
-   *     return $userTransaction;
+   *   private SessionContext $sessionContext;
+   *
+   *   &#64;MethodContract(pre  = &#64;Expression(&quot;sessionContext != null&quot;),
+   *                   post = &#64;Expression(&quot;sessionContext.getRollbackOnly()&quot;),
+   *                   exc  = &#64;Throw(type = IllegalStateException.class,
+   *                                 cond = &#64;Expression(value = &quot;true&quot;, description = &quot;This bean is declared as bean managed transaction&quot;))
+   *   public final boolean getRollbackOnlyImpl() throws IllegalStateException {
+   *     return getSessionContext().getRollbackOnly();
+   *   }
+   * </pre>
+   * <p>Either implementation can only throw an IllegalStateException. This exception should be passed through.</p>
+   */
+  @Basic(pre = @Expression("! rollbackOnlyPrecondition() throws"))
+  protected abstract boolean getRollbackOnlyImpl();
+
+  /**
+   * <p>Called by the framework when persistent beans that are to be persisted or updated are not civilized.</p>
+   * <p>When this class is used with pure JPA, this can be implemented as
+   *   {@code getEntityManager().getTransaction().setRollbackOnly()}. However, this approach does not work
+   *   when using this class as a session bean, with JTA transactions. In this case, we need to call
+   *   {@code setRollbackOnly()} on the {@code EJBContext}. See
+   *   <a href="http://java.sun.com/javaee/5/docs/tutorial/doc/bncij.html#bnciv">the relevant section in the Java
+   *   EE Tutorial</a>.</p>
+   * <p>When this class is used outside a container, you can implement this method as:</p>
+   * <pre>
+   *   &#64;MethodContract(pre  = &#64;Expression(&quot;entityManager != null&quot;),
+   *                   post = &#64;Expression(&quot;entityManager.transaction.getRollbackOnly() == true&quot;),
+   *                   exc  = {&#64;Throw(type = IllegalStateException.class,
+   *                                  cond = &#64;Expression(&quot;! entityManager.transaction.active&quot;)),
+   *                           &#64;Throw(type = IllegalStateException.class,
+   *                                  cond = &#64;Expression(value = &quot;true&quot;, description = &quot;entity manager is a JTA entity manager &quot;))}
+   *   )
+   *   public final void setRollbackOnlyImpl() throws IllegalStateException {
+   *     getEntityManager().getTransaction().setRollbackOnly();
+   *   }
+   * </pre>
+   * <p>When this class is used as the implementation of an EJB3 session bean with container managed transactions,
+   *   you can implement this method as:</p>
+   * <pre>
+   *   &#64;Basic
+   *   public final SessionContext getSessionContext() {
+   *     return $sessionContext;
    *   }
    *
-   *   &#64;MethodContract(post = &#64;Expression(&quot;userTransaction == _userTransaction&quot;))
-   *   public final void setUserTransaction(UserTransaction userTransaction) {
-   *     $userTransaction = userTransaction;
+   *   &#64;MethodContract(post = &#64;Expression(&quot;sessionContext == _sessionContext&quot;))
+   *   public final void setSessionContext(SessionContext sessionContext) {
+   *     $sessionContext = sessionContext;
    *   }
    *
-   *   &#64;Invars(&#64;Expression(&quot;$userTransaction != null&quot;))
-   *   private UserTransaction $userTransaction;
+   *   &#64;Resource
+   *   private SessionContext $sessionContext;
    *
-   *   &#64;MethodContract(post = &#64;Expression(&quot;new UserEntityTransactionBridge(userTransaction)&quot;))
-   *   public final EntityTransaction getEntityTransaction() {
-   *     return new UserEntityTransactionBridge(getUserTransaction());
+   *   &#64;MethodContract(pre  = &#64;Expression(&quot;sessionContext != null&quot;),
+   *                   post = &#64;Expression(&quot;sessionContext.getRollbackOnly() == true&quot;),
+   *                   exc  = &#64;Throw(type = IllegalStateException.class,
+   *                                 cond = &#64;Expression(value = &quot;true&quot;, description = &quot;This bean is declared as bean managed transaction&quot;))
+   *   public final void setRollbackOnlyImpl() throws IllegalStateException {
+   *     getSessionContext().setRollbackOnly();
+   *   }
+   * </pre>
+   * <p>Either implementation can only throw an IllegalStateException, when making a transaction
+   *   roll-back only is not appropriate. This exception should be passed through.</p>
+   */
+  @MethodContract(pre  = @Expression("! rollbackOnlyPrecondition() throws"),
+                  post = {@Expression("getRollBackOnly() == true"),
+                          @Expression(value = "true", description = "The current transaction is set to roll-back only")},
+                  exc  = @Throw(type = IllegalStateException.class,
+                                cond = @Expression("true"))
+  )
+  protected abstract void setRollbackOnlyImpl() throws IllegalStateException;
+
+  /**
+   * <p>Abstract precondition for {@link #setRollbackOnly()} and {@link #setRollbackOnlyImpl()},
+   *   and {@link #getRollbackOnly()} and {@link #getRollbackOnlyImpl()}.</p>
+   * <p>When this class is used outside a container, you can implement this method as:</p>
+   * <pre>
+   *   &#64;MethodContract(post = &#64;Expression(&quot;'entityManager != null&quot;),
+   *                   exc  = &#64;Throw(type = AssertionError.class,
+   *                                 cond = &#64;Expression(&quot;entityManager == null&quot;))
+   *   )
+   *   public final void rollbackOnlyPrecondition() throws AssertionError {
+   *     dependency(getEntityManager(), &quot;entityManager&quot;);
+   *     // getEntityManager.getTransaction() never returns null
+   *   }
+   * </pre>
+   * <p>When this class is used as the implementation of an EJB3 session bean with container managed transactions,
+   *   you can implement this method as:</p>
+   * <pre>
+   *   &#64;Basic
+   *   public final SessionContext getSessionContext() {
+   *     return $sessionContext;
+   *   }
+   *
+   *   &#64;MethodContract(post = &#64;Expression(&quot;sessionContext == _sessionContext&quot;))
+   *   public final void setSessionContext(SessionContext sessionContext) {
+   *     $sessionContext = sessionContext;
+   *   }
+   *
+   *   &#64;Resource
+   *   private SessionContext $sessionContext;
+   *
+   *   &#64;MethodContract(post = &#64;Expression(&quot;'sessionContext != null&quot;),
+   *                   exc  = &#64;Throw(type = AssertionError.class,
+   *                                 cond = &#64;Expression(&quot;sessionContext == null&quot;))
+   *   public final void setRollbackOnlyImpl() throws IllegalStateException {
+   *     dependency(getSessionContext(), &quot;sessionContext&quot;);
    *   }
    * </pre>
    */
-  @MethodContract(pre  = @Expression("entityManager != null"),
-                  post = @Expression("result != null"))
-  public abstract EntityTransaction getEntityTransaction();
-
-
-  @MethodContract(pre  = @Expression("entityManager != null"),
-                  post = @Expression("entityManager.transaction"))
-  protected final EntityTransaction entityTransactionFromEntityManager() {
-    assert dependency(getEntityManager(), "entityManager");
-    return getEntityManager().getTransaction();
-  }
-
-
+  @MethodContract(post =  @Expression(value = "true",
+                                      description = "throws a programming error if the dependencies for get- and setRollbackOnlyImpl are not satisfied"))
+  protected abstract void rollbackOnlyPrecondition() throws AssertionError;
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
   retrieveAllPersistentBeans(Class<_PersistentBean_> persistentBeanType, boolean retrieveSubClasses) {
@@ -422,12 +548,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
       if (_LOG.isDebugEnabled()) {
         _LOG.debug("persistent bean offered for persist os not civilized; rollback", cpe);
       }
-      try {
-        getEntityTransaction().setRollbackOnly();
-      }
-      catch (IllegalStateException exc) {
-        unexpectedException(exc, "could not perform necessary rollback");
-      }
+      setRollbackOnly();
       cpe.throwIfNotEmpty();
     }
     else {

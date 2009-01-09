@@ -19,9 +19,9 @@ package org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.dependency;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
@@ -55,8 +55,18 @@ public class JpaStatelessCrudDao
   }
 
   @Override
-  public EntityTransaction getEntityTransaction() {
-    return entityTransactionFromEntityManager();
+  protected boolean getRollbackOnlyImpl() {
+    return getEntityManager().getTransaction().getRollbackOnly();
+  }
+
+  @Override
+  protected void rollbackOnlyPrecondition() throws AssertionError {
+    dependency(getEntityManager(), "entityManager");
+  }
+
+  @Override
+  protected void setRollbackOnlyImpl() throws IllegalStateException {
+    getEntityManager().getTransaction().setRollbackOnly();
   }
 
 }
