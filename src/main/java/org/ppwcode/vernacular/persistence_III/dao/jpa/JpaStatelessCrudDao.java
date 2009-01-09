@@ -252,7 +252,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
    *   &#64;MethodContract(post = &#64;Expression(&quot;'sessionContext != null&quot;),
    *                   exc  = &#64;Throw(type = AssertionError.class,
    *                                 cond = &#64;Expression(&quot;sessionContext == null&quot;))
-   *   public final void setRollbackOnlyImpl() throws IllegalStateException {
+   *   public final void rollbackOnlyPrecondition() throws IllegalStateException {
    *     dependency(getSessionContext(), &quot;sessionContext&quot;);
    *   }
    * </pre>
