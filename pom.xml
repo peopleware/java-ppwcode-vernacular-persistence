@@ -288,6 +288,10 @@
       <artifactId>ppwcode-vernacular-semantics-VI</artifactId>
     </dependency>
     <dependency>
+    	<groupId>org.ppwcode.vernacular</groupId>
+    	<artifactId>ppwcode-vernacular-value-III</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.ppwcode.vernacular</groupId>
       <artifactId>ppwcode-vernacular-semantics-VI</artifactId>
       <version>1.0.0-SNAPSHOT</version> <!--  this version is not defined in ppwcode ppwcode parent pom -->
