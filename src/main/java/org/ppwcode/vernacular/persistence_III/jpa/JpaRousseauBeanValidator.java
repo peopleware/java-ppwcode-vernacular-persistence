@@ -41,24 +41,30 @@ import org.toryt.annotations_I.Throw;
  *   {@link RousseauBean}, and thus can be used in circumstances where you do not wish to apply the
  *   {@code PersistentBean} interface. The listener methods do nothing for entities that not have type
  *   {@link RousseauBean}, so it is no problem to define the listener as the default entity listener for all inserts
- *   and updates. This can be done in the persistency unit definition as follows:</p>
+ *   and updates. This can be done in the persistence unit definition as follows:</p>
  * <pre>
  *   &lt;entity-mappings&gt;
  *     &lt;entity-listeners&gt;
- *       &lt; entity-listeners class=&quot;org.ppwcode.vernacular.persistence_III.jpa.JpaRousseauBeanValidator&quot;&gt;
+ *       &lt;entity-listeners class=&quot;org.ppwcode.vernacular.persistence_III.jpa.JpaRousseauBeanValidator&quot;&gt;
  *     &lt;/entity-listeners&gt;
  *   &lt;/entity-mappings&gt;
  * </pre>
- * <p>If you use entities that extend {@code AbstractIntegerIdVersionedPersistentBean}, this is not necessary, since that
- *   class defines the listener for itself and all subtypes.</p>
  * <p>In case validation fails ({@code ! }{@link CompoundPropertyException#isEmpty()}), the exception that expresses
  *   the validation problem is packaged into a {@link ApplicationExceptionTransportException}, because JPA entity listener methods
  *   are only allowed to throw {@link RuntimeException RuntimeExceptions}. When a listener does throw an exception,
  *   the current transaction is rolled-back, and all instances of session beans implicated in the current
  *   thread are discarded.</p>
  * <p>The problem with this approach is that, with multiple updates and inserts in 1 transaction, only the
- *   first validation that fails has the opportunity to express its woes. This validator is to be used as a last resort.
- *   If you use the {@link JpaStatelessCrudDao} and a persistence strategy (cascade, loading strategy) according to the
+ *   first validation that fails has the opportunity to express its woes.</p>
+ * <p>Note that validation using an entity listener only works if certain preconditions are satisfied.
+ *   {@link PrePersist} and {@link PreUpdate}. Lifecycle methods operate on not yet fully attached
+ *   {@link RousseauBean}s.  If civility checks of a new or updated entity include verifying properties
+ *   of associated, already persistent RousseauBeans, then these associated RousseauBeans must be attached
+ *   to the {@link EntityManager}'s Persistence Context prior to calling persist() or merge() for the Entity
+ *   that is subject to insertion.  Otherwise, civility checks for the new or updated entity may be performed
+ *   using outdated (and therefore possibly incorrect) data;  data needed for civility checks may not be
+ *   available if associated {@link RousseauBean}s are not attached, due to lazy fetching.</p>
+ *   <p>If you use the {@link JpaStatelessCrudDao} and a persistence strategy (cascade, loading strategy) according to the
  *   ppwcode vernacular for relations, normally all relevant beans are validated before insertion or update. This
  *   validator thus does the same work again. Its functionality is less than optimal in reporting all problems in one
  *   go, but it makes the system completely safe at the cost of extra processing time. This is not a good idea in
@@ -66,6 +72,9 @@ import org.toryt.annotations_I.Throw;
  *   integrity. For {@link JpaStatelessCrudDao}, it thus has to make sure that the persistence manager will not try to
  *   persist in cases of problems, since then one problem will be noted twice. Thus {@link JpaStatelessCrudDao} will
  *   have to abort the transaction before commit is attempted. It does.</p>
+ * <p>It must be noted that validation is done on the PrePersist and PreUpdate lifeCycle event.  This means that
+ *   the entity that is being validated may not have
+ * 
  */
 public class JpaRousseauBeanValidator {
 

@@ -58,7 +58,6 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 @MappedSuperclass
-@EntityListeners({JpaRousseauBeanValidator.class})
 public abstract class AbstractIntegerIdPersistentBean<_Version_ extends Serializable> extends AbstractRousseauBean
     implements VersionedPersistentBean<Integer, _Version_> {
 

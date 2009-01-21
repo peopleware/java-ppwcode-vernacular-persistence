@@ -52,7 +52,6 @@ import org.toryt.annotations_I.MethodContract;
 @SvnInfo(revision = "$Revision$",
          date     = "$Date$")
 @MappedSuperclass
-@EntityListeners({JpaRousseauBeanValidator.class})
 public abstract class AbstractIntegerIdIntegerVersionedPersistentBean extends AbstractIntegerIdPersistentBean<Integer>
     implements VersionedPersistentBean<Integer, Integer> {
 
