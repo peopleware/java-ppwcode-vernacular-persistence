@@ -163,8 +163,9 @@ public abstract class AbstractPersistentBeanConverter extends BeanConverter {
 					// Hmm what to do what to do... throw a programming error?
 					throw subject;
 				}
-			}
+      }
 		}
+      // TODO and else?
 	}
 	
 	/**
