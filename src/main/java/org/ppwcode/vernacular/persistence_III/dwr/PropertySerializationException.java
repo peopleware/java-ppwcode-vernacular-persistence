@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2009 - $Date: 2009-02-19 13:40:14 +0100 (Thu, 19 Feb 2009) $ by PeopleWare n.v.
+Copyright 2009 - $Date$ by PeopleWare n.v.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import org.ppwcode.vernacular.l10n_III.I18nTemplateException;
 import org.ppwcode.vernacular.l10n_III.LocalizedException;
 import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
 
-@Copyright("2009 - $Date: 2009-02-19 13:40:14 +0100 (Thu, 19 Feb 2009) $, PeopleWare n.v.")
+@Copyright("2009 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 4170 $",
-         date     = "$Date: 2009-02-19 13:40:14 +0100 (Thu, 19 Feb 2009) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 public class PropertySerializationException extends PropertyException {
 
   public PropertySerializationException(Object origin, String propertyName, String message, Throwable cause) {
