@@ -141,7 +141,7 @@ public abstract class AbstractPersistentBeanConverter extends BeanConverter {
 		e = huntFor(subject, ValueException.class);
 		if (e != null) {
 			compound.addElementException(
-					new PropertyException(
+					new PropertySerializationException(
 							bean,
 							property.getName(),
 							e.getLocalizedMessage(), 
