@@ -1,6 +1,7 @@
 package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
 import org.ppwcode.vernacular.persistence_III.dao.RemoteAtomicStatelessCrudDao;
+import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -9,11 +10,24 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-public abstract class JpaRemoteAtomicStatelessCrudDao extends
-		RemoteAtomicStatelessCrudDao {
+public abstract class JpaRemoteAtomicStatelessCrudDao extends	RemoteAtomicStatelessCrudDao {
 
-	public abstract EntityManagerFactory getEntityManagerFactory();
+	protected abstract EntityManagerFactory getEntityManagerFactory();
+	
+  /*<property name="statelessCrudJoinTransactionDao">
+  -------------------------------------------------------------------------*/
 
+  @MethodContract(
+    post = @Expression("statelessCrudJoinTransactionDao == _statelessCrudJoinTransactionDao")
+  )
+  /**
+   * This class only works with JpaOutfoContainerStatelessCrudDao, since we must
+   * be able to programmatically configure the entity manager.
+   */
+  public final void setStatelessCrudJoinTransactionDao(JpaOutOfContainerStatelessCrudDao dao) {
+  	super.setStatelessCrudJoinTransactionDao(dao);
+  }
+	
   /*<property name="entity manager">
   -------------------------------------------------------------------------*/
 
@@ -26,6 +40,7 @@ public abstract class JpaRemoteAtomicStatelessCrudDao extends
     post = @Expression("entityManager == _manager")
   )
   private final void setEntityManager(EntityManager manager) {
+  	((JpaOutOfContainerStatelessCrudDao)getRequiredTransactionStatelessCrudDao()).setEntityManager(manager);
     $entityManager = manager;
   }
 
@@ -33,17 +48,18 @@ public abstract class JpaRemoteAtomicStatelessCrudDao extends
 
   /*</property>*/
 
+
   /*<property name="transaction">
   -------------------------------------------------------------------------*/
   @Basic(init = @Expression("false"))
-  private EntityTransaction getTransaction() {
+  protected EntityTransaction getTransaction() {
   	return $transaction;
   }
   
   @MethodContract(
       post = @Expression("transaction == _tx")
     )
-  private void setTransaction(EntityTransaction tx) {
+  protected void setTransaction(EntityTransaction tx) {
   	$transaction = tx;
   }
   
