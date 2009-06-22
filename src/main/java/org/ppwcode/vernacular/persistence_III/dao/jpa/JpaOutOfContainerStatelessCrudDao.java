@@ -45,6 +45,8 @@ public class JpaOutOfContainerStatelessCrudDao extends JpaStatelessCrudDao {
   private EntityManager $entityManager = null;
   /*</property>*/
 
+
+
   @Override
   protected boolean getRollbackOnlyImpl() {
     // TODO Auto-generated method stub
