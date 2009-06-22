@@ -26,10 +26,14 @@ import javax.persistence.EntityManager;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
+import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaOutOfContainerStatelessCrudDao;
 import org.ppwcode.vernacular.persistence_III.jpa.test.businesslogic.RequiredTransactionStatelessCrudDao;
 import org.toryt.annotations_I.Basic;
 
 
+/**
+ * @mudo I don't see the difference with {@link JpaOutOfContainerStatelessCrudDao}?
+ */
 @Copyright("2008 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
