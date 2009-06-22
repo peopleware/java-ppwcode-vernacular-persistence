@@ -1,19 +1,18 @@
 package org.ppwcode.vernacular.persistence_III.dao.jpa;
 
-import org.ppwcode.vernacular.persistence_III.dao.RemoteAtomicStatelessCrudDao;
-import org.ppwcode.vernacular.persistence_III.dao.RequiredTransactionStatelessCrudDao;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-public abstract class JpaRemoteAtomicStatelessCrudDao extends	RemoteAtomicStatelessCrudDao {
+import org.ppwcode.vernacular.persistence_III.dao.RemoteAtomicStatelessCrudDao;
+import org.toryt.annotations_I.Basic;
+import org.toryt.annotations_I.Expression;
+import org.toryt.annotations_I.MethodContract;
 
-	protected abstract EntityManagerFactory getEntityManagerFactory();
-	
+public abstract class JpaRemoteAtomicStatelessCrudDao extends  RemoteAtomicStatelessCrudDao {
+
+  protected abstract EntityManagerFactory getEntityManagerFactory();
+
   /*<property name="statelessCrudJoinTransactionDao">
   -------------------------------------------------------------------------*/
 
@@ -25,9 +24,9 @@ public abstract class JpaRemoteAtomicStatelessCrudDao extends	RemoteAtomicStatel
    * be able to programmatically configure the entity manager.
    */
   public final void setStatelessCrudJoinTransactionDao(JpaOutOfContainerStatelessCrudDao dao) {
-  	super.setStatelessCrudJoinTransactionDao(dao);
+    super.setStatelessCrudJoinTransactionDao(dao);
   }
-	
+
   /*<property name="entity manager">
   -------------------------------------------------------------------------*/
 
@@ -40,7 +39,7 @@ public abstract class JpaRemoteAtomicStatelessCrudDao extends	RemoteAtomicStatel
     post = @Expression("entityManager == _manager")
   )
   private final void setEntityManager(EntityManager manager) {
-  	((JpaOutOfContainerStatelessCrudDao)getRequiredTransactionStatelessCrudDao()).setEntityManager(manager);
+    ((JpaOutOfContainerStatelessCrudDao)getRequiredTransactionStatelessCrudDao()).setEntityManager(manager);
     $entityManager = manager;
   }
 
@@ -53,41 +52,41 @@ public abstract class JpaRemoteAtomicStatelessCrudDao extends	RemoteAtomicStatel
   -------------------------------------------------------------------------*/
   @Basic(init = @Expression("false"))
   protected EntityTransaction getTransaction() {
-  	return $transaction;
+    return $transaction;
   }
-  
+
   @MethodContract(
       post = @Expression("transaction == _tx")
     )
   protected void setTransaction(EntityTransaction tx) {
-  	$transaction = tx;
+    $transaction = tx;
   }
-  
+
   private EntityTransaction $transaction = null;
   /*</property>*/
-  
+
   @Override
   public boolean isOperational() {
-  	return getEntityManager() != null
-  		&& getTransaction() != null
-  		&& getTransaction().isActive();
+    return getEntityManager() != null
+      && getTransaction() != null
+      && getTransaction().isActive();
   }
 
   @Override
-	protected void beginTransaction() {
-			setEntityManager(getEntityManagerFactory().createEntityManager());
-			setTransaction(getEntityManager().getTransaction());
-			getTransaction().begin();
-	}
+  protected void beginTransaction() {
+      setEntityManager(getEntityManagerFactory().createEntityManager());
+      setTransaction(getEntityManager().getTransaction());
+      getTransaction().begin();
+  }
 
-	@Override
-	protected void commitTransaction() {
-		getTransaction().commit();
-	}
+  @Override
+  protected void commitTransaction() {
+    getTransaction().commit();
+  }
 
-	@Override
-	protected void rollbackTransaction() {
-		getTransaction().rollback();
-	}
+  @Override
+  protected void rollbackTransaction() {
+    getTransaction().rollback();
+  }
 
 }
