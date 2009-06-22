@@ -21,7 +21,7 @@ import org.toryt.annotations_I.MethodContract;
  * use EntityTransactions in this application
  *
  * @author tmahieu
- *
+ * @mudo I don't see the difference with {@link JpaStatelessCrudDao}?
  */
 public class JpaOutOfContainerStatelessCrudDao extends JpaStatelessCrudDao {
 
