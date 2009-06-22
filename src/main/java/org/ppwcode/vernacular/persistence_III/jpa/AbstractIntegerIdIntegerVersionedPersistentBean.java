@@ -20,7 +20,6 @@ package org.ppwcode.vernacular.persistence_III.jpa;
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 

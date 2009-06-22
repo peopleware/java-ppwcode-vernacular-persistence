@@ -23,7 +23,6 @@ import static org.ppwcode.util.reflect_I.CloneHelpers.klone;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
