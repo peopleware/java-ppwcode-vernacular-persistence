@@ -654,8 +654,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
    */
   @MethodContract(pre  = @Expression("_persistentBeanType != null"),
                   post = @Expression("callerInAtLeastOneOfRoles(allowedRolesForDelete(_persistentBeanType))"))
-  public final <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  boolean isDeleteAllowed(Class<?> persistentBeanType) {
+  public final boolean isDeleteAllowed(Class<?> persistentBeanType) {
     assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
     return callerInAtLeastOneOfRoles(allowedRolesForDelete(persistentBeanType));
   }
