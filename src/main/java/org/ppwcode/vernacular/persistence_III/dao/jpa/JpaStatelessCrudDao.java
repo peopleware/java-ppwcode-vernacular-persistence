@@ -260,6 +260,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
   @MethodContract(post =  @Expression(value = "true",
                                       description = "throws a programming error if the dependencies for get- and setRollbackOnlyImpl are not satisfied"))
   protected abstract void rollbackOnlyPrecondition() throws AssertionError;
+
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
   retrieveAllPersistentBeans(Class<_PersistentBean_> persistentBeanType, boolean retrieveSubClasses) {
