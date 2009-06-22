@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2007 - $Date: 2008-07-26 00:36:28 +0200 (Sat, 26 Jul 2008) $ by PeopleWare n.v.
+Copyright 2007 - $Date$ by PeopleWare n.v.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -38,10 +38,10 @@ import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
  *
  * @author    Jan Dockx
  */
-@Copyright("2007 - $Date: 2008-07-26 00:36:28 +0200 (Sat, 26 Jul 2008) $, PeopleWare n.v.")
+@Copyright("2007 - $Date$, PeopleWare n.v.")
 @License(APACHE_V2)
-@SvnInfo(revision = "$Revision: 1860 $",
-         date     = "$Date: 2008-07-26 00:36:28 +0200 (Sat, 26 Jul 2008) $")
+@SvnInfo(revision = "$Revision$",
+         date     = "$Date$")
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
