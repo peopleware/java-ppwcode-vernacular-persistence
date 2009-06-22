@@ -47,6 +47,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_III.ApplicationException;
+import org.ppwcode.vernacular.exception_III.ApplicationSecurityException;
 import org.ppwcode.vernacular.exception_III.CompoundSemanticException;
 import org.ppwcode.vernacular.exception_III.SemanticException;
 import org.ppwcode.vernacular.persistence_III.AlreadyChangedException;
@@ -72,6 +73,13 @@ import org.toryt.annotations_I.Throw;
  * ...
  * </pre>
  * <p>to the type.</p>
+ * <p>This class also adds security in an abstract way, via {@link #isCallerInRole(String)}.
+ * Each concrete {@link VersionedPersistentBean} must declare which roles are allowed to create, update
+ * and delete instances of the bean using the {@code &#64;CreateAllowedBy}, {@code &#64;UpdateAllowedBy},
+ * and {@code &#64;DeleteAllowedBy} annotations.
+ * All the roles used must be declared in the concrete class using {@code &#64;DeclareRoles}.</p>
+ *
+ * @mudo security really belongs higher than in the JPA specific implementation
  *
  * @mudo unit tests
  */
@@ -261,6 +269,13 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
                                       description = "throws a programming error if the dependencies for get- and setRollbackOnlyImpl are not satisfied"))
   protected abstract void rollbackOnlyPrecondition() throws AssertionError;
 
+  /**
+   * The current user has role {@code role}.
+   * Subtypes can implement this using a {@code HttpServletRequest.isUserInRole(String)} or
+   * {@code EJBContext.isCallerInRole(String)}, e.g..
+   */
+  protected abstract boolean isCallerInRole(String role);
+
   /* only 1 database access, thus SUPPORTS would suffice; yet, to avoid dirty reads, as per JPA recomendation: Required */
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
   retrieveAllPersistentBeans(Class<_PersistentBean_> persistentBeanType, boolean retrieveSubClasses) {
@@ -356,13 +371,17 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     }
   }
 
+  @MethodContract(post = {}, exc = @Throw(type = ApplicationSecurityException.class, cond = @Expression("! isCreateAllowed(_pb.getClass())")))
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException {
+  _PB_ createPersistentBean(_PB_ pb) throws ApplicationException, ApplicationSecurityException {
     _LOG.debug("Creating persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() == null);
     assert pre(pb.getPersistenceVersion() == null);
     assert dependency(getEntityManager(), "entityManager");
+    if (! isCreateAllowed(pb.getClass())) {
+      throw new ApplicationSecurityException("USER_NOT_ALLOWED_TO_CREATE", null);
+    }
     // Since we are only persisting pb, we only need to normalize pb
     pb.normalize();
     /* for all first level upstream associations (to-one): replace the referenced object with a fresh copy
@@ -422,13 +441,17 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
    *
    * @todo on change of an upstream association, the civility of the old parent is not checked in the current implementation
    */
+  @MethodContract(post = {}, exc = @Throw(type = ApplicationSecurityException.class, cond = @Expression("! isUpdateAllowed(_pb.getClass())")))
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException {
+  _PB_ updatePersistentBean(_PB_ pb) throws ApplicationException, ApplicationSecurityException {
     _LOG.debug("Updating persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert pre(pb.getPersistenceId() != null);
     assert pre(pb.getPersistenceVersion() != null);
     assert dependency(getEntityManager(), "entityManager");
+    if (! isUpdateAllowed(pb.getClass())) {
+      throw new ApplicationSecurityException("USER_NOT_ALLOWED_TO_UPDATE", null);
+    }
     // check whether the pb exists, because we do not want to create a new entity
     // will throw an IdNotFoundException, if the pb does not exist
     findManagedEntity(pb);
@@ -573,11 +596,15 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     }
   }
 
+  @MethodContract(post = {}, exc = @Throw(type = ApplicationSecurityException.class, cond = @Expression("! isDeleteAllowed(_pb.getClass())")))
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws SemanticException, IdNotFoundException {
+  _PB_ deletePersistentBean(_PB_ pb) throws SemanticException, IdNotFoundException, ApplicationSecurityException {
     _LOG.debug("Deleting persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert dependency(getEntityManager(), "entityManager");
+    if (! isDeleteAllowed(pb.getClass())) {
+      throw new ApplicationSecurityException("USER_NOT_ALLOWED_TO_DELETE", null);
+    }
     try {
       _PB_ fpb = findManagedEntity(pb);
       getEntityManager().remove(fpb); // database will hurl when not possible, depending on cascade settings
@@ -597,6 +624,90 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
     // pb.setPersistenceId(null);
     _LOG.debug("delete succeeded; attempting commit and returning new persistent bean: " + pb);
     return pb;
+  }
+
+  /**
+   * The current user has one of the roles defined in an {@link CreateAllowedBy} annotation
+   * for {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("_persistentBeanType != null"),
+                  post = @Expression("callerInAtLeastOneOfRoles(allowedRolesForCreate(_persistentBeanType))"))
+  public final boolean isCreateAllowed(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    return callerInAtLeastOneOfRoles(allowedRolesForCreate(persistentBeanType));
+  }
+
+  /**
+   * The current user has one of the roles defined in an {@link UpdateAllowedBy} annotation
+   * for {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("_persistentBeanType != null"),
+                  post = @Expression("callerInAtLeastOneOfRoles(allowedRolesForUpdate(_persistentBeanType))"))
+  public final boolean isUpdateAllowed(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    return callerInAtLeastOneOfRoles(allowedRolesForUpdate(persistentBeanType));
+  }
+
+  /**
+   * The current user has one of the roles defined in an {@link DeleteAllowedBy} annotation
+   * for {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("_persistentBeanType != null"),
+                  post = @Expression("callerInAtLeastOneOfRoles(allowedRolesForDelete(_persistentBeanType))"))
+  public final <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
+  boolean isDeleteAllowed(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    return callerInAtLeastOneOfRoles(allowedRolesForDelete(persistentBeanType));
+  }
+
+  /**
+   * The roles defined in an {@link CreateAllowedBy} annotation on {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("persistentBeanType"),
+                  post = @Expression("persistentBeanType.getAnnotation(CreateAllowedBy.class) != null ?" +
+                                     "  persistentBeanType.getAnnotation(CreateAllowedBy.class).value() : null"))
+  public final String[] allowedRolesForCreate(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    CreateAllowedBy annotation = persistentBeanType.getAnnotation(CreateAllowedBy.class);
+    return annotation != null ? annotation.value() : null;
+  }
+
+  /**
+   * The roles defined in an {@link UpdateAllowedBy} annotation on {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("persistentBeanType"),
+                  post = @Expression("persistentBeanType.getAnnotation(UpdateAllowedBy.class) != null ?" +
+                                     "  persistentBeanType.getAnnotation(UpdateAllowedBy.class).value() : null"))
+  public final String[] allowedRolesForUpdate(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    UpdateAllowedBy annotation = persistentBeanType.getAnnotation(UpdateAllowedBy.class);
+    return annotation != null ? annotation.value() : null;
+  }
+
+  /**
+   * The roles defined in an {@link DeleteAllowedBy} annotation on {@code persistentBeanType}.
+   */
+  @MethodContract(pre  = @Expression("persistentBeanType"),
+                  post = @Expression("persistentBeanType.getAnnotation(DeleteAllowedBy.class) != null ?" +
+                                     "  persistentBeanType.getAnnotation(DeleteAllowedBy.class).value() : null"))
+  public final String[] allowedRolesForDelete(Class<?> persistentBeanType) {
+    assert preArgumentNotNull(persistentBeanType, "persistentBeanType");
+    DeleteAllowedBy annotation = persistentBeanType.getAnnotation(DeleteAllowedBy.class);
+    return annotation != null ? annotation.value() : null;
+  }
+
+  @MethodContract(post = @Expression("roles != null && exists (String role : roles) {isCallerInRole(role)}"))
+  public boolean callerInAtLeastOneOfRoles(String[] roles) {
+    assert preArgumentNotNull(roles, "roles");
+    if (roles == null) {
+      return false;
+    }
+    for (String role : roles) {
+      if (isCallerInRole(role)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

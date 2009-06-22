@@ -63,4 +63,10 @@ public class JpaOutOfContainerStatelessCrudDao extends JpaStatelessCrudDao {
   protected void setRollbackOnlyImpl() throws IllegalStateException {
     getEntityManager().getTransaction().setRollbackOnly();
   }
+
+  @Override
+  protected boolean isCallerInRole(String role) {
+    return true;
+  }
+
 }

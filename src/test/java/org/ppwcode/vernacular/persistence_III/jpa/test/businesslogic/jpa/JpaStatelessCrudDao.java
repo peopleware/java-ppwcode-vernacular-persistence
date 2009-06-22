@@ -73,4 +73,9 @@ public class JpaStatelessCrudDao
     getEntityManager().getTransaction().setRollbackOnly();
   }
 
+  @Override
+  protected boolean isCallerInRole(String role) {
+    return true;
+  }
+
 }
