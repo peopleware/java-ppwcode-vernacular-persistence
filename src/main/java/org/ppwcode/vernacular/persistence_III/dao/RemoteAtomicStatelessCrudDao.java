@@ -60,8 +60,11 @@ import org.toryt.annotations_I.MethodContract;
  *   }
  * </pre>
  * <p>Furthermore, you need to inject a {@link #getRequiredTransactionStatelessCrudDao() RequiredTransactionStatelessCrudDao}
- *    and an {@link #getExceptionHandler() ExceptionHandler}. A {@link #getUserTransaction() UserTransaction} is injected
- *    as a &#64;Resource.</p>
+ *    and an {@link #getExceptionHandler() ExceptionHandler}. The abstract methods {@link #isOperational()},
+ *    {@link #beginTransaction()}, {@link #commitTransaction()}, and {@link #rollbackTransaction()} must be
+ *    implemented. A subclass could do this by providing a {@link javax.transaction.UserTransaction} or
+ *    {@link javax.persistence.EntityTransaction}, and implementing these methods by delegating the work to these
+ *    specialized objects.</p>
  * <p>That is why this class does not have the {@code &#64;Stateless}, {@code &#64;WebService} nor {@code &#64;TransactionManagement}
  *   or {@code &#64;TransactionAttribute} annotation (apart from infecting this library package with a dependency on EJB3 annotations).
  *   In this way you have the possibility to keep backward compatibility when your business application's semantics change, and the class
@@ -123,12 +126,14 @@ public abstract class RemoteAtomicStatelessCrudDao implements AtomicStatelessCru
 
   /*</property>*/
 
-  @MethodContract(post = @Expression("result ? statelessCrudJoinTransactionDao != null && userTransaction != null && exceptionHandler != null"))
+
+
   /**
    * Returns true if this RemoteAtomicStatelessCrudDao is involved in an
    * transaction (beginTransaction was called, but not yet rolled back
    * or committed).
    */
+  @MethodContract(post = @Expression("result ? statelessCrudJoinTransactionDao != null && userTransaction != null && exceptionHandler != null"))
   public abstract boolean isOperational();
 
   /**
@@ -142,13 +147,13 @@ public abstract class RemoteAtomicStatelessCrudDao implements AtomicStatelessCru
    * (hence protected)
    */
   protected abstract void commitTransaction();
-  
+
   /**
    * Rolls back a transaction. Must only be called by this class
    * (hence protected)
    */
   protected abstract void rollbackTransaction();
-  
+
   public <_PersistentBean_ extends PersistentBean<?>> Set<_PersistentBean_>
   retrieveAllPersistentBeans(Class<_PersistentBean_> persistentBeanType, boolean retrieveSubClasses) {
     assert dependency(getExceptionHandler(), "exceptionHandler");
