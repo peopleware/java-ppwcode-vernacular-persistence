@@ -60,7 +60,7 @@ import org.toryt.annotations_I.Throw;
  *   {@link PrePersist} and {@link PreUpdate}. Lifecycle methods operate on not yet fully attached
  *   {@link RousseauBean}s.  If civility checks of a new or updated entity include verifying properties
  *   of associated, already persistent RousseauBeans, then these associated RousseauBeans must be attached
- *   to the {@link EntityManager}'s Persistence Context prior to calling persist() or merge() for the Entity
+ *   to the {@link javax.persistence.EntityManager}'s Persistence Context prior to calling persist() or merge() for the Entity
  *   that is subject to insertion.  Otherwise, civility checks for the new or updated entity may be performed
  *   using outdated (and therefore possibly incorrect) data;  data needed for civility checks may not be
  *   available if associated {@link RousseauBean}s are not attached, due to lazy fetching.</p>
@@ -74,7 +74,7 @@ import org.toryt.annotations_I.Throw;
  *   have to abort the transaction before commit is attempted. It does.</p>
  * <p>It must be noted that validation is done on the PrePersist and PreUpdate lifeCycle event.  This means that
  *   the entity that is being validated may not have
- * 
+ *
  */
 public class JpaRousseauBeanValidator {
 
