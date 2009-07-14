@@ -598,7 +598,7 @@ public abstract class JpaStatelessCrudDao extends AbstractJpaDao implements Requ
 
   @MethodContract(post = {}, exc = @Throw(type = ApplicationSecurityException.class, cond = @Expression("! isDeleteAllowed(_pb.getClass())")))
   public <_Id_ extends Serializable, _Version_ extends Serializable, _PB_ extends VersionedPersistentBean<_Id_, _Version_>>
-  _PB_ deletePersistentBean(_PB_ pb) throws SemanticException, IdNotFoundException, ApplicationSecurityException {
+  _PB_ deletePersistentBean(_PB_ pb) throws ApplicationException, IdNotFoundException, ApplicationSecurityException {
     _LOG.debug("Deleting persistent bean: " + pb);
     assert preArgumentNotNull(pb, "pb");
     assert dependency(getEntityManager(), "entityManager");
