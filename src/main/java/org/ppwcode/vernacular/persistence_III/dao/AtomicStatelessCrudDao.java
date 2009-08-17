@@ -35,7 +35,7 @@ import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
  *   Methods follow the ppwcode exception vernacular completely. Apart from the business logic, also exceptions that
  *   happen at commit time or roll-back time, are handled according to the vernacular. This entails logging and
  *   warning of the interested parties.</p>
- * <p>This interface allows the used of the stateless CRUD dao as a remote session bean, and outside the container as
+ * <p>This interface allows the use of the stateless CRUD dao as a remote session bean, and outside the container as
  *   part of the <acronym title="Data Access Layer">DAL</acronym>. The interface is especially useful for clients for
  *   which a CRUD operation maps directly to a use case (and thus an atomic action). Clients that want to use the CRUD
  *   functionality as part of a broader transaction are better of using {@link RequiredTransactionStatelessCrudDao},
