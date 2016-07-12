@@ -16,38 +16,33 @@ limitations under the License.
 
 package org.ppwcode.vernacular.persistence.IV;
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.util.serialization_I.SerializationHelpers.replace;
+import org.ppwcode.vernacular.semantics.VII.bean.AbstractRousseauBean;
 
-import java.io.NotSerializableException;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import java.io.Serializable;
 
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
-
-
 /**
- * A partial implementation of the interface {@link PersistentBean}.
- * This adds the use of the ppwcode util serialization alternative for serialization.
- * This means that <code>&#64;DoNotSerialize</code can be used where you want transient serialization, but you
- * cannot use that keyword because of its effect on JPA and possibly other persistence solutions.
+ * <p>A partial implementation of the interface {@link PersistentBean}.</p>
+ * <p>The {@link #getPersistenceId() persistenceId} is annotated for JPA use.</p>
+ *
+ * <p>Note: this version does not use the ppwcode util serialization alternative for serialization, as did earlier
+ *   versions. The main reason, remote communication of serialized objects, has disappeared. It might be necessary
+ *   to reinstate this at some time fo other reasons.</p>
  *
  * @author    Nele Smeets
  * @author    Ruben Vandeginste
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  *
- * @mudo We now have a dependency here on JPA via annotations. Also, the listener is defined in a subpackage, which
+ * // TODO We now have a dependency here on JPA via annotations. Also, the listener is defined in a subpackage, which
  *       depends on this package. This introduces a cycle! This is a bad idea. Like this, you always need the JPA
  *       libraries, even if they are annotations, because the annotations are loaded in the import statements too
  *       (at least under 1.5). Thus, the annotations must go, and we need to use the xml files.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
     implements PersistentBean<_Id_> {
 
@@ -59,30 +54,17 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
   }
 
   public final boolean hasSamePersistenceId(final PersistentBean<_Id_> other) {
-    return (other != null)  && ((getPersistenceId() == null) ? other.getPersistenceId() == null : getPersistenceId().equals(other.getPersistenceId()));
+    return (other != null)
+            && ((getPersistenceId() == null)
+              ? other.getPersistenceId() == null
+              : getPersistenceId().equals(other.getPersistenceId()));
   }
 
-  public final void setPersistenceId(final _Id_ persistenceId) {
-    $persistenceId = persistenceId;
-  }
-
-//  @Id
-//  @GeneratedValue
-//  @Column(name="persistenceId")
+  @Id
+  @GeneratedValue(strategy = GenerationType.TABLE)
+  @Column(name="id")
   private _Id_ $persistenceId;
 
   /*</property>*/
-
-
-
-  /**
-   * Use the ppwcode serialization util alternative for serialization.
-   * This means that <code>&#64;DoNotSerialize</code can be used where
-   * you want transient serialization, but you cannot use that keyword because
-   * of its effect on JPA and possibly other persistence solutions.
-   */
-  protected final Object writeReplace() throws NotSerializableException {
-    return replace(this);
-  }
 
 }
