@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.junit.jpa;
+package org.ppwcode.vernacular.persistence.IV.junit.jpa;
 
 
 import static org.junit.Assert.fail;
@@ -41,7 +41,7 @@ import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
 import org.ppwcode.vernacular.exception_III.ExternalError;
-import org.ppwcode.vernacular.persistence_III.PersistentBean;
+import org.ppwcode.vernacular.persistence.IV.PersistentBean;
 import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaPagingList;
 
 

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.jpa;
+package org.ppwcode.vernacular.persistence.IV.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
@@ -31,9 +31,9 @@ import javax.persistence.MappedSuperclass;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
-import org.ppwcode.vernacular.persistence_III.PersistentBean;
-import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
+import org.ppwcode.vernacular.persistence.IV.PersistentBean;
+import org.ppwcode.vernacular.persistence.IV.AbstractPersistentBean;
+import org.ppwcode.vernacular.persistence.IV.VersionedPersistentBean;
 import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
 
 

@@ -25,7 +25,7 @@
   </bean>
 
 
-  <bean id="databaseHelper" class="org.ppwcode.vernacular.persistence_III.junit.DatabaseHelper">
+  <bean id="databaseHelper" class="org.ppwcode.vernacular.persistence.IV.junit.DatabaseHelper">
     <property name="dataSource" ref="datasource"/>
     <property name="createScript" value="${databaseHelper.createScript}"/>
     <property name="populateScript" value="${databaseHelper.populateScript}"/>

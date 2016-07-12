@@ -14,10 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.jpa;
+package org.ppwcode.vernacular.persistence.IV.jpa;
 
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import static org.ppwcode.util.reflect_I.CloneHelpers.klone;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -26,9 +29,9 @@ import javax.persistence.Version;
 import org.ppwcode.metainfo_I.Copyright;
 import org.ppwcode.metainfo_I.License;
 import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.persistence_III.AbstractPersistentBean;
-import org.ppwcode.vernacular.persistence_III.AbstractVersionedPersistentBean;
-import org.ppwcode.vernacular.persistence_III.VersionedPersistentBean;
+import org.ppwcode.vernacular.persistence.IV.AbstractVersionedPersistentBean;
+import org.ppwcode.vernacular.persistence.IV.VersionedPersistentBean;
+import org.ppwcode.vernacular.persistence.IV.AbstractPersistentBean;
 import org.toryt.annotations_I.Basic;
 import org.toryt.annotations_I.Expression;
 import org.toryt.annotations_I.MethodContract;
@@ -37,22 +40,23 @@ import org.toryt.annotations_I.MethodContract;
 /**
  * <p>It turns out that, at least with OpenJPA, we cannot use a {@Link MappedSuperclass} annotation on classes
  *   that have a generic type parameter. For that reason, this class is introduced as a full code copy of
- *   {@link AbstractPersistentBean} and {@link AbstractVersionedPersistentBean}, with the {@code _Id_}
- *   and {@code _Version_} fixed to {@link Integer}.</p>
+ *   {@link AbstractPersistentBean} and {@link AbstractVersionedPersistentBean}, with the {@code _Id_} fixed to
+ *   {@link Integer} and {@code _Version_} fixed to {@link Timestamp}.</p>
  * <p>We tried to use an intermediate class where we resolve the generic parameter, but it turns out that the
  *   problem occurs whenever there is a generic parameter in the class hierarchy. Generic parameters in the
  *   interface hierarchy are not a problem.</p>
  * <p>This is very sad, an we hope this will be resolved in the future. Classes that now
- *   {@code ... extends AbstractIntegerIdIntegerVersionedPersistentBean} can be changed later, when the workaround is no
+ *   {@code ... extends AbstractIntegerIdTimestampVersionedPersistentBean} can be changed later, when the workaround is no
  *   longer needed, to {@code ... extends AbstractVersionedPersistentBean<Integer>}.</p>
+ *
  */
 @Copyright("2004 - 2016, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
          date     = "2016")
 @MappedSuperclass
-public abstract class AbstractIntegerIdIntegerVersionedPersistentBean extends AbstractIntegerIdPersistentBean<Integer>
-    implements VersionedPersistentBean<Integer, Integer> {
+public abstract class AbstractIntegerIdTimestampVersionedPersistentBean extends AbstractIntegerIdPersistentBean<Timestamp>
+    implements VersionedPersistentBean<Integer, Timestamp> {
 
   /*<property name="version">*/
   //------------------------------------------------------------------
@@ -63,8 +67,8 @@ public abstract class AbstractIntegerIdIntegerVersionedPersistentBean extends Ab
    * should never set the persistence version.
    */
   @Basic(init = @Expression("null"))
-  public final Integer getPersistenceVersion() {
-    return $persistenceVersion;
+  public final Timestamp getPersistenceVersion() {
+    return klone($persistenceVersion);
   }
 
   /**
@@ -77,13 +81,13 @@ public abstract class AbstractIntegerIdIntegerVersionedPersistentBean extends Ab
   @MethodContract(
     post = @Expression("persistenceVersion == _persistenceVersion")
   )
-  public final void setPersistenceVersion(final Integer persistenceVersion) {
-    $persistenceVersion = persistenceVersion;
+  public final void setPersistenceVersion(final Timestamp persistenceVersion) {
+    $persistenceVersion = klone(persistenceVersion);
   }
 
   @Version
   @Column(name="persistenceVersion")
-  private Integer $persistenceVersion;
+  private Timestamp $persistenceVersion;
 
   /*</property>*/
 

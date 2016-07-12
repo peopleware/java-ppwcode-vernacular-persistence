@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.jpa;
+package org.ppwcode.vernacular.persistence.IV.jpa;
 
 
 import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
@@ -45,7 +45,7 @@ import org.toryt.annotations_I.Throw;
  * <pre>
  *   &lt;entity-mappings&gt;
  *     &lt;entity-listeners&gt;
- *       &lt;entity-listeners class=&quot;org.ppwcode.vernacular.persistence_III.jpa.JpaRousseauBeanValidator&quot;&gt;
+ *       &lt;entity-listeners class=&quot;JpaRousseauBeanValidator&quot;&gt;
  *     &lt;/entity-listeners&gt;
  *   &lt;/entity-mappings&gt;
  * </pre>

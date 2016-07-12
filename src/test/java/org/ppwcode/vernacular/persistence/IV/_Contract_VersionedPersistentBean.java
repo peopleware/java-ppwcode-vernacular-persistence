@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III;
+package org.ppwcode.vernacular.persistence.IV;
 
 import static org.junit.Assert.assertEquals;
 

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </license>*/
 
-package org.ppwcode.vernacular.persistence_III.sql;
+package org.ppwcode.vernacular.persistence.IV.sql;
 
 
 import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
