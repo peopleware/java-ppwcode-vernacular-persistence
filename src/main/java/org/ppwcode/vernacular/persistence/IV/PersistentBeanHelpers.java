@@ -17,21 +17,14 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.util.reflect_I.PropertyHelpers.propertyValue;
-import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
-
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
+import static org.apache.commons.beanutils.PropertyUtils.getPropertyDescriptors;
+import static org.ppwcode.vernacular.exception.IV.util.ProgrammingErrorHelpers.preArgumentNotNull;
+import static org.ppwcode.vernacular.semantics.VII.util.PropertyHelpers.propertyValue;
 
 
 /**
@@ -40,10 +33,7 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class PersistentBeanHelpers {
 
   private PersistentBeanHelpers() {
@@ -56,27 +46,28 @@ public final class PersistentBeanHelpers {
    * in most cases (this is all that is implemented at this time) the beans
    * reachable via a to-one association.
    */
-  @MethodContract(
-    pre  = @Expression("_pb != null"),
-    post = {
-      @Expression("result != null"),
-      @Expression("for (PropertyDescriptor pd : getPropertyDescriptors(_pb)) {" +
-                    "PersistentBean.class.isAssignableFrom(pd.propertyType) && propertyValue(_pb, pd.name) != null ? " +
-                      "result.contains(propertyValue(_pb, pd.name))" +
-                  "}"),
-      @Expression("for (PersistentBean pbr : result) {" +
-                    "exists (PropertyDescriptor pd : getPropertyDescriptors(_pb)) {" +
-                      "pbr == propertyValue(_pb, pd.name)" +
-                    "}" +
-                  "}")
-    }
-  )
+  /*
+    @MethodContract(
+      pre  = @Expression("_pb != null"),
+      post = {
+        @Expression("result != null"),
+        @Expression("for (PropertyDescriptor pd : getPropertyDescriptors(_pb)) {" +
+                      "PersistentBean.class.isAssignableFrom(pd.propertyType) && propertyValue(_pb, pd.name) != null ? " +
+                        "result.contains(propertyValue(_pb, pd.name))" +
+                    "}"),
+        @Expression("for (PersistentBean pbr : result) {" +
+                      "exists (PropertyDescriptor pd : getPropertyDescriptors(_pb)) {" +
+                        "pbr == propertyValue(_pb, pd.name)" +
+                      "}" +
+                    "}")
+      }
+    )
+  */
   public static Set<PersistentBean<?>> directUpstreamPersistentBeans(PersistentBean<?> pb) {
     assert preArgumentNotNull(pb, "pb");
-    Set<PersistentBean<?>> result = new HashSet<PersistentBean<?>>();
+    Set<PersistentBean<?>> result = new HashSet<>();
     PropertyDescriptor[] pds = getPropertyDescriptors(pb);
-    for (int i = 0; i < pds.length; i++) {
-      PropertyDescriptor pd = pds[i];
+    for (PropertyDescriptor pd : pds) {
       if (PersistentBean.class.isAssignableFrom(pd.getPropertyType())) {
         PersistentBean<?> upstreamCandidate = propertyValue(pb, pd.getName());
         if (upstreamCandidate != null) {
@@ -94,29 +85,27 @@ public final class PersistentBeanHelpers {
    * reachable via a to-one association. This is applied recursively.
    * {@code pb} itself is also part of the set.
    */
-  @MethodContract(
-    pre  = @Expression("_pb != null"),
-    post = {
-      @Expression("result != null"),
-      @Expression("{_pb} U directUpstreamPersistentBeans(_pb) U " +
-                   "union (PersistentBean pbr : directUpstreamPersistentBeans(_pb)) {upstreamPersistentBeans(pbr)}")
-    }
-  )
+  /*
+    @MethodContract(
+      pre  = @Expression("_pb != null"),
+      post = {
+        @Expression("result != null"),
+        @Expression("{_pb} U directUpstreamPersistentBeans(_pb) U " +
+                     "union (PersistentBean pbr : directUpstreamPersistentBeans(_pb)) {upstreamPersistentBeans(pbr)}")
+      }
+    )
+  */
   public static Set<PersistentBean<?>> upstreamPersistentBeans(PersistentBean<?> pb) {
     assert preArgumentNotNull(pb, "pb");
-    LinkedList<PersistentBean<?>> agenda = new LinkedList<PersistentBean<?>>();
+    LinkedList<PersistentBean<?>> agenda = new LinkedList<>();
     agenda.add(pb);
     int i = 0;
     while (i < agenda.size()) {
       PersistentBean<?> current = agenda.get(i);
-      for (PersistentBean<?> pbr : directUpstreamPersistentBeans(current)) {
-        if (! agenda.contains(pbr)) {
-          agenda.add(pbr);
-        }
-      }
+      directUpstreamPersistentBeans(current).stream().filter(pbr -> !agenda.contains(pbr)).forEach(agenda::add);
       i++;
     }
-    return new HashSet<PersistentBean<?>>(agenda);
+    return new HashSet<>(agenda);
   }
 
 }
