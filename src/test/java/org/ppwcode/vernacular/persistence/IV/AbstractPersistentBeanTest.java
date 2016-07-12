@@ -17,28 +17,24 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBeanTest;
-import org.ppwcode.vernacular.semantics_VI.bean.stubs.NumberOfProperties;
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
-import org.ppwcode.vernacular.semantics_VI.exception.PropertyException;
+import org.ppwcode.vernacular.semantics.VII.bean.stubs.NumberOfProperties;
+import org.ppwcode.vernacular.semantics.VII.exception.CompoundPropertyException;
+import org.ppwcode.vernacular.semantics.VII.exception.PropertyException;
+
+import java.io.Serializable;
+import java.util.*;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
+@SuppressWarnings({"WeakerAccess", "UnusedParameters", "Duplicates"})
 public class AbstractPersistentBeanTest {
 
+  @SuppressWarnings({"WeakerAccess", "unused"})
   public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
     extends AbstractPersistentBean<_Id_> implements NumberOfProperties {
 
@@ -103,6 +99,7 @@ public class AbstractPersistentBeanTest {
 
   }
 
+  @SuppressWarnings({"WeakerAccess", "Duplicates"})
   public static class AbstractPersistentBeanWILD<_Id_ extends Serializable>
     extends AbstractPersistentBeanSTUB<_Id_> {
 
@@ -125,6 +122,7 @@ public class AbstractPersistentBeanTest {
 
   }
 
+  @SuppressWarnings({"WeakerAccess", "unused"})
   public static class AbstractPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
     extends AbstractPersistentBean<_Id_> implements NumberOfProperties {
 
@@ -143,17 +141,17 @@ public class AbstractPersistentBeanTest {
 
   @Before
   public void setUp() throws Exception {
-    subjects = new ArrayList<AbstractPersistentBean<?>>();
+    subjects = new ArrayList<>();
     AbstractPersistentBeanSTUB<?> subject =
       new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, null);
     subjects.add(subject);
     Integer id = 9;
-    Set<String> stringSet = new HashSet<String>();
+    Set<String> stringSet = new HashSet<>();
     stringSet.add("string 1");
     stringSet.add("string 2");
     stringSet.add(null);
     int[] intArray = {5, 6, 4, 8};
-    subject = new AbstractPersistentBeanSTUB<Integer>(id, null, null, null, null);
+    subject = new AbstractPersistentBeanSTUB<>(id, null, null, null, null);
     subjects.add(subject);
     subject = new AbstractPersistentBeanSTUB<Integer>(null,"PROPERTY 1", null, null, null);
     subjects.add(subject);
@@ -163,9 +161,9 @@ public class AbstractPersistentBeanTest {
     subjects.add(subject);
     subject = new AbstractPersistentBeanSTUB<Integer>(null, null, null, null, intArray);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanSTUB<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
+    subject = new AbstractPersistentBeanSTUB<>(id, "PROPERTY 1", new Date(), stringSet, intArray);
     subjects.add(subject);
-    subject = new AbstractPersistentBeanWILD<Integer>(id, "PROPERTY 1", new Date(), stringSet, intArray);
+    subject = new AbstractPersistentBeanWILD<>(id, "PROPERTY 1", new Date(), stringSet, intArray);
     subjects.add(subject);
   }
 
@@ -207,9 +205,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testHashCode() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testHashCode(subject);
-    }
+    subjects.forEach(AbstractPersistentBeanTest::testHashCode);
   }
 
   public static void testToString(AbstractPersistentBean<?> subject) {
@@ -222,57 +218,13 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testToString() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testToString(subject);
-    }
+    subjects.forEach(AbstractPersistentBeanTest::testToString);
   }
 
   @Test
   public void testClone() {
     // The method clone cannot be tested, because the method is declared
     // protected in AbstractSemanticBean. This is exactly the intended behaviour.
-  }
-
-  public static Set<String> testPropertyNamesForToStringA(AbstractPersistentBean<?> subject) {
-    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringA(subject);
-    assertFalse(result.contains("wildExceptions"));
-    assertFalse(result.contains("civilized"));
-    assertInvariants(subject);
-    return result;
-  }
-
-  public static Set<String> testPropertyNamesForToStringB(AbstractPersistentBean<?> subject) {
-    Set<String> result = AbstractRousseauBeanTest.testPropertyNamesForToStringB(subject);
-    assertFalse(result.contains("wildExceptions"));
-    assertFalse(result.contains("civilized"));
-    assertInvariants(subject);
-    return result;
-  }
-
-  @Test
-  public void testPropertyNamesForToString2() {
-    AbstractPersistentBean<?> subject = new AbstractPersistentBeanNOPROPERTIES<Integer>();
-    System.out.println(subject);
-    testPropertyNamesForToStringA(subject);
-  }
-
-  @Test
-  public void testPropertyNamesForToString1() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testPropertyNamesForToStringB(subject);
-    }
-  }
-
-  public static void testCollectionString(AbstractPersistentBean<?> subject) {
-    AbstractRousseauBeanTest.testCollectionString(subject);
-    assertInvariants(subject);
-  }
-
-  @Test
-  public void testCollectionString() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testCollectionString(subject);
-    }
   }
 
   public static CompoundPropertyException testGetWildExceptions(AbstractPersistentBean<?> subject) {
@@ -309,28 +261,24 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testIsCivilized() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testIsCivilized(subject);
-    }
+    subjects.forEach(AbstractPersistentBeanTest::testIsCivilized);
   }
 
   public static void testCheckCivility(AbstractPersistentBean<?> subject) {
-    boolean OLDcivilized = subject.civilized();
+    boolean OLDCivilized = subject.civilized();
     try {
       subject.checkCivility();
-      _Contract_PersistentBean.contractPostCheckCivility(OLDcivilized, subject);
+      _Contract_PersistentBean.contractPostCheckCivility(OLDCivilized, subject);
     }
     catch (CompoundPropertyException thrown) {
-      _Contract_PersistentBean.contractExcCheckCivility(OLDcivilized, subject, thrown);
+      _Contract_PersistentBean.contractExcCheckCivility(OLDCivilized, subject, thrown);
     }
     assertInvariants(subject);
   }
 
   @Test
   public void testCheckCivility() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testCheckCivility(subject);
-    }
+    subjects.forEach(AbstractPersistentBeanTest::testCheckCivility);
   }
 
   public static void testNormalize(AbstractPersistentBean<?> subject) {
@@ -342,9 +290,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testNormalize() {
-    for (AbstractPersistentBean<?> subject : subjects) {
-      testNormalize(subject);
-    }
+    subjects.forEach(AbstractPersistentBeanTest::testNormalize);
   }
 
 }

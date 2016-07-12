@@ -20,9 +20,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
+import org.ppwcode.vernacular.semantics.VII.exception.CompoundPropertyException;
 
 
+@SuppressWarnings("unused")
 public class _Contract_VersionedPersistentBean {
 
 

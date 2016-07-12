@@ -17,20 +17,17 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV.jpa;
 
 
-import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.preArgumentNotNull;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+//import org.ppwcode.vernacular.exception.IV.ApplicationExceptionTransportException;
+import org.ppwcode.vernacular.exception.IV.ApplicationExceptionTransportException;
+import org.ppwcode.vernacular.semantics.VII.bean.RousseauBean;
+import org.ppwcode.vernacular.semantics.VII.exception.CompoundPropertyException;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_III.ApplicationExceptionTransportException;
-import org.ppwcode.vernacular.persistence_III.dao.jpa.JpaStatelessCrudDao;
-import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
+import static org.ppwcode.vernacular.exception.IV.util.ProgrammingErrorHelpers.preArgumentNotNull;
 
 
 /**
@@ -50,7 +47,8 @@ import org.toryt.annotations_I.Throw;
  *   &lt;/entity-mappings&gt;
  * </pre>
  * <p>In case validation fails ({@code ! }{@link CompoundPropertyException#isEmpty()}), the exception that expresses
- *   the validation problem is packaged into a {@link ApplicationExceptionTransportException}, because JPA entity listener methods
+ *   the validation problem is packaged into a {@link ApplicationExceptionTransportException},
+ *   because JPA entity listener methods
  *   are only allowed to throw {@link RuntimeException RuntimeExceptions}. When a listener does throw an exception,
  *   the current transaction is rolled-back, and all instances of session beans implicated in the current
  *   thread are discarded.</p>
@@ -64,42 +62,43 @@ import org.toryt.annotations_I.Throw;
  *   that is subject to insertion.  Otherwise, civility checks for the new or updated entity may be performed
  *   using outdated (and therefore possibly incorrect) data;  data needed for civility checks may not be
  *   available if associated {@link RousseauBean}s are not attached, due to lazy fetching.</p>
- *   <p>If you use the {@link JpaStatelessCrudDao} and a persistence strategy (cascade, loading strategy) according to the
+ *   <p>If you use a persistence strategy (cascade, loading strategy) according to the
  *   ppwcode vernacular for relations, normally all relevant beans are validated before insertion or update. This
  *   validator thus does the same work again. Its functionality is less than optimal in reporting all problems in one
  *   go, but it makes the system completely safe at the cost of extra processing time. This is not a good idea in
  *   systems with an extreme load, but gives us a buffer against programming errors in normal systems, protecting data
- *   integrity. For {@link JpaStatelessCrudDao}, it thus has to make sure that the persistence manager will not try to
- *   persist in cases of problems, since then one problem will be noted twice. Thus {@link JpaStatelessCrudDao} will
- *   have to abort the transaction before commit is attempted. It does.</p>
+ *   integrity. It thus has to make sure that the persistence manager will not try to
+ *   persist in cases of problems, since then one problem will be noted twice. You should abort the transaction before
+ *   commit is attempted.</p>
  * <p>It must be noted that validation is done on the PrePersist and PreUpdate lifeCycle event.  This means that
- *   the entity that is being validated may not have
+ *   the entity that is being validated may not have</p>
  *
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class JpaRousseauBeanValidator {
 
   private final static Log _LOG = LogFactory.getLog(JpaRousseauBeanValidator.class);
 
   @PrePersist
   @PreUpdate
-  @MethodContract(
-    pre  = @Expression("entity != null"),
-    post = {
-      @Expression("entity.normalize()"),
-      @Expression(value = "entity'civilized",
-                  description = "if this bean is not civilized before the call, " +
-                      "nothing can make this postcondition true, and thus an " +
-                      "exception must be thrown")
-    },
-    exc = @Throw(type = ApplicationExceptionTransportException.class,
-                 cond = {
-                   @Expression("! entity'civilized"),
-                   @Expression("thrown.cause != null"),
-                   @Expression("thrown.cause instanceof CompoundPropertyException"),
-                   @Expression("thrown.cause.like(wildExceptions)"),
-                   @Expression("thrown.cause.closed")
-                 })
-  )
+  /*  @MethodContract(
+      pre  = @Expression("entity != null"),
+      post = {
+        @Expression("entity.normalize()"),
+        @Expression(value = "entity'civilized",
+                    description = "if this bean is not civilized before the call, " +
+                        "nothing can make this postcondition true, and thus an " +
+                        "exception must be thrown")
+      },
+      exc = @Throw(type = ApplicationExceptionTransportException.class,
+                   cond = {
+                     @Expression("! entity'civilized"),
+                     @Expression("thrown.cause != null"),
+                     @Expression("thrown.cause instanceof CompoundPropertyException"),
+                     @Expression("thrown.cause.like(wildExceptions)"),
+                     @Expression("thrown.cause.closed")
+                   })
+    )*/
   public void validate(Object entity) throws ApplicationExceptionTransportException {
     _LOG.debug("pre-insert or -update called for " + entity);
     assert preArgumentNotNull(entity, "entity");

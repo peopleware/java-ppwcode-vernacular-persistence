@@ -174,6 +174,11 @@
       </dependency>
       <dependency>
         <groupId>org.ppwcode</groupId>
+        <artifactId>ppwcode-vernacular-exception-IV</artifactId>
+        <version>2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ppwcode</groupId>
         <artifactId>ppwcode-vernacular-semantics-VII</artifactId>
         <version>1.0.0</version>
       </dependency>
@@ -201,6 +206,13 @@
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
         <version>3.2.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ppwcode</groupId>
+        <artifactId>ppwcode-vernacular-semantics-VII</artifactId>
+        <version>1.0.0</version>
+        <type>test-jar</type>
         <scope>test</scope>
       </dependency>
     </dependencies>

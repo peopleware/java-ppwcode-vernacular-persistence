@@ -21,10 +21,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 
-import org.ppwcode.vernacular.semantics_VI.bean.RousseauBeanContract;
-import org.ppwcode.vernacular.semantics_VI.exception.CompoundPropertyException;
+import org.ppwcode.vernacular.semantics.VII.bean.RousseauBeanContract;
+import org.ppwcode.vernacular.semantics.VII.exception.CompoundPropertyException;
 
 
+@SuppressWarnings("WeakerAccess")
 public class _Contract_PersistentBean {
 
   // interface, not actual tests, only contract
@@ -75,7 +76,7 @@ public class _Contract_PersistentBean {
     assertEquals((other != null) && eqn(subject.getPersistenceId(), other.getPersistenceId()), result);
   }
 
-  private final static boolean eqn(Object one, Object other) {
+  private static boolean eqn(Object one, Object other) {
     return one == null ? other == null : one.equals(other);
   }
 
