@@ -24,13 +24,11 @@ import org.ppwcode.vernacular.exception.IV.ApplicationException;
  * Superclass that gathers internal exceptions that are specific for
  * persistence operations.
  *
- * @todo need to work on i18n messages
- *
  * @author    Jan Dockx
  * @author    David Van Keer
  * @author    PeopleWare n.v.
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class PersistenceException extends ApplicationException {
 
   /**
@@ -43,9 +41,9 @@ public class PersistenceException extends ApplicationException {
    */
   /*
     @MethodContract(
-      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
+      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validMessageKey(_messageKey)"),
       post = {
-        @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+        @Expression("message == (_messageKey == null || _messageIdentifier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
         @Expression("cause == _cause")
       }
     )
@@ -61,9 +59,9 @@ public class PersistenceException extends ApplicationException {
    */
   /*
     @MethodContract(
-      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
+      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validMessageKey(_messageKey)"),
       post = {
-        @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+        @Expression("message == (_messageKey == null || _messageIdentifier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
         @Expression("cause == _cause")
       }
     )
