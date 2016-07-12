@@ -17,17 +17,9 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import org.ppwcode.vernacular.semantics.VII.bean.RousseauBean;
 
 import java.io.Serializable;
-
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.semantics_VI.bean.RousseauBean;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
 
 
 
@@ -41,8 +33,7 @@ import org.toryt.annotations_I.MethodContract;
  * <p>Persistent beans are not {@link Cloneable} however. Implementing clone for a semantic inheritance
  *   tree is a large investment, and should not be enforced. Furthermore, it still is a bad idea to make
  *   any semantic object {@link Cloneable}. From experience we know that it is very difficult to decide
- *   in general how deep a clone should go. Persistent beans are {@link Serializable} though, because
- *   they are often used also as Data Transfer Objects in multi-tier applications.</p>
+ *   in general how deep a clone should go. Persistent beans are {@link Serializable} though.</p>
  *<p>{@code _Id_} must be {@link Serializable}, because PersistentBeans are {@link Serializable}
  *   and the {@link #getPersistenceId()} is not {@code transient}. (And BTW, id's must be
  *   {@link Serializable} for Hibernate too ... :-) ).</p>
@@ -50,16 +41,15 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings("unused")
 public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  @Basic(init = @Expression("null"))
+  /*
+    @Basic(init = @Expression("null"))
+  */
   _Id_ getPersistenceId();
 
   /**
@@ -68,24 +58,12 @@ public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean,
    * @param     other
    *            The persistent object to compare to.
    */
-  @MethodContract(
-    post = @Expression("_other != null && persistenceId == _other.persistenceId")
-  )
+  /*
+    @MethodContract(
+      post = @Expression("_other != null && persistenceId == _other.persistenceId")
+    )
+  */
   boolean hasSamePersistenceId(final PersistentBean<_Id_> other);
-
-  /**
-   * @param     persistenceId
-   *            The new value
-   *
-   * @idea This method should not appear in this interface. Once an id is set,
-   *       it should always remain the same (final, immutable property).
-   *       Persistence engines need a way to set the property, but that is it.
-   *       The question is whether it is possible to do testing than?
-   */
-  @MethodContract(
-    post = @Expression("persistenceId == _persistenceId")
-  )
-  void setPersistenceId(final _Id_ persistenceId);
 
   /*</property>*/
 
