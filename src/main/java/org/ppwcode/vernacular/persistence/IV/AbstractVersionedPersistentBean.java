@@ -19,6 +19,7 @@ package org.ppwcode.vernacular.persistence.IV;
 
 import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
 import static org.ppwcode.util.reflect_I.CloneHelpers.safeReference;
+import static org.ppwcode.vernacular.semantics.VII.util.CloneHelpers.safeReference;
 
 import java.io.Serializable;
 
@@ -40,10 +41,7 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings("WeakerAccess")
 public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable, _Version_ extends Serializable>
     extends AbstractPersistentBean<_Id_>
     implements VersionedPersistentBean<_Id_, _Version_> {
@@ -51,16 +49,18 @@ public abstract class AbstractVersionedPersistentBean<_Id_ extends Serializable,
   /*<property name="version">*/
   //------------------------------------------------------------------
 
-  @Basic(init = @Expression("null"))
+  /*
+    @Basic(init = @Expression("null"))
+  */
   public final _Version_ getPersistenceVersion() {
     return safeReference($persistenceVersion);
   }
 
-  @MethodContract(
-    post = @Expression("persistenceVersion == _persistenceVersion")
-  )
-  public final void setPersistenceVersion(final _Version_ persistenceVersion) {
-    $persistenceVersion = safeReference(persistenceVersion);
+  /**
+   * Provided to make testing possible.
+   */
+  protected void setPersistenceVersion(_Version_ persistenceVersion) {
+    $persistenceVersion = persistenceVersion;
   }
 
   @Version

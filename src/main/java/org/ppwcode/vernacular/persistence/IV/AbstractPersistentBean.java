@@ -43,12 +43,16 @@ import java.io.Serializable;
  *       libraries, even if they are annotations, because the annotations are loaded in the import statements too
  *       (at least under 1.5). Thus, the annotations must go, and we need to use the xml files.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
     implements PersistentBean<_Id_> {
 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
+  /*
+    @Basic(init = @Expression("null"))
+  */
   public final _Id_ getPersistenceId() {
     return $persistenceId;
   }
@@ -58,6 +62,13 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
             && ((getPersistenceId() == null)
               ? other.getPersistenceId() == null
               : getPersistenceId().equals(other.getPersistenceId()));
+  }
+
+  /**
+   * Provided to make testing possible.
+   */
+  protected void setPersistenceId(_Id_ persistenceId) {
+    $persistenceId = persistenceId;
   }
 
   @Id
