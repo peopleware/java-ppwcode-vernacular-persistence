@@ -17,18 +17,15 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV.sql;
 
 
-import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ppwcode.vernacular.exception.IV.ApplicationException;
+import org.ppwcode.vernacular.exception.IV.ExternalError;
+import org.ppwcode.vernacular.exception.IV.handle.ThrowableTriager;
 
 import java.sql.SQLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ppwcode.vernacular.exception_III.ExternalError;
-import org.ppwcode.vernacular.exception_III.ApplicationException;
-import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
+import static org.ppwcode.vernacular.exception.IV.util.ExceptionHelpers.huntFor;
 
 
 /**
@@ -39,7 +36,8 @@ import org.toryt.annotations_I.MethodContract;
  * The {@link SqlExceptionHandler} should be set to a handler specific for the type of
  * database used.
  */
-public class SqlExceptionTriager implements ExceptionTriager {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class SqlExceptionTriager implements ThrowableTriager {
 
 
   private static final Log _LOG = LogFactory.getLog(SqlExceptionTriager.class);
@@ -48,12 +46,16 @@ public class SqlExceptionTriager implements ExceptionTriager {
   /*<property name="sqlExceptionHandler">*/
   //------------------------------------------------------------------
 
-  @Basic(init = @Expression("null"))
+  /*
+    @Basic(init = @Expression("null"))
+  */
   public final SqlExceptionHandler getSqlExceptionHandler() {
     return $sqlExceptionHandler;
   }
 
-  @MethodContract(post = @Expression("sqlExceptionHandler == _sqlExceptionHandler"))
+  /*
+    @MethodContract(post = @Expression("sqlExceptionHandler == _sqlExceptionHandler"))
+  */
   public final void setSqlExceptionHandler(final SqlExceptionHandler sqlExceptionHandler) {
     $sqlExceptionHandler = sqlExceptionHandler;
   }
@@ -62,17 +64,19 @@ public class SqlExceptionTriager implements ExceptionTriager {
 
   /*</property>*/
 
-  @MethodContract(
-    post = {
-      @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler != null && " +
-                  "sqlExceptionHandler.handle(huntFor(_t, SQLException.class)) != null ? " +
-                  "result == sqlExceptionHandler.handle(huntFor(_t, SQLException.class))"),
-      @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler != null && " +
-                  "sqlExceptionHandler.handle(huntFor(_t, SQLException.class)) == null ? " +
-                  "result instanceof ExternalError && result.cause == huntFor(_t, SQLException.class)"),
-      @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler == null ? result == _t")
-    }
-  )
+  /*
+    @MethodContract(
+      post = {
+        @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler != null && " +
+                    "sqlExceptionHandler.handle(huntFor(_t, SQLException.class)) != null ? " +
+                    "result == sqlExceptionHandler.handle(huntFor(_t, SQLException.class))"),
+        @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler != null && " +
+                    "sqlExceptionHandler.handle(huntFor(_t, SQLException.class)) == null ? " +
+                    "result instanceof ExternalError && result.cause == huntFor(_t, SQLException.class)"),
+        @Expression("huntFor(_t, SQLException.class) != null && sqlExceptionHandler == null ? result == _t")
+      }
+    )
+  */
   public Throwable triage(Throwable t) {
     SQLException sqlExc = huntFor(t, SQLException.class);
     if (sqlExc != null) {
@@ -83,7 +87,7 @@ public class SqlExceptionTriager implements ExceptionTriager {
         }
         else {
           // any other SQL exception is probably a deployment problem
-          return new ExternalError("A SQL error occured that was not recognized as an internal exception", sqlExc);
+          return new ExternalError("A SQL error occurred that was not recognized as an internal exception", sqlExc);
         }
       }
       else {

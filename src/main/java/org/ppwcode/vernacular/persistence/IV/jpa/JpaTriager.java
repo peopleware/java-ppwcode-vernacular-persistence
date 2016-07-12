@@ -17,21 +17,13 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV.jpa;
 
 
-import static org.ppwcode.util.exception_III.ExceptionHelpers.huntFor;
-import static org.ppwcode.util.exception_III.ProgrammingErrorHelpers.newAssertionError;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-import javax.persistence.TransactionRequiredException;
-
-import org.ppwcode.vernacular.exception_III.handle.ExceptionTriager;
+import org.ppwcode.vernacular.exception.IV.handle.ThrowableTriager;
 import org.ppwcode.vernacular.persistence.IV.AlreadyChangedException;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
+
+import javax.persistence.*;
+
+import static org.ppwcode.vernacular.exception.IV.util.ExceptionHelpers.huntFor;
+import static org.ppwcode.vernacular.exception.IV.util.ProgrammingErrorHelpers.newAssertionError;
 
 
 /**
@@ -45,22 +37,26 @@ import org.toryt.annotations_I.MethodContract;
  * <p>Other exceptions are considered programming errors. They should not occur in a correct program, or
  *  should have been dealt with, or already converted, closer to where they occur, higher in the stack.</p>
  */
-public class JpaTriager  implements ExceptionTriager {
+@SuppressWarnings("unused")
+public class JpaTriager  implements ThrowableTriager {
 
-  @MethodContract(
-    post = {
-      @Expression("huntFor(t, OptimisticLockException.class) != null ? result instanceof AlreadyChangedException && result.cause == huntFor(t, OptimisticLockException.class)"),
-      @Expression("huntFor(t, EntityNotFoundException.class) != null ? result instanceof AlreadyChangedException && result.cause == huntFor(t, EntityNotFoundException.class)"),
-      @Expression("huntFor(t, NonUniqueResultException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, NonUniqueResultException.class)"),
-      @Expression("huntFor(t, NoResultException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, NoResultException.class)"),
-      @Expression("huntFor(t, EntityExistsException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, EntityExistsException.class)"),
-      @Expression("huntFor(t, TransactionRequiredException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, TransactionRequiredException.class)"),
-      @Expression("huntFor(t, OptimisticLockException.class) == null &&  huntFor(t, EntityNotFoundException.class) == null && " +
-                  "huntFor(t, NonUniqueResultException.class) == null && huntFor(t, NoResultException.class) == null && " +
-                  "huntFor(t, EntityExistsException.class) == null && huntFor(t, TransactionRequiredException.class) == null ? " +
-                    "result == t")
-    }
-  )
+  /*
+    @MethodContract(
+      post = {
+        @Expression("huntFor(t, OptimisticLockException.class) != null ? result instanceof AlreadyChangedException && result.cause == huntFor(t, OptimisticLockException.class)"),
+        @Expression("huntFor(t, EntityNotFoundException.class) != null ? result instanceof AlreadyChangedException && result.cause == huntFor(t, EntityNotFoundException.class)"),
+        @Expression("huntFor(t, NonUniqueResultException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, NonUniqueResultException.class)"),
+        @Expression("huntFor(t, NoResultException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, NoResultException.class)"),
+        @Expression("huntFor(t, EntityExistsException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, EntityExistsException.class)"),
+        @Expression("huntFor(t, TransactionRequiredException.class) != null ? result instanceof AssertionError && result.cause == huntFor(t, TransactionRequiredException.class)"),
+        @Expression("huntFor(t, OptimisticLockException.class) == null &&  huntFor(t, EntityNotFoundException.class) == null && " +
+                    "huntFor(t, NonUniqueResultException.class) == null && huntFor(t, NoResultException.class) == null && " +
+                    "huntFor(t, EntityExistsException.class) == null && huntFor(t, TransactionRequiredException.class) == null ? " +
+                      "result == t")
+      }
+    )
+  */
+  @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
   public Throwable triage(Throwable t) {
     OptimisticLockException olExc = huntFor(t, OptimisticLockException.class);
     if (olExc != null) {
@@ -71,7 +67,7 @@ public class JpaTriager  implements ExceptionTriager {
       /* this means a bean (we don't know which) we are working with was already removed from the database;
        * that is a version of optimistic locking
        */
-      return new AlreadyChangedException(null, olExc);
+      return new AlreadyChangedException(null, enfExc);
     }
     // it is not necessary to triage programming errors, but hey, now we can add some interesting messages
     NonUniqueResultException nurExc = huntFor(t, NonUniqueResultException.class);

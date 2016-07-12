@@ -17,17 +17,7 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-
 import java.io.Serializable;
-
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.Invars;
-import org.toryt.annotations_I.MethodContract;
 
 
 /**
@@ -39,27 +29,26 @@ import org.toryt.annotations_I.MethodContract;
  * @author    David Van Keer
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class IdNotFoundException extends PersistenceException {
 
   /*<construction>*/
   //------------------------------------------------------------------
 
-  @MethodContract(
-    pre = {
-      @Expression("persistentBeanType != null"),
-      @Expression("_id != null")
-    },
-    post = {
-      @Expression("persistentBeanType == _persistentBeanType"),
-      @Expression("id == _id"),
-      @Expression("message == (_messageKey == null || _messageKey == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
-      @Expression("cause == _cause")
-    }
-  )
+  /*
+    @MethodContract(
+      pre = {
+        @Expression("persistentBeanType != null"),
+        @Expression("_id != null")
+      },
+      post = {
+        @Expression("persistentBeanType == _persistentBeanType"),
+        @Expression("id == _id"),
+        @Expression("message == (_messageKey == null || _messageKey == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+        @Expression("cause == _cause")
+      }
+    )
+  */
   public <_Id_ extends Serializable>
   IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType,
                       _Id_ id, String messageKey, Throwable cause) {
@@ -70,35 +59,39 @@ public class IdNotFoundException extends PersistenceException {
     $id = id;
   }
 
-  @MethodContract(
-    pre = {
-      @Expression("persistentBeanType != null"),
-      @Expression("_id != null")
-    },
-    post = {
-      @Expression("persistentBeanType == _persistentBeanType"),
-      @Expression("id == _id"),
-      @Expression("message == DEFAULT_MESSAGE_KEY"),
-      @Expression("cause == null")
-    }
-  )
+  /*
+    @MethodContract(
+      pre = {
+        @Expression("persistentBeanType != null"),
+        @Expression("_id != null")
+      },
+      post = {
+        @Expression("persistentBeanType == _persistentBeanType"),
+        @Expression("id == _id"),
+        @Expression("message == DEFAULT_MESSAGE_KEY"),
+        @Expression("cause == null")
+      }
+    )
+  */
   public <_Id_ extends Serializable>
   IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id) {
     this(persistentBeanType, id, null, null);
   }
 
-  @MethodContract(
-    pre = {
-      @Expression("persistentBeanType != null"),
-      @Expression("_id != null")
-    },
-    post = {
-      @Expression("persistentBeanType == _persistentBeanType"),
-      @Expression("id == _id"),
-      @Expression("message == DEFAULT_MESSAGE_KEY"),
-      @Expression("cause == _cause")
-    }
-  )
+  /*
+    @MethodContract(
+      pre = {
+        @Expression("persistentBeanType != null"),
+        @Expression("_id != null")
+      },
+      post = {
+        @Expression("persistentBeanType == _persistentBeanType"),
+        @Expression("id == _id"),
+        @Expression("message == DEFAULT_MESSAGE_KEY"),
+        @Expression("cause == _cause")
+      }
+    )
+  */
   public <_Id_ extends Serializable>
   IdNotFoundException(Class<? extends PersistentBean<_Id_>> persistentBeanType, _Id_ id, Throwable cause) {
     this(persistentBeanType, id, null, cause);
@@ -110,12 +103,16 @@ public class IdNotFoundException extends PersistenceException {
   /*<property name="persistentBeanType">*/
   //------------------------------------------------------------------
 
-  @Basic(invars = @Expression("persistentBeanType != null"))
+  /*
+    @Basic(invars = @Expression("persistentBeanType != null"))
+  */
   public final Class<? extends PersistentBean<?>> getPersistentBeanType() {
     return $persistentBeanType;
   }
 
-  @Invars(@Expression("$persistentBeanType != null"))
+  /*
+    @Invars(@Expression("$persistentBeanType != null"))
+  */
   private final Class<? extends PersistentBean<?>> $persistentBeanType;
 
   /*</property>*/
@@ -125,12 +122,16 @@ public class IdNotFoundException extends PersistenceException {
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  @Basic(invars = @Expression("id != null"))
+  /*
+    @Basic(invars = @Expression("id != null"))
+  */
   public final Object getId() {
     return $id;
   }
 
-  @Invars(@Expression("$id != null"))
+  /*
+    @Invars(@Expression("$id != null"))
+  */
   private final Object $id;
 
   /*</property>*/

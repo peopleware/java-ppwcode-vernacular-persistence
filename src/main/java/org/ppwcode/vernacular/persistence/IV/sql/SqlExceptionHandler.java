@@ -17,24 +17,15 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV.sql;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
+import org.ppwcode.vernacular.exception.IV.ApplicationException;
+import org.ppwcode.vernacular.exception.IV.ExternalError;
 
 import java.sql.SQLException;
-
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_III.ExternalError;
-import org.ppwcode.vernacular.exception_III.ApplicationException;
-import org.ppwcode.vernacular.persistence_III.dao.Dao;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
-import org.toryt.annotations_I.Throw;
 
 
 /**
  * <p>Abstraction of how to handle {@link SQLException SQLExceptions}.</p>
- * <p>{@link Dao Dao's} often must deal with potential exceptions from a JDBC driver. These either come from
+ * <p>DAOs often must deal with potential exceptions from a JDBC driver. These either come from
  *   the driver, the database server, or from exceptions that are raised by triggers or stored procedures,
  *   or by constraint violations. They all turn up as {@link SQLException SQLExceptions}.</p>
  * <p>The first kinds are of an external nature. Normally, this is fatal for an application. According to
@@ -42,7 +33,7 @@ import org.toryt.annotations_I.Throw;
  *   are semantic exceptions. Normally, they would result in a roll-back, user feedback, and continuation
  *   of the normal operation of the application. According to ppwcode exception vernacular, they should be
  *   encapsulated in an {@link ApplicationException}</p>
- * <p>It is impossible for {@link Dao Dao's} to decide of which kind the {@link SQLException} is in general.
+ * <p>It is impossible for DAOs to decide of which kind the {@link SQLException} is in general.
  *   Database exceptions are not much more than a string, and there is no standardization over different
  *   database engines. Furthermore, exceptions raised by triggers and stored procedures, and constraints,
  *   are application specific.</p>
@@ -57,10 +48,7 @@ import org.toryt.annotations_I.Throw;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings("WeakerAccess")
 public interface SqlExceptionHandler {
 
   /**
@@ -70,20 +58,22 @@ public interface SqlExceptionHandler {
    * @param sqlException
    *        The exception to handle.
    */
-  @MethodContract(
-    pre  = @Expression("_sqlException != null"),
-    post = @Expression("true"),
-    exc  = {
-      @Throw(type = AssertionError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of a bad configuration of " +
-                                              "this object, which is considered a programming error or external condition")),
-      @Throw(type = ExternalError.class,
-             cond = @Expression(value = "true",
-                                description = "could perform the operation because of some problem with persistency " +
-                                              "which we consider external"))
-    }
-  )
+  /*
+    @MethodContract(
+      pre  = @Expression("_sqlException != null"),
+      post = @Expression("true"),
+      exc  = {
+        @Throw(type = AssertionError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of a bad configuration of " +
+                                                "this object, which is considered a programming error or external condition")),
+        @Throw(type = ExternalError.class,
+               cond = @Expression(value = "true",
+                                  description = "could perform the operation because of some problem with persistency " +
+                                                "which we consider external"))
+      }
+    )
+  */
   ApplicationException handle(SQLException sqlException);
 
 }

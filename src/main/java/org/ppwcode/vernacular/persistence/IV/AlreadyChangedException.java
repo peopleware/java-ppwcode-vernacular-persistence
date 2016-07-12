@@ -17,17 +17,6 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.Invars;
-import org.toryt.annotations_I.MethodContract;
-
-
 /**
  * <p>This exception signals a versioning conflict: we tried to change data in persistent
  *   storage for {@link #getObject()}, but the data in persistent storage has
@@ -37,25 +26,23 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
 public class AlreadyChangedException extends PersistenceException {
 
   /*<construction>*/
   //------------------------------------------------------------------
 
-  @MethodContract(
-    pre = {
-      @Expression("object != null")
-    },
-    post = {
-      @Expression("object == _object"),
-      @Expression("message == DEFAULT_MESSAGE_KEY"),
-      @Expression("cause == _cause")
-    }
-  )
+  /*
+    @MethodContract(
+      pre = {
+        @Expression("object != null")
+      },
+      post = {
+        @Expression("object == _object"),
+        @Expression("message == DEFAULT_MESSAGE_KEY"),
+        @Expression("cause == _cause")
+      }
+    )
+  */
   public AlreadyChangedException(Object object, Throwable cause) {
     super(null, cause);
     assert object != null;
@@ -69,12 +56,16 @@ public class AlreadyChangedException extends PersistenceException {
   /*<property name="persistentBean">*/
   //------------------------------------------------------------------
 
-  @Basic(invars = @Expression("object != null"))
+  /*
+    @Basic(invars = @Expression("object != null"))
+  */
   public final Object getObject() {
     return $object;
   }
 
-  @Invars(@Expression("$object != null"))
+  /*
+    @Invars(@Expression("$object != null"))
+  */
   private final Object $object;
 
   /*</property>*/

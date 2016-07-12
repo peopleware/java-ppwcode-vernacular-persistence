@@ -17,14 +17,7 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.ppwcode.vernacular.exception_III.ApplicationException;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
+import org.ppwcode.vernacular.exception.IV.ApplicationException;
 
 
 /**
@@ -37,10 +30,7 @@ import org.toryt.annotations_I.MethodContract;
  * @author    David Van Keer
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - 2016, PeopleWare n.v.")
-@License(APACHE_V2)
-@SvnInfo(revision = "$Revision$",
-         date     = "2016")
+@SuppressWarnings("ALL")
 public class PersistenceException extends ApplicationException {
 
   /**
@@ -51,13 +41,15 @@ public class PersistenceException extends ApplicationException {
    *            The exception that occurred, causing this exception to be thrown, if that is
    *            the case.
    */
-  @MethodContract(
-    pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
-    post = {
-      @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
-      @Expression("cause == _cause")
-    }
-  )
+  /*
+    @MethodContract(
+      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
+      post = {
+        @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+        @Expression("cause == _cause")
+      }
+    )
+  */
   public PersistenceException(final String messageKey, final Throwable cause) {
     super(messageKey, cause);
   }
@@ -67,13 +59,15 @@ public class PersistenceException extends ApplicationException {
    *            The string that identifies a localized end user feedback message about the
    *            non-nominal behavior.
    */
-  @MethodContract(
-    pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
-    post = {
-      @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
-      @Expression("cause == _cause")
-    }
-  )
+  /*
+    @MethodContract(
+      pre  = @Expression("_messageKey == null || _messageKey == EMPTY || validmessageKey(_messageKey)"),
+      post = {
+        @Expression("message == (_messageKey == null || _messageIdentfier == EMPTY) ? DEFAULT_MESSAGE_KEY : _messageKey"),
+        @Expression("cause == _cause")
+      }
+    )
+  */
   public PersistenceException(final String messageKey) {
     this(messageKey, null);
   }

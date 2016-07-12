@@ -17,21 +17,11 @@ limitations under the License.
 package org.ppwcode.vernacular.persistence.IV;
 
 
-import static org.ppwcode.metainfo_I.License.Type.APACHE_V2;
-import static org.ppwcode.util.reflect_I.CloneHelpers.safeReference;
-import static org.ppwcode.vernacular.semantics.VII.util.CloneHelpers.safeReference;
-
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Version;
+import java.io.Serializable;
 
-import org.ppwcode.metainfo_I.Copyright;
-import org.ppwcode.metainfo_I.License;
-import org.ppwcode.metainfo_I.vcs.SvnInfo;
-import org.toryt.annotations_I.Basic;
-import org.toryt.annotations_I.Expression;
-import org.toryt.annotations_I.MethodContract;
+import static org.ppwcode.vernacular.semantics.VII.util.CloneHelpers.safeReference;
 
 
 /**
