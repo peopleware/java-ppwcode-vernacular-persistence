@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2005 - $Date$ by PeopleWare n.v..
+Copyright 2005 - 2016 by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -44,10 +44,10 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
  *       libraries, even if they are annotations, because the annotations are loaded in the import statements too
  *       (at least under 1.5). Thus, the annotations must go, and we need to use the xml files.
  */
-@Copyright("2004 - $Date$, PeopleWare n.v.")
+@Copyright("2004 - 2016, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
-         date     = "$Date$")
+         date     = "2016")
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
     implements PersistentBean<_Id_> {
 

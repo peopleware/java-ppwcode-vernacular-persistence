@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2005 - $Date$ by PeopleWare n.v..
+Copyright 2005 - 2016 by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -50,10 +50,10 @@ import org.toryt.annotations_I.MethodContract;
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
  */
-@Copyright("2004 - $Date$, PeopleWare n.v.")
+@Copyright("2004 - 2016, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
-         date     = "$Date$")
+         date     = "2016")
 public interface PersistentBean<_Id_ extends Serializable> extends RousseauBean, Serializable {
 
   /*<property name="id">*/

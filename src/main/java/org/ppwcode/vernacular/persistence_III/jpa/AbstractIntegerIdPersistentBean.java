@@ -1,5 +1,5 @@
 /*<license>
-Copyright 2005 - $Date$ by PeopleWare n.v..
+Copyright 2005 - 2016 by PeopleWare n.v..
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -52,10 +52,10 @@ import org.ppwcode.vernacular.semantics_VI.bean.AbstractRousseauBean;
  *   cannot use that keyword because of its effect on JPA and possibly other persistence solutions.</p>
  *
  */
-@Copyright("2004 - $Date$, PeopleWare n.v.")
+@Copyright("2004 - 2016, PeopleWare n.v.")
 @License(APACHE_V2)
 @SvnInfo(revision = "$Revision$",
-         date     = "$Date$")
+         date     = "2016")
 @MappedSuperclass
 public abstract class AbstractIntegerIdPersistentBean<_Version_ extends Serializable> extends AbstractRousseauBean
     implements VersionedPersistentBean<Integer, _Version_> {
