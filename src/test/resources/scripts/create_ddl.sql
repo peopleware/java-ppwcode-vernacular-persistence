@@ -1,2 +1,0 @@
--- Empty, jpa creates the tables
---
