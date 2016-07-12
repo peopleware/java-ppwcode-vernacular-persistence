@@ -30,6 +30,13 @@
   </properties>
   <body>
 
+    <release version="IV v1.0" date="2016-07-12" description="revival">
+      <action dev="jand" type="update">
+        Everything is changed. This revives this code base after almost 8 years.
+        Java is now at version 8.
+      </action>
+    </release>
+
     <release version="III v1.0" date="2009-06-??" description="Port to ppwcode">
       <action dev="jand" type="update">
         Changed package to ppwcode structure.
