@@ -39,7 +39,7 @@ import java.io.Serializable;
  * }
  *
  * ATId
- * ATGeneratedValue(strategy = GenerationType.TABLE, generator = "<SPECIFIC GENERATOR NAME>")
+ * ATGeneratedValue(strategy = GenerationType.TABLE, generator = "#SPECIFIC GENERATOR NAME#")
  * ATColumn(name = "id")
  * private _Id_ $persistenceId;
  * </pre>
