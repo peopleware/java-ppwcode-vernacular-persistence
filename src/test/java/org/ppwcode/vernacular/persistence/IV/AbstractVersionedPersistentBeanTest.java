@@ -38,10 +38,12 @@ public class AbstractVersionedPersistentBeanTest {
   public static class AbstractVersionedPersistentBeanSTUB<_Id_ extends Serializable>
     extends AbstractVersionedPersistentBean<_Id_, Integer> implements NumberOfProperties {
 
+    private _Id_ $persistenceId;
+
     public AbstractVersionedPersistentBeanSTUB(_Id_ id, String property1,
-            Date property2, Set<String> property3, int[] property4) {
+                                               Date property2, Set<String> property3, int[] property4) {
       super();
-      setPersistenceId(id);
+      $persistenceId = id;
       $property1 = property1;
       $property2 = property2;
       $property3 = property3;
@@ -97,6 +99,10 @@ public class AbstractVersionedPersistentBeanTest {
       return nrOfProperties() - 2;
     }
 
+    @Override
+    public _Id_ getPersistenceId() {
+      return $persistenceId;
+    }
   }
 
   @SuppressWarnings("Duplicates")
@@ -126,7 +132,9 @@ public class AbstractVersionedPersistentBeanTest {
   public static class AbstractVersionedPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
     extends AbstractVersionedPersistentBean<_Id_, Integer> implements NumberOfProperties {
 
-      public int nrOfProperties() {
+    private _Id_ $persistenceId;
+
+    public int nrOfProperties() {
         return 2; // 0 + persistenceId + persistenceVersion
       }
 
@@ -134,6 +142,10 @@ public class AbstractVersionedPersistentBeanTest {
         return nrOfProperties();
       }
 
+    @Override
+    public _Id_ getPersistenceId() {
+      return $persistenceId;
+    }
   }
 
 

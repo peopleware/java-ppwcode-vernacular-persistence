@@ -18,16 +18,31 @@ package org.ppwcode.vernacular.persistence.IV;
 
 import org.ppwcode.vernacular.semantics.VII.bean.AbstractRousseauBean;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import java.io.Serializable;
 
 /**
  * <p>A partial implementation of the interface {@link PersistentBean}.</p>
- * <p>The {@link #getPersistenceId() persistenceId} is annotated for JPA use.</p>
+ * <p>Sadly, we cannot implement {@link #getPersistenceId()}, because we cannot completely annotate
+ *   the property for JPA use here. The mapping must be done on the private instance field, which
+ *   is not available in subclasses, so it should be done here. Here, however, we do not have all information
+ *   in the most general case. Notably, we probably want to use a generator specific for the concrete class by
+ *   name. The alternative is to do mapping with XML files, without annotations.
+ *   See {@link AbstractIdPersistentBean}.</p>
+ *
+ * <p>Implementation of {@link #getPersistenceId()} should be done in subclasses, with the following idiom:</p>
+ * <pre>
+ * /**
+ *  * Basic inspector. Initially {@code null}.
+ *  *-
+ * public final _Id_ getPersistenceId(){
+ *   return $persistenceId;
+ * }
+ *
+ * ATId
+ * ATGeneratedValue(strategy = GenerationType.TABLE, generator = "<SPECIFIC GENERATOR NAME>")
+ * ATColumn(name = "id")
+ * private _Id_ $persistenceId;
+ * </pre>
  *
  * <p>Note: this version does not use the ppwcode util serialization alternative for serialization, as did earlier
  *   versions. The main reason, remote communication of serialized objects, has disappeared. It might be necessary
@@ -37,11 +52,6 @@ import java.io.Serializable;
  * @author    Ruben Vandeginste
  * @author    Jan Dockx
  * @author    PeopleWare n.v.
- *
- * // TODO We now have a dependency here on JPA via annotations. Also, the listener is defined in a subpackage, which
- *       depends on this package. This introduces a cycle! This is a bad idea. Like this, you always need the JPA
- *       libraries, even if they are annotations, because the annotations are loaded in the import statements too
- *       (at least under 1.5). Thus, the annotations must go, and we need to use the xml files.
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends AbstractRousseauBean
@@ -50,31 +60,12 @@ public abstract class AbstractPersistentBean<_Id_ extends Serializable> extends 
   /*<property name="id">*/
   //------------------------------------------------------------------
 
-  /*
-    @Basic(init = @Expression("null"))
-  */
-  public final _Id_ getPersistenceId() {
-    return $persistenceId;
-  }
-
   public final boolean hasSamePersistenceId(final PersistentBean<_Id_> other) {
     return (other != null)
             && ((getPersistenceId() == null)
               ? other.getPersistenceId() == null
               : getPersistenceId().equals(other.getPersistenceId()));
   }
-
-  /**
-   * Provided to make testing possible.
-   */
-  protected void setPersistenceId(_Id_ persistenceId) {
-    $persistenceId = persistenceId;
-  }
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.TABLE)
-  @Column(name="id")
-  private _Id_ $persistenceId;
 
   /*</property>*/
 

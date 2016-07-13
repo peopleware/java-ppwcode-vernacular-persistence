@@ -32,11 +32,11 @@ import static org.junit.Assert.assertTrue;
 
 
 @SuppressWarnings({"WeakerAccess", "UnusedParameters", "Duplicates"})
-public class AbstractPersistentBeanTest {
+public class AbstractIdPersistentBeanTest {
 
   @SuppressWarnings({"WeakerAccess", "unused"})
   public static class AbstractPersistentBeanSTUB<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> implements NumberOfProperties {
+    extends AbstractIdPersistentBean<_Id_> implements NumberOfProperties {
 
     public AbstractPersistentBeanSTUB(_Id_ id, String property1,
             Date property2, Set<String> property3, int[] property4) {
@@ -124,7 +124,7 @@ public class AbstractPersistentBeanTest {
 
   @SuppressWarnings({"WeakerAccess", "unused"})
   public static class AbstractPersistentBeanNOPROPERTIES<_Id_ extends Serializable>
-    extends AbstractPersistentBean<_Id_> implements NumberOfProperties {
+    extends AbstractIdPersistentBean<_Id_> implements NumberOfProperties {
 
     public int nrOfProperties() {
       return 1; // 0 + persistenceId
@@ -191,7 +191,7 @@ public class AbstractPersistentBeanTest {
       testEquals(subject, null);
       testEquals(subject, subject);
       testEquals(subject, new Object());
-      testEquals(subject, new AbstractPersistentBeanSTUB<Integer>(null, "hfhfh", null, null, null));
+      testEquals(subject, new AbstractPersistentBeanSTUB<Integer>(null, "A dummy string", null, null, null));
     }
   }
 
@@ -205,7 +205,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testHashCode() {
-    subjects.forEach(AbstractPersistentBeanTest::testHashCode);
+    subjects.forEach(AbstractIdPersistentBeanTest::testHashCode);
   }
 
   public static void testToString(AbstractPersistentBean<?> subject) {
@@ -218,7 +218,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testToString() {
-    subjects.forEach(AbstractPersistentBeanTest::testToString);
+    subjects.forEach(AbstractIdPersistentBeanTest::testToString);
   }
 
   @Test
@@ -261,7 +261,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testIsCivilized() {
-    subjects.forEach(AbstractPersistentBeanTest::testIsCivilized);
+    subjects.forEach(AbstractIdPersistentBeanTest::testIsCivilized);
   }
 
   public static void testCheckCivility(AbstractPersistentBean<?> subject) {
@@ -278,7 +278,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testCheckCivility() {
-    subjects.forEach(AbstractPersistentBeanTest::testCheckCivility);
+    subjects.forEach(AbstractIdPersistentBeanTest::testCheckCivility);
   }
 
   public static void testNormalize(AbstractPersistentBean<?> subject) {
@@ -290,7 +290,7 @@ public class AbstractPersistentBeanTest {
 
   @Test
   public void testNormalize() {
-    subjects.forEach(AbstractPersistentBeanTest::testNormalize);
+    subjects.forEach(AbstractIdPersistentBeanTest::testNormalize);
   }
 
 }

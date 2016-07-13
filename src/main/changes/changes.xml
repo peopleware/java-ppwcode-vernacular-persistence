@@ -30,6 +30,15 @@
   </properties>
   <body>
 
+    <release version="IV v1.1" date="2016-07-12" description="revival">
+      <action dev="jand" type="fix">
+        Split AbstractPersistentBean in AbstractPersistentBean and AbstractIdPersistentBean.
+        The previous version was completely unusable with JPA. This changes will break classes
+        that extended the previous version of AbstractPersistentBean and AbstractVersionedPersistentBean
+        (which could never have worked).
+      </action>
+    </release>
+
     <release version="IV v1.0" date="2016-07-12" description="revival">
       <action dev="jand" type="update">
         Everything is changed. This revives this code base after almost 8 years.
